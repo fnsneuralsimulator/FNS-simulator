@@ -1,4 +1,4 @@
-![FNS logo](https://github.com/fnsneuralsimulator/fns-documentation/FNSlogo.png "FNS logo")
+![FNS logo](https://github.com/fnsneuralsimulator/fns-documentation/blob/master/FNSlogo.png?raw=true "FNS logo")
 
 FNS neural simulator
 =====
