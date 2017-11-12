@@ -15,7 +15,7 @@ It comes with the GPLv3 (please see LICENSE).
 * For questions and support: fnsneuralsimulator@gmail.com
 
 
-Citing Auryn
+Citing FNS
 ------------
 
 When using FNS, please cite us as follows:
