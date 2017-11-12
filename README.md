@@ -1,7 +1,7 @@
 ![FNS logo](https://github.com/fnsneuralsimulator/fns-documentation/blob/master/FNSlogo.png?raw=true "FNS logo") FNS neural simulator
 =====
 
-FNS is an event-driven Spiking Neural Network (SNN) framework, oriented to 
+FNS is an event-driven Spiking Neural Network framework, oriented to 
 data-driven brain simulations. FNS combines spiking/synaptic level 
 description with the event-driven approach, allowing the user to define 
 heterogeneous modules and multi-scale connectivity with delayed connections 
