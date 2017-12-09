@@ -1,2 +1,0 @@
-.\start.bat configs\config.xml .\connPkgs\connectivity_80
-
