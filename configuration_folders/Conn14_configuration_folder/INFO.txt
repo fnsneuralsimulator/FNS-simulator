@@ -1,0 +1,8 @@
+Conn14_configuration_file and Conn14_interconnectivity_set will allow you to simulate a brain model composed of 14 regions
+
+In order to obtain the .CSV of the model activity in the folder experiments/Conn14, you can use the following "experiment command":
+.\start.bat .\...\Conn14_configuration_file.xml .\...\Conn14_interconnectivity_set Conn14 16383
+
+Note that 16383 represents the mask to obtain the activity of all 14 nodes in output
+
+Please read the user manual for additional info
