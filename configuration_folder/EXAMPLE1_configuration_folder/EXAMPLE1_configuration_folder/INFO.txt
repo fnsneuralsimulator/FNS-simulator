@@ -1,6 +1,8 @@
-Using EXAMPLE1_configuration_file and EXAMPLE1_interconnectivity_set you can simulate a brain model made of 14 regions.
+EXAMPLE1_configuration_file and EXAMPLE1_interconnectivity_set allow you to simulate a brain model made of 14 regions
 
 In order to obtain the .CSV of the model activity in the folder experiments/EXAMPLE1, you can use the following experiment command:
 .\start.bat .\...\EXAMPLE1_configuration_file.xml .\...\EXAMPLE1_interconnectivity_set EXAMPLE1 16383
 
 Note that 16383 represents the mask to obtain the activity of all 14 nodes in output
+
+Please read the USER MANUAL for additional info
