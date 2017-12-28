@@ -19,7 +19,7 @@ Please cite FNS
 When using FNS, please cite us as follows:
 
 Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, Mario 
-Salerno, Ernesto Pereda, Fernando Maestú (2017). "FNS: An event-driven 
+Salerno, Fernando Maestú, Ernesto Pereda (2017). "FNS: An event-driven 
 spiking neural network framework for efficient simulations of large-scale 
 brain models". 
 Laboratory of Cognitive and Computational Neuroscience, UPM-UCM Centre for 
