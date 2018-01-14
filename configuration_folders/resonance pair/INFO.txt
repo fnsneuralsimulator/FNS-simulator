@@ -1,7 +1,0 @@
-Dynamical Relaying mechanism, as described in the paper of 
-- Maslennikov and Nekorkin, 2014. Modular networks with delayed coupling: Synchronization and frequency control. Phys. Rev. E 90.
-- Gollo, L. et al., 2014. Mechanisms of zero-lag synchronization in cortical motifs. PLOS computational biology 10 (4), 1–17)
-
-
-In order to obtain the .CSV of the model activity in the folder experiments/resonance_pair, you can use the following "experiment command":
-.\start.bat .\configuration_folders\resonance_pair\configuration_file.xml .\configuration_folders\resonance_pair\interconnectivity_set dynamical_relaying 3
