@@ -2,7 +2,7 @@
 
 <fns_config>
     <!-- simulation time (ms) -->
-    <stop>500</stop>
+    <stop>400</stop>
     <!-- intra-node mean amplitude of a spike -->
     <glob_mu_w>0.1</glob_mu_w>
     <!-- number of neurons for each node -->
