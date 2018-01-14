@@ -1,4 +1,0 @@
-Dynamical Relaying mechanism, as described in the paper of Vicente et al., 2008: "Dynamical relaying can yield zero time lag neuronal synchrony despite long conduction delays".
-
-In order to obtain the .CSV of the model activity in the folder experiments/dynamical_relaying, you can use the following "experiment command":
-.\start.bat .\configuration_folders\dynamical_relaying\configuration_file.xml .\configuration_folders\dynamical_relaying\interconnectivity_set dynamical_relaying 7
