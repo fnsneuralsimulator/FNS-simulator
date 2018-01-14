@@ -1,0 +1,8 @@
+Through the folder 'connectivity_14' you will be able to simulate the brain model composed of 14 regions, described in the paper "FNS: an event-driven spiking neural network framework for efficient simulations of large-scale brain models" (2018).
+
+In order to obtain the .CSV of the model activity in the folder experiments/connectivity_14, you can use the following "experiment command":
+.\start.bat .\configuration_folders\connectivity_14\configuration_file.xml .\configuration_folders\connectivity_14\interconnectivity_set connectivity_14 16383
+
+Note that 16383 represents the mask to obtain as output the activity of all 14 nodes 
+
+Please read the user manual for additional info

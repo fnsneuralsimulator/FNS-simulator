@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<fns_config>
+
+    <!-- simulation time (ms) -->
+    <stop>1000</stop>
+    <!-- intra-node mean amplitude of a spike -->
+    <glob_mu_w>0.04</glob_mu_w>
+    <!-- number of neurons for each node -->
+    <glob_n>100</glob_n>
+
+    <!-- SW topology (true) or random network (false) -->
+    <!-- SW rewiring probability-->
+    <glob_rewiring_P>0.5</glob_rewiring_P>
+    <!-- SW mean degree -->
+    <glob_k>30</glob_k>
+    <!-- ratio between excitatory and total neuron number-->
+    <glob_R>0.8</glob_R>
+	
+    <!-- number of external inputs per neuron -->
+    <glob_external_inputs_number>1</glob_external_inputs_number>
+    <!-- type of external input:0) Poisson, 1) constant, 2) noise -->
+    <glob_external_inputs_type>1</glob_external_inputs_type>
+    <!-- time step between two distinct input event from the same input source,
+     for Poisson and constant input type -->
+    <glob_external_inputs_timestep>1</glob_external_inputs_timestep>
+    <!-- Poisson firerate (for other input type it is ignored) -->
+    <glob_external_inputs_firerate>0.1</glob_external_inputs_firerate>
+    <!-- duration of the external input -->
+    <glob_external_inputs_fireduration>1000</glob_external_inputs_fireduration>
+	<!-- amplitude of each external input -->
+    <glob_external_inputs_amplitude>0.074</glob_external_inputs_amplitude>
+
+    <!-- speed of a signal over an axon  -->
+    <avg_neuronal_signal_speed>5.1</avg_neuronal_signal_speed>
+    <!-- enable plasticity rule -->
+    <glob_plasticity>false</glob_plasticity>
+				
+	<!-- neuron parameters -->
+    <global_neuron_manager>
+        <!-- linear decay factor for the inner state of each neuron -->
+        <D>0.07</D>
+        <!-- threshold constant -->
+        <c>0.04</c>
+        <!-- refractory period of each neuron (ms) -->
+        <t_arp>2</t_arp>
+    </global_neuron_manager>
+
+</fns_config>
