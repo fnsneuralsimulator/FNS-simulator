@@ -39,12 +39,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import utils.constants.Constants;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "fns_config")
 public class SpikingSimulatorCfg {
 	
 	private int stop;
-	private Boolean glob_plasticity;
 	private Double avg_neuronal_signal_speed;
 	private NeuManCfg global_neuron_manager;
 	private ArrayList<NodeCfg> node = new ArrayList<NodeCfg>();
@@ -53,14 +54,25 @@ public class SpikingSimulatorCfg {
 	private Integer glob_k;
 	private Long glob_n;
 	private Double glob_R;
-	private Boolean glob_small_world_topology=true;
 	private Double glob_mu_w;
+	private Double glob_w_pre_exc;
+	private Double glob_w_pre_inh;
+	private Integer glob_Bn;
+	private Double glob_IBI;
 	private Integer glob_external_inputs_number;
 	private Integer glob_external_inputs_type;
+	private Double glob_external_inputs_time_offset;
 	private Integer glob_external_inputs_fireduration;
 	private Integer glob_external_inputs_timestep;
 	private Double glob_external_inputs_firerate; 
 	private Double glob_external_inputs_amplitude; 
+	private Boolean glob_plasticity;
+	private Double glob_etap = Constants.ETAP;
+	private Double glob_etam = Constants.ETAM;
+	private Double glob_taup = Constants.TAUP;
+	private Double glob_taum = Constants.TAUM;
+	private Double glob_pw_max = Constants.PWMAX;
+	private Double glob_to = Constants.TO;	
 
 	public int getStop() {
 		return stop;
@@ -135,12 +147,20 @@ public class SpikingSimulatorCfg {
 		this.glob_k = glob_k;
 	}
 
-	public Double getMu_w() {
-		return glob_mu_w;
+	public Integer getGlob_Bn() {
+		return (glob_Bn!=null) ? glob_Bn : 1;
 	}
 
-	public void setMu_w(Double mu_w) {
-		this.glob_mu_w = mu_w;
+	public void setGlob_Bn(Integer glob_Bn) {
+		this.glob_Bn = glob_Bn;
+	}
+
+	public Double getGlob_IBI() {
+		return (glob_IBI!=null) ? glob_IBI : 0;
+	}
+
+	public void setGlob_IBI(Double glob_IBI) {
+		this.glob_IBI = glob_IBI;
 	}
 
 	public Long getGlob_local_n() {
@@ -159,14 +179,30 @@ public class SpikingSimulatorCfg {
 		this.glob_R = R;
 	}
 
-	public Boolean getGlob_small_world_topology() {
-		return glob_small_world_topology;
+	public Double getGlob_mu_w() {
+		return glob_mu_w;
 	}
 
-	public void setGlob_small_world_topology(Boolean glob_small_world_topology) {
-		this.glob_small_world_topology = glob_small_world_topology;
+	public void setGlob_mu_w(Double glob_mu_w) {
+		this.glob_mu_w = glob_mu_w;
 	}
-	
+
+	public Double getGlob_w_pre_exc() {
+		return glob_w_pre_exc;
+	}
+
+	public void setGlob_w_pre_exc(Double glob_w_pre_exc) {
+		this.glob_w_pre_exc = glob_w_pre_exc;
+	}
+
+	public Double getGlob_w_pre_inh() {
+		return glob_w_pre_inh;
+	}
+
+	public void setGlob_w_pre_inh(Double glob_w_pre_inh) {
+		this.glob_w_pre_inh = glob_w_pre_inh;
+	}
+
 
 	public Integer getGlob_external_inputs_number() {
 		return glob_external_inputs_number;
@@ -182,6 +218,14 @@ public class SpikingSimulatorCfg {
 
 	public void setGlob_external_inputs_type(Integer glob_external_inputs_type) {
 		this.glob_external_inputs_type = glob_external_inputs_type;
+	}
+
+	public Double getGlob_external_inputs_time_offset() {
+		return glob_external_inputs_time_offset;
+	}
+
+	public void setGlob_external_inputs_time_offset(Double glob_external_inputs_time_offset) {
+		this.glob_external_inputs_time_offset = glob_external_inputs_time_offset;
 	}
 
 	public Integer getGlob_external_inputs_fireduration() {
@@ -214,6 +258,62 @@ public class SpikingSimulatorCfg {
 	
 	public void setGlob_external_inputs_amplitude(Double glob_external_inputs_amplitude) {
 		this.glob_external_inputs_amplitude = glob_external_inputs_amplitude;
+	}
+
+	public Boolean getGlob_plasticity() {
+		return glob_plasticity;
+	}
+
+	public void setGlob_plasticity(Boolean glob_plasticity) {
+		this.glob_plasticity = glob_plasticity;
+	}
+
+	public Double getGlob_etap() {
+		return glob_etap;
+	}
+
+	public void setGlob_etap(Double glob_etap) {
+		this.glob_etap = glob_etap;
+	}
+
+	public Double getGlob_etam() {
+		return glob_etam;
+	}
+
+	public void setGlob_etam(Double glob_etam) {
+		this.glob_etam = glob_etam;
+	}
+
+	public Double getGlob_taup() {
+		return glob_taup;
+	}
+
+	public void setGlob_taup(Double glob_taup) {
+		this.glob_taup = glob_taup;
+	}
+
+	public Double getGlob_taum() {
+		return glob_taum;
+	}
+
+	public void setGlob_taum(Double glob_taum) {
+		this.glob_taum = glob_taum;
+	}
+
+	public Double getGlob_pw_max() {
+		return glob_pw_max;
+	}
+
+	public void setGlob_pw_max(Double glob_pw_max) {
+		this.glob_pw_max = glob_pw_max;
+	}
+
+	public Double getGlob_to() {
+		return glob_to;
+	}
+
+	public void setGlob_to(Double glob_to) {
+		this.glob_to = glob_to;
 	}
 
 	public String toString(){

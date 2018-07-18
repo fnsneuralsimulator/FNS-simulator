@@ -33,11 +33,19 @@ package utils.experiment;
 
 public class Experiment {
 	
-	public static String expName="";
-	public static String DIR="experiments/";
+	private static String expName="";
+	private static String dir="/experiments/";
 	
-	public static  void setExperimentName(String name){
-		expName=name+"/";
+	public static void setExperimentName(String name){
+		expName=name;
+	}
+	
+	public static String getExperimentName() {
+		return expName;
+	}
+	
+	public static String getExperimentDir() {
+		return expName+dir;
 	}
 
 }

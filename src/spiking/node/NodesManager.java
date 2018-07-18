@@ -35,43 +35,39 @@ package spiking.node;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.Random;
 
 import spiking.controllers.node.NodeThread;
 import spiking.internode.InterNodeSpike;
 import spiking.simulator.SpikingNeuralSimulator;
-import utils.tools.NiceNode;
-import utils.tools.NiceQueue;
-import utils.constants.Constants;
 import utils.exceptions.BadCurveException;
 import utils.statistics.StatisticsCollector;
 import utils.tools.IntegerCouple;
 
 import org.apache.commons.math3.distribution.GammaDistribution;
-import org.mapdb.*;
 
 public class NodesManager implements Serializable {
 	
 	public static final Double MAX_TRACT_LENGTH=100000.0;
-	private static final long serialVersionUID = -4781040115396333609L;
+	private final static long serialVersionUID = -4781040115396333609L;
 	private final static String TAG = "[Nodes Manager] ";
 	private final static Boolean verbose = true;
 	private final static Integer goodCurveGuessThreshold= 5;
 	private final static Integer badCurveGuessThreshold= 15;
+	private StatisticsCollector sc;
 	
 	
 	private Boolean debug = false;
 
-
-	//ergion threads array list 
-	private ArrayList<NodeThread> regThrds = new ArrayList<NodeThread>();
+	public StatisticsCollector getStatisticsCollector() {
+		return sc;
+	}
 	
-	//interworld connection probability
-	private HashMap<IntegerCouple, NodesInterconnection> regConnections = new HashMap<IntegerCouple, NodesInterconnection>();
+	//ergion threads array list 
+	private ArrayList<NodeThread> nodeThreads = new ArrayList<NodeThread>();
+	
+	//internodes connection probability
+	private HashMap<IntegerCouple, NodesInterconnection> nodesConnections = new HashMap<IntegerCouple, NodesInterconnection>();
 	
 	
 	//the total number of neuron
@@ -104,85 +100,112 @@ public class NodesManager implements Serializable {
 	private Random randGen = new Random(System.currentTimeMillis());
 	
 	
-	public NodesManager(SpikingNeuralSimulator sim){
+	public NodesManager(SpikingNeuralSimulator sim, StatisticsCollector sc){
 		this.sim=sim;
+		this.sc=sc;
 	}
 	
 	public void addNodeThread(NodeThread regT){
 		if (initialized)
 			return;
-		//reg.setId(regs.size());
-		//updateNeuronTreeIndexes(reg.getId());
-		regThrds.add(regT);
-		
+		nodeThreads.add(regT);
 		n+=regT.getN();
 		//updating the maximum number of neuron within a same node
 		if (regT.getN()>maxN)
 			maxN=regT.getN();
-
 		println("adding node:"+regT.getNodeId()+", n:"+regT.getN()+"\n");
-		//reg.setExcitatoryStartingIndex(excitatory+inhibithory);
-//		println("exc starting:"+reg.getExcitatoryStartingIndex());
 		excitatory+=regT.getExcitatory();
-//		reg.setInhibithoryStartingIndex(excitatory+inhibithory);
-//		println("inhib starting:"+reg.getInhibithoryStartingIndex());
 		inhibithory+=regT.getInhibithory();
 		if (regT.hasExternalInput()){
-//			updateExtNeuronTreeIndexes(reg.getId());
-//			reg.setExternalStartingIndex(externalInputs);
-			//println("External inputs:"+regT.getExternalInputs()+" starting @:"+regT.getExternalStartingIndex());
 			externalInputs+=regT.getExternalInputs();
 			regsWithExternalInputs.add(regT.getNodeId());
-			//regExternalInputsNumber.put(reg.getId(), reg.getExternalInputs());
 		}
-		//++nregs;
-	}
-	
+	}	
 	
 	public void addInterNodeConnection(
-			NodeThread reg1, NodeThread reg2, 
-			Double weight, Double amplitude, 
-			Double amplitudeStdVariation, Double length, 
-			Double lengthShapeParameter){
-		if (length==null)
+			NodeThread node1, 
+			NodeThread node2, 
+			Double Ne_en_ratio, 
+			Double mu_omega, 
+			Double sigma_omega, 
+			Double mu_lambda, 
+			Double alpha_lambda,
+			Integer inter_node_conn_type){
+		if (mu_lambda==null)
 			println("length null 1...");
-		NodesInterconnection regi = new NodesInterconnection(reg1, reg2, weight);
-		regi.setLength(length);
-//		Integer src =  (reg1.getRegionId()<reg2.getRegionId())? reg1.getRegionId(): reg2.getRegionId();
-//		Integer dst =  (reg1.getRegionId()<reg2.getRegionId())? reg2.getRegionId(): reg1.getRegionId();
-		regConnections.put(new IntegerCouple(reg1.getNodeId(), reg2.getNodeId()), regi);
-		_addInterRegionConnection(reg1.getNodeId(),reg2.getNodeId(),weight,amplitude,amplitudeStdVariation, length, lengthShapeParameter);
+		NodesInterconnection n_conn = new NodesInterconnection(
+				node1, 
+				node2, 
+				Ne_en_ratio,
+				mu_omega,
+				sigma_omega,
+				mu_lambda,
+				alpha_lambda,
+				inter_node_conn_type);
+		nodesConnections.put(new IntegerCouple(node1.getNodeId(), node2.getNodeId()), n_conn);
+		_addInterRegionConnection(
+				node1.getNodeId(),
+				node2.getNodeId(),
+				Ne_en_ratio,
+				mu_omega,
+				sigma_omega, 
+				mu_lambda, 
+				alpha_lambda,
+				inter_node_conn_type);
 	}
 	
 	public void addInterNodeConnectionParameters(
-			Integer reg1Id, Integer reg2Id, 
-			Double weight, Double amplitude, 
-			Double amplitudeStdVariation, Double length, 
-			Double lengthShapeParameter){
+			Integer reg1Id, 
+			Integer reg2Id, 
+			Double weight, 
+			Double amplitude, 
+			Double amplitudeStdVariation, 
+			Double length, 
+			Double lengthShapeParameter,
+			Integer inter_node_conn_type){
 		if (length==null)
 			println("length null 2...");
 		NodesInterconnection regi = new NodesInterconnection(reg1Id, reg2Id, weight);
 		regi.setLength(length);
 //		Integer src =  (reg1Id<reg2Id)? reg1Id: reg2Id;
 //		Integer dst =  (reg1Id<reg2Id)? reg2Id: reg1Id;
-		regConnections.put(new IntegerCouple(reg1Id, reg2Id), regi);
-		_addInterRegionConnection(reg1Id, reg2Id, weight, amplitude, amplitudeStdVariation, length, lengthShapeParameter);
+		nodesConnections.put(new IntegerCouple(reg1Id, reg2Id), regi);
+		_addInterRegionConnection(
+				reg1Id, 
+				reg2Id, 
+				weight, 
+				amplitude, 
+				amplitudeStdVariation, 
+				length, 
+				lengthShapeParameter,
+				inter_node_conn_type);
 	}
 	
 	private void _addInterRegionConnection(
-			Integer reg1Id, Integer reg2Id, 
-			Double weight, Double amplitude, 
-			Double amplitudeStdVariation, Double length, 
-			Double lengthShapeParameter){
+			Integer node1id, 
+			Integer node2id, 
+			Double weight, 
+			Double amplitude, 
+			Double amplitudeStdVariation, 
+			Double length, 
+			Double lengthShapeParameter,
+			Integer inter_node_conn_type){
 		if (length==null)
 			println("length null...");
 		if (minTractLength==null)
 			println("min tract length null...");
-		
 		if (length<minTractLength)
 			minTractLength=length;
 		try {
-			__addInterRegionConnection(reg1Id, reg2Id, weight,amplitude,amplitudeStdVariation,length, lengthShapeParameter);
+			__addInterRegionConnection(
+					node1id, 
+					node2id, 
+					weight,
+					amplitude,
+					amplitudeStdVariation,
+					length, 
+					lengthShapeParameter,
+					inter_node_conn_type);
 		} catch (BadCurveException e) {
 			e.printStackTrace();
 		}
@@ -190,56 +213,131 @@ public class NodesManager implements Serializable {
 	
 	
 	/**
-	 *  adds an inter node connection using the weight as the number of connections
-	 *  between neurons of the two nodes
+	 * adds an inter node connection using the weight as the number of connections
+	 * between neurons of the two nodes
 	 * @throws BadCurveException 
 	 */
 	private void __addInterRegionConnection(
-			Integer reg1Id, Integer reg2Id, 
-			Double weight, Double amplitude, 
-			Double amplitudeStdVariation, Double length, 
-			Double lengthShapeParameter) throws BadCurveException{
-		long tmp = (long)(regThrds.get(reg1Id).getExcitatory()*weight);
+			Integer reg1Id, 
+			Integer reg2Id, 
+			Double Ne_en_ratio, 
+			Double mu_omega, 
+			Double sigma_omega, 
+			Double mu_lambda, 
+			Double alpha_lambda,
+			Integer inter_node_conn_type) throws BadCurveException{
+		/*
+		 * The schema for internode connections
+		 * 
+		 *   \        |       |       |       |
+		 *    \  from |	mixed |	 exc  |  inh  |
+		 *  to \      |       |       |       |
+		 * ------------------------------------
+		 *    mixed   |   0   |   3   |   6   |
+		 * ------------------------------------
+		 *     exc    |   1   |   4   |   7   |
+		 * ------------------------------------
+		 *     inh    |   2   |   5   |   8   |
+		 * ------------------------------------
+		 *  
+		 */
+        long Nsrc = 0;
+        // case EXC2*
+        if ((inter_node_conn_type==NodesInterconnection.EXC2MIXED)||
+                (inter_node_conn_type==NodesInterconnection.EXC2EXC)||
+                (inter_node_conn_type==NodesInterconnection.EXC2INH)) {
+            Nsrc = nodeThreads.get(reg1Id).getExcitatory();
+        }
+        // case INH2*
+        else if ((inter_node_conn_type==NodesInterconnection.INH2MIXED)||
+                (inter_node_conn_type==NodesInterconnection.INH2EXC)||
+                (inter_node_conn_type==NodesInterconnection.INH2INH)) {
+            Nsrc = nodeThreads.get(reg1Id).getInhibithory();
+        }
+        // case MIXED2*
+        else
+            Nsrc = nodeThreads.get(reg1Id).getN();
+		long tmp = (long)(Nsrc*Ne_en_ratio);
 		Long i1, i2;
-		GammaDistribution gd = (lengthShapeParameter!=null)?
-				new GammaDistribution(lengthShapeParameter, lengthShapeParameter/length)
+		GammaDistribution gd = (alpha_lambda!=null)?
+				new GammaDistribution(alpha_lambda, alpha_lambda/mu_lambda)
 				:null;
 		for (long i=0; i<tmp;++i){
-			i1 = (long)(Math.random() * regThrds.get(reg1Id).getExcitatory());
-			i2 = (long)(Math.random() * regThrds.get(reg2Id).getExcitatory());
-			Double tmpAmp, tmpLength=-1.0;
-			tmpAmp = (amplitudeStdVariation!=null)?
-					Math.abs(randGen.nextGaussian()*amplitudeStdVariation+amplitude)
-					:amplitude;
+			// case EXC2*
+			if ((inter_node_conn_type==NodesInterconnection.EXC2MIXED)||
+					(inter_node_conn_type==NodesInterconnection.EXC2EXC)||
+					(inter_node_conn_type==NodesInterconnection.EXC2INH)) {
+				i1 = (long)(Math.random() * nodeThreads.get(reg1Id).getExcitatory());
+			}
+			// case INH2*
+			else if ((inter_node_conn_type==NodesInterconnection.INH2MIXED)||
+					(inter_node_conn_type==NodesInterconnection.INH2EXC)||
+					(inter_node_conn_type==NodesInterconnection.INH2INH)) {
+				i1 = nodeThreads.get(reg1Id).getExcitatory()+
+						((long)(Math.random() * nodeThreads.get(reg1Id).getInhibithory()));
+			}
+			// case MIXED2*
+			else
+				i1 = (long)(Math.random() * nodeThreads.get(reg1Id).getN());
+			// case *2EXC
+			if ((inter_node_conn_type==NodesInterconnection.MIXED2EXC)||
+					(inter_node_conn_type==NodesInterconnection.EXC2EXC)||
+					(inter_node_conn_type==NodesInterconnection.INH2EXC)) {
+				i2 = (long)(Math.random() * nodeThreads.get(reg2Id).getExcitatory());
+			}
+			// case *2INH
+			else if ((inter_node_conn_type==NodesInterconnection.MIXED2INH)||
+					(inter_node_conn_type==NodesInterconnection.EXC2INH)||
+					(inter_node_conn_type==NodesInterconnection.INH2INH)) {
+				i2 = nodeThreads.get(reg2Id).getExcitatory()+
+						((long)(Math.random() * nodeThreads.get(reg2Id).getInhibithory()));
+			}
+			// case *2MIXED
+			else
+				i2 = (long)(Math.random() * nodeThreads.get(reg2Id).getN());
+			Double tmp_mu_w, tmpLength=-1.0;
+			tmp_mu_w = (sigma_omega!=null)?
+					Math.abs(randGen.nextGaussian()*sigma_omega+mu_omega)
+					:mu_omega;
+			if (mu_omega<0 && tmp_mu_w >0)
+				tmp_mu_w=-tmp_mu_w;
 			int goodCurveGuess=0;
 			while ((tmpLength<0)&&(goodCurveGuess<badCurveGuessThreshold)){
 				tmpLength = (gd!=null)?	
-						length* (gd.sample())
-						: length;
+						mu_lambda* (gd.sample())
+						: mu_lambda;
 				++goodCurveGuess;
 			}
 			if (goodCurveGuess>=goodCurveGuessThreshold){
-				StatisticsCollector.setBadCurve();
+				sc.setBadCurve();
 				if (goodCurveGuess>=badCurveGuessThreshold)
-					throw new BadCurveException("the gamma curve G("+lengthShapeParameter+", "+ 
-							(lengthShapeParameter/length)+" has a shape which is not compliant with firnet scope.");
+					throw new BadCurveException("the gamma curve G("+alpha_lambda+", "+ 
+							(alpha_lambda/mu_lambda)+" has a shape which is not compliant with firnet scope.");
 			}
-			regThrds.get(reg1Id).addIntermoduleSynapse(
-					reg1Id , i1, reg2Id, i2,
-					tmpAmp, tmpLength );
-			regThrds.get(reg2Id).addIntermoduleSynapse(
-					reg1Id , i1, reg2Id, i2,
-					tmpAmp, tmpLength );
+			nodeThreads.get(reg1Id).addInterNodeSynapse(
+					reg1Id, 
+					i1, 
+					reg2Id, 
+					i2,
+					nodeThreads.get(reg1Id).getExcitatoryPresynapticWeight(),
+					tmp_mu_w,
+					tmpLength);
+			nodeThreads.get(reg2Id).addInterNodeSynapse(
+					reg1Id, 
+					i1, 
+					reg2Id, 
+					i2,
+					nodeThreads.get(reg1Id).getExcitatoryPresynapticWeight(),
+					tmp_mu_w,
+					tmpLength);
 			++ inter_node_conns_num;
 		}
-		println("excitatory: "+regThrds.get(reg1Id).getExcitatory()+
-				 "\ninternode connections:"+inter_node_conns_num);
 	}
 	
 	public NodesInterconnection _getInterworldConnectionProb(Node reg1, Node reg2){
 		Integer src=  (reg1.getId()<reg2.getId())? reg1.getId(): reg2.getId();
 		Integer dst=  (reg1.getId()<reg2.getId())? reg2.getId(): reg1.getId();
-		return regConnections.get(new IntegerCouple(src, dst));
+		return nodesConnections.get(new IntegerCouple(src, dst));
 	}
 	
 	public Long getTotalN(){
@@ -256,7 +354,7 @@ public class NodesManager implements Serializable {
 	}
 
 	public int getNodeThreadsNum(){
-		return regThrds.size();
+		return nodeThreads.size();
 	}
 
 	public Boolean getInitialized() {
@@ -268,11 +366,11 @@ public class NodesManager implements Serializable {
 	}
 
 	public Integer getnSms() {
-		return regThrds.size();
+		return nodeThreads.size();
 	}
 	
 	public NodeThread getNodeThread(int index){
-		return regThrds.get(index);
+		return nodeThreads.get(index);
 	}
 	
 	/**
@@ -312,20 +410,20 @@ public class NodesManager implements Serializable {
 
 
 	public void startAll() {
-		for (int i=0; i<regThrds.size();++i)
-			regThrds.get(i).start();
+		for (int i=0; i<nodeThreads.size();++i)
+			nodeThreads.get(i).start();
 	}
 	
 
 	public void runNewSplit(double newStopTime) {
 		updateInterNodeSpikes();
-		for (int i=0; i<regThrds.size();++i)
-			regThrds.get(i).runNewSplit(newStopTime);		
-	}
+		for (int i=0; i<nodeThreads.size();++i)
+			nodeThreads.get(i).runNewSplit(newStopTime);		
+	} 
 	
 	public void killAll() {
-		for (int i=0; i<regThrds.size();++i)
-			regThrds.get(i).kill();
+		for (int i=0; i<nodeThreads.size();++i)
+			nodeThreads.get(i).kill();
 	}
 	
 	public synchronized Boolean splitComplete(Integer nodeId){
@@ -333,14 +431,15 @@ public class NodesManager implements Serializable {
 	}
 	
 	private void updateInterNodeSpikes(){
-		for (int i=0; i<regThrds.size();++i){
-			while (regThrds.get(i).hasInterNodeSpikes())
-				deliverInterNodeSpike( regThrds.get(i).popInterNodeSpike() );
+		for (int i=0; i<nodeThreads.size();++i){
+			ArrayList <InterNodeSpike> tmpInterNodeSpikes=nodeThreads.get(i).pullInternodeFires();
+			for (int j=0; j<tmpInterNodeSpikes.size();++j)
+				deliverInterNodeSpike( tmpInterNodeSpikes.get(j));
 		}
 	}
 	
 	private void deliverInterNodeSpike(InterNodeSpike irs){
-		regThrds.get(irs.getSyn().getDendriteNodeId()).burnInterNodeSpike(irs);
+		nodeThreads.get(irs.getSyn().getDendriteNodeId()).burnInterNodeSpike(irs);
 	}
 
 	

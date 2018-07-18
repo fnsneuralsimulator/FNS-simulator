@@ -123,6 +123,15 @@ public class ConnectivityPackageManager {
 				ris.get(index).setLengthShapeParameter(lenghtShapeParameter);
 		}
 	}
+	
+	public void addType(Integer src, Integer dst, Integer type) {
+		if ((nodes.get(src)!=null)&&(nodes.get(dst)!=null)){
+			IntegerCouple tmp = new IntegerCouple(src, dst);
+			Integer index = indexes.get(tmp);			
+			if (index!=null)
+				ris.get(index).setType(type);
+		}
+	}
 
 	
 	public Integer getNodesNum() {

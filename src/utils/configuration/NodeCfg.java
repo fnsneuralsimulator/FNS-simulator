@@ -36,6 +36,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import utils.constants.Constants;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "node")
 public class NodeCfg {
@@ -44,15 +46,27 @@ public class NodeCfg {
 	private Integer k;
 	private Long n;
 	private Double R;
+	private Double mu_w;
+	private Double w_pre_exc;
+	private Double w_pre_inh;
 	private Integer external_inputs_number;
 	private Integer external_inputs_type;
+	private Double external_inputs_time_phase;
 	private Integer external_inputs_fireduration;
 	private Integer external_inputs_timestep;
 	private Double external_inputs_firerate;
 	private Double external_inputs_amplitude;
 	private Boolean small_world_topology;
-	private Double mu_w;
+	private Integer Bn;
+	private Double IBI;
 	private NeuManCfg neuron_manager;
+	private Boolean plasticity;
+	private Double etap;
+	private Double etam;
+	private Double taup;
+	private Double taum;
+	private Double pw_max;
+	private Double to;
 	
 //	public NodeCfg(){}
 //	public NodeCfg(
@@ -114,6 +128,30 @@ public class NodeCfg {
 		this.R = excitRatio;
 	}
 
+	public Double getW_pre_exc() {
+		return w_pre_exc;
+	}
+
+	public void setW_pre_exc(Double exc_ampl) {
+		this.w_pre_exc = exc_ampl;
+	}
+
+	public Double getW_pre_inh() {
+		return w_pre_inh;
+	}
+
+	public void setW_pre_inh(Double inh_ampl) {
+		this.w_pre_inh = inh_ampl;
+	}
+
+	public Double getMu_w() {
+		return mu_w;
+	}
+
+	public void setMu_w(Double mu_w) {
+		this.mu_w = mu_w;
+	}
+
 	public Integer getExternal_inputs_number() {
 		return external_inputs_number;
 	}
@@ -136,6 +174,14 @@ public class NodeCfg {
 
 	public void setExternal_inputs_type(Integer external_inputs_type) {
 		this.external_inputs_type = external_inputs_type;
+	}
+
+	public Double getExternal_inputs_time_phase() {
+		return external_inputs_time_phase;
+	}
+
+	public void setExternal_inputs_time_phase(Double external_inputs_time_phase) {
+		this.external_inputs_time_phase = external_inputs_time_phase;
 	}
 
 	public Integer getExternal_inputs_timestep() {
@@ -170,14 +216,79 @@ public class NodeCfg {
 		this.external_inputs_fireduration = external_inputs_fireduration;
 	}
 	
-	public Double getMu_w() {
-		return mu_w;
+	
+	public Integer getBn() {
+		return Bn;
 	}
 
-	public void setMu_w(Double mu_w) {
-		this.mu_w = mu_w;
+	public void setBn(Integer bn) {
+		Bn = bn;
 	}
-	
+
+	public Double getIBI() {
+		return IBI;
+	}
+
+	public void setIBI(Double iBI) {
+		IBI = iBI;
+	}
+
+	public Boolean getPlasticity() {
+		return plasticity;
+	}
+
+	public void setPlasticity(Boolean plasticity) {
+		this.plasticity = plasticity;
+	}
+
+	public Double getEtap() {
+		return etap;
+	}
+
+	public void setEtap(Double etap) {
+		this.etap = etap;
+	}
+
+	public Double getEtam() {
+		return etam;
+	}
+
+	public void setEtam(Double etam) {
+		this.etam = etam;
+	}
+
+	public Double getTaup() {
+		return taup;
+	}
+
+	public void setTaup(Double taup) {
+		this.taup = taup;
+	}
+
+	public Double getTaum() {
+		return taum;
+	}
+
+	public void setTaum(Double taum) {
+		this.taum = taum;
+	}
+
+	public Double getPw_max() {
+		return pw_max;
+	}
+
+	public void setPw_max(Double pw_max) {
+		this.pw_max = pw_max;
+	}
+
+	public Double getTo() {
+		return to;
+	}
+
+	public void setTo(Double to) {
+		this.to = to;
+	}
+
 	public NeuManCfg getNeuron_manager(){
 		return neuron_manager;
 	}

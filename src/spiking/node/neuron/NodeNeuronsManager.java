@@ -145,7 +145,7 @@ public class NodeNeuronsManager {
 	public Double getPreSynapticWeight(Long neuronId){
 		Double retval = presynapticWeights.get(neuronId);
 		if (retval==null)	 
-			retval = (isExcitatory(neuronId))? Constants.EXCITATORY_PRESYNAPTIC_DEF_VAL : Constants.INHIBITORY_PRESYNAPTIC_DEF_VAL;
+			retval = (isExcitatory(neuronId))? n.getExc_ampl() : n.getInh_ampl();
 		return retval;
 	}
 	
@@ -204,9 +204,7 @@ public class NodeNeuronsManager {
 	}
 	
 	public boolean isExcitatory(Long neuronId){
-		if (neuronId<n.getExcitatory())
-			return true;
-		return false;
+		return n.isExcitatory(neuronId);
 	}
 	
 	public Double getLastBurningTime(Long neuronId) {
@@ -235,23 +233,26 @@ public class NodeNeuronsManager {
 		if (n.getExternalInputsType()==ExternalInput.CONSTANT){
 			double fireTime;
 			if (currentTime==0.0)
-				fireTime=0.1;
+				fireTime=n.getExternalInputsTimeOffset();
 			else
 				fireTime=currentTime+ n.getExternalInput().getTimeStep();
 			setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId,(long)0));
 			setTimeToFire(extNeuronId, fireTime);
-			addActiveNeuron(extNeuronId, fireTime);
+			addActiveNeuron(extNeuronId, fireTime, currentTime, 0);
+			if (fireTime<currentTime){
+				println(".......................................constant firet:"+fireTime+" current:"+currentTime);
+			}
 			return;
 		}
 		else if ((n.getExternalInputsType()==ExternalInput.NOISE) && (Math.random()<0.3)){
 			double fireTime;
 			if (currentTime==0.0)
-				fireTime=0.1;
+				fireTime=n.getExternalInputsTimeOffset();
 			else
 				fireTime=currentTime+Math.random()*n.getExternalInput().getTimeStep();
 			setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId,(long)0));
 			setTimeToFire(extNeuronId, fireTime);
-			addActiveNeuron(extNeuronId, fireTime);
+			addActiveNeuron(extNeuronId, fireTime, currentTime, 4);
 			return;
 		}
 		/* Case of poissonian external inputs */
@@ -268,7 +269,7 @@ public class NodeNeuronsManager {
 				/* If the time-to-fire is greater than zero, then 
 				 * the firing neuron is added in the active neuron list. */
 				if (!getTimeToFire(extNeuronId).equals(Constants.EXTERNAL_TIME_TO_FIRE_DEF_VAL))
-					addActiveNeuron(extNeuronId, minExternalSpike.tf);
+					addActiveNeuron(extNeuronId, minExternalSpike.tf, currentTime, 1);
 			}
 		}
 		else{
@@ -277,9 +278,12 @@ public class NodeNeuronsManager {
 	}
 	
 	
-	public void addActiveNeuron(Long neuronId, Double spikeTime){
-		debprintln("adding active neuron with id:"+neuronId+" and spike time:"+spikeTime);
-		activeNeurons.insert(spikeTime, neuronId);
+	public void addActiveNeuron(Long neuronId, Double fireTime, Double currentTime, Integer debug){
+		if (fireTime<currentTime) {
+			println("\n....................\ndebug"+debug+"\n....................");
+			System.exit(1);
+		}
+		activeNeurons.insert(fireTime, neuronId);
 	}
 	
 	public void removeActiveNeuron(Long neuronId){

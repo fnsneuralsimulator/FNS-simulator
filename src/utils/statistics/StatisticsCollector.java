@@ -31,106 +31,249 @@
 
 package utils.statistics;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
-
-//import javax.swing.JFrame;
-//
-//import org.jfree.chart.ChartFactory;
-//import org.jfree.chart.ChartFrame;
-//import org.jfree.chart.JFreeChart;
-//import org.jfree.chart.plot.PlotOrientation;
-//import org.jfree.data.xy.XYSeries;
-//import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.RefineryUtilities;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
-//import org.math.plot.Plot2DPanel;
-import org.mapdb.HTreeMap;
-import org.mapdb.Serializer;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import connectivity.conn_package.PackageReader;
 import spiking.node.FiringNeuron;
 import spiking.node.SpikingSynapse;
 import spiking.node.Synapse;
-import spiking.node.external_inputs.ExternalInput;
 import utils.plotter.FastScatterPlotter;
 import utils.plotter.ScatterPlotter;
 import utils.tools.CompressedFire;
-import utils.tools.LongCouple;
 
-public class StatisticsCollector {
+public class StatisticsCollector extends Thread {
 	
-	private final static String TAG = "[Statistic Collector] ";
-	private static Long active=0l;
-	private static Long passive=0l;
-	private static Long passive2active=0l;
-	private static Long active2passive=0l;
-	public static Long missedFires=0l;
-	private static HashMap<Long, SpikingSynapse>burningSpikesHashMap = new HashMap<Long, SpikingSynapse>();
-	private static HashMap<Long, FiringNeuron>firingSpikesHashMap = new HashMap<Long, FiringNeuron>();
-	private static ArrayList<Double> firingNeurons= new ArrayList<Double>();
-	private static ArrayList<Double> firingTimes= new ArrayList<Double>();
-	private static HashMap<CompressedFire, Integer> compressor = new HashMap<CompressedFire, Integer>();
-	private static Double simulatedTime=0.0;
-	private static Double minMissedAxonalDelay = Double.MAX_VALUE;
-	private static Double minNe_en_ratio;
-	private static Double maxNe_en_ratio;
-	private static Boolean badCurve=false;
-	private static long firingSpikesCounter=0l;
-	private static long burningSpikesCounter=0l;
-	private static BigInteger region2checkMask = BigInteger.ZERO;
+	private final String TAG = "[Statistic Collector] ";
+	private volatile Long active=0l;
+	private volatile Long passive=0l;
+	private volatile Long passive2active=0l;
+	private volatile Long active2passive=0l;
+	public  volatile Long missedFires=0l;
+	private volatile HashMap<Long, SpikingSynapse>burningSpikesHashMap = new HashMap<Long, SpikingSynapse>();
+	private volatile HashMap<Long, FiringNeuron>firingSpikesHashMap = new HashMap<Long, FiringNeuron>();
+	private volatile ArrayList<Double> firingNeurons= new ArrayList<Double>();
+	private volatile ArrayList<Double> firingTimes= new ArrayList<Double>();
+	private volatile ArrayList<Double> firstFiringNeurons= null;
+	private volatile ArrayList<Double> firstFiringTimes= null;
+	private volatile HashMap<CompressedFire, Integer> compressor = new HashMap<CompressedFire, Integer>();
+	private volatile Double simulatedTime=0.0;
+	private volatile Double minMissedAxonalDelay = Double.MAX_VALUE;
+	private volatile Double minNe_en_ratio;
+	private volatile Double maxNe_en_ratio;
+	private volatile Boolean badCurve=false;
+	private volatile long firingSpikesCounter=0l;
+	private volatile long burningSpikesCounter=0l;
+	private volatile BigInteger region2checkMask = BigInteger.ZERO;
+	private volatile Boolean checkall=false;
+	private final long serialize_after = 10000l;
+	private volatile int wrotes_split=0;
+	private volatile String filename = "";
+	private volatile Boolean matlab=false;
+	private volatile int count=1;
+	private volatile ArrayList<CollectedFire> newFires=new ArrayList<CollectedFire>();
+	private volatile ArrayList<CollectedBurn> newBurns=new ArrayList<CollectedBurn>();
+	private Lock lock = new ReentrantLock();
+	private Condition eventQueueCondition = lock.newCondition();
+	private Boolean keepRunning=true;
+	private String defFileName=null;
 	
-	public static synchronized void collectActive(){
+	
+	public void run() {
+		for(;keepRunning;) {
+			if ((newBurns.size()<=0)&&(newFires.size()<=0))
+				wait_event();
+			while (newBurns.size()>0) 
+				processBurnSpike(newBurns.remove(0));
+			while (newFires.size()>0) 
+				processFireSpike(newFires.remove(0));
+		}
+		while (newBurns.size()>0) 
+			processBurnSpike(newBurns.remove(0));
+		while (newFires.size()>0) 
+			processFireSpike(newFires.remove(0));
+	}
+	
+	public void kill(){
+		keepRunning=false;
+		lock.lock();
+		eventQueueCondition.signal();
+		lock.unlock();
+	}
+	
+	private void new_event() {
+		lock.lock();
+		eventQueueCondition.signal();
+		lock.unlock();
+	}
+	
+	private void wait_event() {
+		lock.lock();
+		try {
+			eventQueueCondition.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		lock.unlock();
+	}
+	
+	
+	public void set_filename(String filename){
+		this.filename=filename;
+	}
+	
+	private void reset(){
+		burningSpikesHashMap = new HashMap<Long, SpikingSynapse>();
+		firingSpikesHashMap = new HashMap<Long, FiringNeuron>();
+		if (firstFiringNeurons==null){
+			firstFiringNeurons=firingNeurons;
+			firstFiringTimes=firingTimes;
+		}
+		firingNeurons= new ArrayList<Double>();
+		firingTimes= new ArrayList<Double>();
+	}
+	
+	public  void setMatlab() {
+		matlab=true;
+	}
+	
+	public synchronized void collectActive(){
 		++active;
 	}
 	
-	public static synchronized void collectPassive2active(){
+	public synchronized void collectPassive2active(){
 		++passive2active;
 	}
 	
-	public static synchronized void collectActive2passive(){
+	public synchronized void collectActive2passive(){
 		++active2passive;
 	}
 	
-	public static synchronized void collectPassive(){
+	public synchronized void collectPassive(){
 		++passive;
 	}
 	
-	public static void setSimulatedTime(Double sTime){
-		simulatedTime=sTime;
-	}
 	
-	public static synchronized void collectFireSpike(Integer firingRegionId, Long firingNeuronId, Double firingTime, Long maxN, Double compressionFactor, Boolean isExcitatory, Boolean isExternal){
-		CompressedFire cf = new CompressedFire(firingRegionId, firingNeuronId, firingTime, maxN, compressionFactor);
-		Integer tmp = compressor.get(new CompressedFire(firingRegionId, firingNeuronId, firingTime, maxN, compressionFactor));
+	public synchronized void collectFireSpike(
+			Integer firingRegionId, 
+			Long firingNeuronId, 
+			Double firingTime, 
+			Long maxN, 
+			Double compressionFactor, 
+			Boolean isExcitatory, 
+			Boolean isExternal){
+//		this.newFires.add(
+		processFireSpike(
+				new CollectedFire(
+						firingRegionId, 
+						firingNeuronId, 
+						firingTime, 
+						maxN, 
+						compressionFactor, 
+						isExcitatory, 
+						isExternal
+						));
+		new_event();
+	}
+
+	private void processFireSpike(CollectedFire cf) {
+		CompressedFire compF = new CompressedFire(
+				cf.getFiringRegionId(), 
+				cf.getFiringNeuronId(), 
+				cf.getFiringTime(), 
+				cf.getMaxN(), 
+				cf.getCompressionFactor());
+		Integer tmp = compressor.get(
+				new CompressedFire(
+						cf.getFiringRegionId(), 
+						cf.getFiringNeuronId(), 
+						cf.getFiringTime(), 
+						cf.getMaxN(), 
+						cf.getCompressionFactor()));
 		if (tmp!=null)
 			return;
-		firingNeurons.add(new Double(cf.getCompressedNeuronId()));
-		firingTimes.add(firingTime);
-		if ( region2checkMask.testBit(((int)firingRegionId))){
-			FiringNeuron fn= new FiringNeuron(firingRegionId,firingNeuronId,firingTime,isExcitatory,isExternal);
+		firingNeurons.add(new Double(compF.getCompressedNeuronId()));
+		firingTimes.add(cf.getFiringTime());
+		if (checkall ||( region2checkMask.testBit(((int)cf.getFiringRegionId())))){
+			FiringNeuron fn= new FiringNeuron(
+					cf.getFiringRegionId(),
+					cf.getFiringNeuronId(),
+					cf.getFiringTime(),
+					cf.getIsExcitatory(),
+					cf.getIsExternal());
 			firingSpikesHashMap.put(new Long(firingSpikesCounter), fn);
 		}
 		++firingSpikesCounter;
+		if ((firingSpikesCounter%serialize_after)==0){
+//		if (firingSpikesHashMap.size()>serialize_after) {
+			makeCsv(filename);
+			if (firstFiringNeurons==null)
+				simulatedTime=cf.getFiringTime();
+		}
 	}
 	
-	public static synchronized void collectMissedFire(Double missedAxonalDelay){
+	public synchronized void collectBurnSpike(
+			Synapse s, 
+			Double burnTime, 
+			Boolean fromExternalSource, 
+			Double fromState, 
+			Double stepInState, 
+			Double postsynapticWeight, 
+			Double presynapticWeight, 
+			Double timeToFire,
+			Double fireTime) {
+//		this.newBurns.add(
+		processBurnSpike(
+				new CollectedBurn(
+						s, 
+						burnTime, 
+						fromExternalSource, 
+						fromState, 
+						stepInState, 
+						postsynapticWeight, 
+						presynapticWeight, 
+						timeToFire, 
+						fireTime));
+		new_event();
+	}
+	
+	private void processBurnSpike(CollectedBurn cb) {
+		if (checkall ||( region2checkMask.testBit(((int)cb.getS().getDendriteNodeId())))){
+			SpikingSynapse ss = new SpikingSynapse(
+					cb.getS(), 
+					cb.getBurnTime(),
+					cb.getFromExternalSource(), 
+					cb.getFromState(), 
+					cb.getStepInState(), 
+					cb.getPostsynapticWeight(), 
+					cb.getPresynapticWeight(), 
+					cb.getTimeToFire(), 
+					cb.getFireTime());
+			burningSpikesHashMap.put(new Long(burningSpikesCounter), ss);
+		}
+		++burningSpikesCounter;
+	}
+	
+	public synchronized void collectMissedFire(Double missedAxonalDelay){
 		if (missedAxonalDelay<minMissedAxonalDelay)
 			minMissedAxonalDelay=missedAxonalDelay;
 		++missedFires;
 	}
 	
-	public static void printFirePlot(){
+	public void printFirePlot(){
 		double [] x = new double [firingTimes.size()];
 		double [] y = new double [firingNeurons.size()];
 		for (int i=0; i<firingNeurons.size();++i){
@@ -139,50 +282,69 @@ public class StatisticsCollector {
 		}
 		System.out.println("[Statistics Collector] X size:"+x.length+", Y size:"+y.length);
 		System.out.println("[Statistics Collector] firing times size:"+firingTimes.size()+", firing neurons size:"+firingNeurons.size());
-		
 		ScatterPlotter frame = new ScatterPlotter("Firnet", x, y,simulatedTime); 
 		frame.setVisible();
 	}
 	
-	public static void printFirePlot(String outputFileName){
-		double [] x = new double [firingTimes.size()];
-		double [] y = new double [firingNeurons.size()];
-		for (int i=0; i<firingNeurons.size();++i){
-			x[i]=firingTimes.get(i);
-			y[i]=firingNeurons.get(i).doubleValue();
+	public void printFirePlot(String outputFileName){
+		double [] x = new double [firstFiringTimes.size()];
+		double [] y = new double [firstFiringNeurons.size()];
+		for (int i=0; i<firstFiringNeurons.size();++i){
+			x[i]=firstFiringTimes.get(i);
+			y[i]=firstFiringNeurons.get(i).doubleValue();
 		}
 		System.out.println("[Statistics Collector] X size:"+x.length+", Y size:"+y.length);
-		System.out.println("[Statistics Collector] firing times size:"+firingTimes.size()+", firing neurons size:"+firingNeurons.size());
-		
+		System.out.println("[Statistics Collector] firing times size:"+firstFiringTimes.size()+", firing neurons size:"+firstFiringNeurons.size());
 		ScatterPlotter frame = new ScatterPlotter("F. N. S.", x, y,simulatedTime,outputFileName); 
 		frame.setVisible();
 	}
 	
-	public static void _printFirePlot(){
-		float [] x = new float [firingTimes.size()];
-		float [] y = new float [firingNeurons.size()];
-		for (int i=0; i<firingNeurons.size();++i){
-			x[i]=(float)(double)firingTimes.get(i);
-			y[i]=(float)(double)firingNeurons.get(i).doubleValue();
-		}
-		FastScatterPlotter frame = new FastScatterPlotter("Firnet", x, y); 
-		frame.setVisible(true);
-		frame.pack();
-		RefineryUtilities.centerFrameOnScreen(frame);
-        frame.setVisible(true);
-        
-	}
-	
-	public static void makeCsv(String filename){
+	public void makeCsv(String filename){
+		if (filename=="")
+			return;
+		++wrotes_split;
 		PrintWriter burnWriter;
 		PrintWriter fireWriter;
+		Boolean new_burn_file=false;
+		Boolean new_fire_file=false;
+		File towritefile;
+		FileWriter fire_fw;
 		DecimalFormat df = new DecimalFormat("#.################"); 
 		try {
 			Iterator<Long> it = burningSpikesHashMap.keySet().iterator();
-			burnWriter = new PrintWriter(filename+"_burning.csv", "UTF-8");
-			burnWriter.println("Burning Time; Firing Node; Firing Neuron; Burning Node; Burning Neuron;"+
-						" External Source; From Internal State; To Internal State; Step in State;"+
-						" Post Synaptic Weight; Pre Synaptic Weight; Instant to Fire; (Afferent) Firing Time");
+			if (firstFiringNeurons==null) {
+//				int count = 1;
+				for(;;++count) {
+					towritefile= new File(filename+String.format("%03d", count)+"_burning.csv");
+				    if(!towritefile.exists()){
+				    	defFileName=filename+String.format("%03d", count);
+				        break;
+				    }
+				}
+			}
+			towritefile= new File(defFileName+"_burning.csv");
+			if (!towritefile.exists()){
+				towritefile.createNewFile();
+				new_burn_file=true;
+			}
+			FileWriter fw = new FileWriter(towritefile,true);
+         	BufferedWriter bw = new BufferedWriter(fw);
+			burnWriter = new PrintWriter(bw);
+			if (new_burn_file)
+				burnWriter.println(
+						"Burning Time; "
+						+ "Firing Node; "
+						+ "Firing Neuron; "
+						+ "Burning Node; "
+						+ "Burning Neuron;"
+						+ "External Source; "
+						+ "From Internal State; "
+						+ "To Internal State; "
+						+ "Step in State;"
+						+" Post Synaptic Weight; "
+						+ "Pre Synaptic Weight; "
+						+ "Instant to Fire; "
+						+ "(Afferent) Firing Time");
 			while (it.hasNext()){
 				Long key = it.next();
 				Double fromState = burningSpikesHashMap.get(key).getFromState();
@@ -215,13 +377,27 @@ public class StatisticsCollector {
 						+ df.format(burningSpikesHashMap.get(key).getPostSynapticWeight())+"; "
 						+ df.format(burningSpikesHashMap.get(key).getPresynapticWeight())+";"
 						+ df.format(burningSpikesHashMap.get(key).getInstantToFire())+";"
-						+ df.format(burningSpikesHashMap.get(key).getFireTime())
+						+ df.format((burningSpikesHashMap.get(key).getFireTime()!=null)?
+								burningSpikesHashMap.get(key).getFireTime():0)
 						);
+//				System.out.println("[statistics]" + df.format(burningSpikesHashMap.get(key).getPostSynapticWeight()));
 			}
+			burnWriter.flush();
 			burnWriter.close();
+			System.out.println("[Statistics Collector] "+towritefile.getAbsolutePath()+" update "+wrotes_split+" complete.");
 			it=firingSpikesHashMap.keySet().iterator();
-			fireWriter=new PrintWriter(filename+"_firing.csv", "UTF-8");
-			fireWriter.println("Firing Time; Firing Node; Firing Neuron;  Neuron Type; External Source");
+			towritefile= new File(defFileName+"_firing.csv");
+			if (towritefile.exists())
+				fire_fw = new FileWriter(towritefile,true);
+			else{
+				towritefile.createNewFile();
+				fire_fw = new FileWriter(towritefile);
+				new_fire_file=true;
+			}
+         	BufferedWriter fire_bw = new BufferedWriter(fire_fw);
+			fireWriter=new PrintWriter(fire_bw);
+			if (new_fire_file)
+				fireWriter.println("Firing Time; Firing Node; Firing Neuron;  Neuron Type; External Source");
 			while (it.hasNext()){
 				Long key = it.next();
 				String excitStr;
@@ -237,19 +413,113 @@ public class StatisticsCollector {
 						+ firingSpikesHashMap.get(key).isExternal()+"; "
 						);
 			}
+			fireWriter.flush();
 			fireWriter.close();
-			
+			if (matlab)
+				makeMatlabCsv();
+			reset();
+			System.out.println("[Statistics Collector] "+towritefile.getAbsolutePath()+" update "+wrotes_split+" complete.");
 		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("[Statistics Collector] Firings:"+firingSpikesCounter);
+	}
+	
+	private void makeMatlabCsv(){
+		if (filename=="")
+			return;
+		PrintWriter burnWriter;
+		PrintWriter fireWriter;
+		try {
+			Iterator<Long> it = burningSpikesHashMap.keySet().iterator();
+			File towritefile;
+			FileWriter fire_fw;
+			towritefile= new File(defFileName+"_burning_matlab.csv");
+			if (!towritefile.exists())
+				towritefile.createNewFile();
+			FileWriter fw = new FileWriter(towritefile,true);
+         	BufferedWriter bw = new BufferedWriter(fw);
+			burnWriter = new PrintWriter(bw);
+			while (it.hasNext()){
+				Long key = it.next();
+				Double fromState = burningSpikesHashMap.get(key).getFromState();
+				Double stepInState=burningSpikesHashMap.get(key).getStepInState();
+				String stepInStateToPrint;
+				String fromStateToPrint;
+				String toStateToPrint;
+				String refrString="10101";
+				if (fromState==null){
+					fromStateToPrint=refrString;
+					toStateToPrint=refrString;
+				}
+				else{
+					fromStateToPrint=fromState.toString();
+					toStateToPrint=""+(fromState+stepInState);
+				}
+				if (stepInState==null)
+					stepInStateToPrint="10101";
+				else
+					stepInStateToPrint=stepInState.toString();
+				burnWriter.println(
+						burningSpikesHashMap.get(key).getBurnTime().toString()+"; "
+						+ burningSpikesHashMap.get(key).getS().getAxonNodeId()+"; "
+						+ burningSpikesHashMap.get(key).getS().getAxonNeuronId()+"; "
+						+ burningSpikesHashMap.get(key).getS().getDendriteNodeId()+"; "
+						+ burningSpikesHashMap.get(key).getS().getDendriteNeuronId()+"; "
+						+ burningSpikesHashMap.get(key).getS().fromExternalInputInteger()+"; "
+						+ fromStateToPrint +"; "
+						+ toStateToPrint +"; "
+						+ stepInStateToPrint+"; "
+						+ burningSpikesHashMap.get(key).getPostSynapticWeight()+"; "
+						+ burningSpikesHashMap.get(key).getPresynapticWeight()+";"
+						+ burningSpikesHashMap.get(key).getInstantToFire()+";"
+						+ burningSpikesHashMap.get(key).getFireTime()
+						);
+			}
+			burnWriter.flush();
+			burnWriter.close();
+			System.out.println("[Statistics Collector] "+towritefile.getAbsolutePath()+" update "+wrotes_split+" complete.");
+			it=firingSpikesHashMap.keySet().iterator();
+			towritefile= new File(defFileName+"_firing_matlab.csv");
+			if (towritefile.exists())
+				fire_fw = new FileWriter(towritefile,true);
+			else{
+				towritefile.createNewFile();
+				fire_fw = new FileWriter(towritefile);
+			}
+         	BufferedWriter fire_bw = new BufferedWriter(fire_fw);
+			fireWriter=new PrintWriter(fire_bw);
+			while (it.hasNext()){
+				Long key = it.next();
+				fireWriter.println(
+						firingSpikesHashMap.get(key).getFiringTime().toString()+"; "
+						+firingSpikesHashMap.get(key).getFiringRegionId()+"; "
+						+ firingSpikesHashMap.get(key).getFiringNeuronId()+"; "
+						+ (firingSpikesHashMap.get(key).isExcitatory()?'1':'0')+"; "
+						+ (firingSpikesHashMap.get(key).isExternal()?'1':'0')+"; "
+						);
+			}
+			fireWriter.flush();
+			fireWriter.close();
+			System.out.println("[Statistics Collector] "+towritefile.getAbsolutePath()+" update "+wrotes_split+" complete.");
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public static void setMinMaxNe_en_ratios(Double minNe_en_ratio, Double maxNe_en_ratio){
-		StatisticsCollector.minNe_en_ratio=minNe_en_ratio;
-		StatisticsCollector.maxNe_en_ratio=maxNe_en_ratio;	
+	
+	public void setMinMaxNe_en_ratios(Double minNe_en_ratio, Double maxNe_en_ratio){
+		this.minNe_en_ratio=minNe_en_ratio;
+		this.maxNe_en_ratio=maxNe_en_ratio;	
 	}
 	
-	public static void PrintResults(){
+	public void PrintResults(){
 		String minNe_en_ratioStr=(minNe_en_ratio==PackageReader.MIN_NE_EN_RATIO_DEF)?
 				"no connection between nodes":(""+minNe_en_ratio);
 		String maxNe_en_ratioStr=(maxNe_en_ratio==PackageReader.MAX_NE_EN_RATIO_DEF)?
@@ -266,29 +536,16 @@ public class StatisticsCollector {
 		System.out.println("Good curve:"+(!badCurve));
 	}
 	
-	public static void setBadCurve(){
+	public void setBadCurve(){
 		badCurve=true;
 	}
-
-	public synchronized static void collectBurnSpike(
-			Synapse s, 
-			Double burnTime, 
-			Boolean fromExternalSource, 
-			Double fromState, 
-			Double stepInState, 
-			Double postsynapticWeight, 
-			Double presynapticWeight, 
-			Double timeToFire,
-			Double fireTime) {
-		if ( region2checkMask.testBit(((int)s.getDendriteNodeId()))){
-			SpikingSynapse ss = new SpikingSynapse(s, burnTime,fromExternalSource, fromState, stepInState, postsynapticWeight, presynapticWeight, timeToFire, fireTime);
-			burningSpikesHashMap.put(new Long(burningSpikesCounter), ss);
-		}
-		++burningSpikesCounter;
+	
+	public void setNodes2checkMask(BigInteger mask){
+		region2checkMask=mask;
 	}
 	
-	public static void setNodes2checkMask(BigInteger mask){
-		region2checkMask=mask;
+	public void checkAll(){
+		checkall=true;
 	}
 	
 	

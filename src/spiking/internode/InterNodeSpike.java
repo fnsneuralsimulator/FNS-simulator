@@ -46,14 +46,17 @@ public class InterNodeSpike implements Serializable{
 	private Double axonalDelay;
 	
 	public InterNodeSpike (Synapse syn, Double burnTime, Double fireTime, Double axonalDelay){
-		this.syn=new Synapse(
-				syn.getAxonNodeId(), 
-				syn.getAxonNeuronId(), 
-				syn.getDendriteNodeId(), 
-				syn.getDendriteNeuronId(), 
-				syn.getLength(), 
-				syn.getAmplitude(), 
-				true);
+//		this.syn=new Synapse(
+//				syn.getAxonNodeId(), 
+//				syn.getAxonNeuronId(), 
+//				syn.getDendriteNodeId(), 
+//				syn.getDendriteNeuronId(), 
+//				syn.getLength(), 
+//				syn.getPostSynapticWeight(),
+//				syn.getPreSynapticWeight(),
+//				false,
+//				true);
+		this.syn=syn;
 		this.burnTime=burnTime;
 		this.fireTime=fireTime;
 		this.axonalDelay=axonalDelay;

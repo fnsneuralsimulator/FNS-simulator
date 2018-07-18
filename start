@@ -1,3 +1,1 @@
-#! /bin/bash
-
-java -Dfile.encoding=UTF-8 -classpath bin:lib/commons-math3-3.5.jar:lib/jgrapht-core-0.9.1.jar:lib/commons-lang3-3.4.jar:lib/jfreechart-1.0.19.jar:lib/jcommon-1.0.23.jar:lib/mapDb.jar -XX:+UseConcMarkSweepGC  spiking.simulator.SpikingNeuralSimulator $1 $2 $3 $4
+java -Xmx1024m -Dfile.encoding=Cp1252 -jar target/fns-V1.0.1-jar-with-dependencies.jar $@

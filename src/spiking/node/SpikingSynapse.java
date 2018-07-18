@@ -76,7 +76,7 @@ public class SpikingSynapse implements Serializable{
 		return fireTime;
 	}
 	
-	public Boolean externalSource(){
+	public Boolean _externalSource(){
 		return fromExternalSource;
 	}
 
@@ -88,7 +88,7 @@ public class SpikingSynapse implements Serializable{
 		this.burnTime = burnTime;
 	}
 
-	public Boolean getFromExternalSource() {
+	public Boolean _getFromExternalSource() {
 		return fromExternalSource;
 	}
 	

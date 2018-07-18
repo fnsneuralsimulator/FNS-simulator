@@ -68,19 +68,20 @@ public class SynapsesManager {
 	private final static Boolean verbose = true;
 
 	
-	private Node r;
+	private Node n;
 	//private NeuronsManagerOld nMan;
 	
 	// the list of axonal delays, only for inter region connections
 	private HashMap<Synapse, Double> axmap;
 	//private HTreeMap<String, Double> axmap;
-	// the list of postsynaptic weights for all synapses with the axons belonging
+	// the list of all synapses with the axons belonging
 	// to a neuron of the region
-	//extendible
-	private HashMap<Synapse, Double> postSynapticWeights;
+	private HashMap<Synapse, Synapse> synapses;
+	// the lists of connections, indexed by firing neuron
+	private HashMap<Long, ArrayList<Synapse>> firingNeuronSynapses;
 	// the lists of connections, indexed by firing neuron
 	//extendible
-	private HashMap<Long, ArrayList<Synapse>> firingNeuronSynapses;
+	private HashMap<Long, ArrayList<Synapse>> burningNeuronSynapses;
 	// the lists of inter region connections, indexed by firing neuron
 	//extendible
 	private HashMap<Long, ArrayList<Synapse>> firingNeuronInterRegionSynapses;
@@ -101,14 +102,16 @@ public class SynapsesManager {
 	
 	
 	
-	public SynapsesManager (Node r, Double avgNeuronalSignalSpeed){
-		this.r=r;
+	public SynapsesManager (Node n, Double avgNeuronalSignalSpeed){
+		this.n=n;
 		//this.nMan=rMan.getNeuronsManager();
 		//this.rMan.setAxonsManager(this);
 		gd= new GammaDistribution(alpha, beta);
 		axmap = new HashMap<Synapse, Double>();
-		postSynapticWeights = new HashMap<Synapse, Double>();
+		synapses = new HashMap<Synapse, Synapse>();
 		firingNeuronSynapses = new HashMap<Long, ArrayList<Synapse>>();
+		if (n.getPlasticity())
+			burningNeuronSynapses = new HashMap<Long, ArrayList<Synapse>>();
 		firingNeuronInterRegionSynapses  = new HashMap<Long, ArrayList<Synapse>>();
 		burningNeuronInterRegionConnections = new HashMap<Long, ArrayList<Synapse>>();
 		this.avgNeuronalSignalSpeed=avgNeuronalSignalSpeed;
@@ -116,73 +119,93 @@ public class SynapsesManager {
 	}
 	
 	private void init(){ 
-		Iterator<LongCouple> it = r.getKeyConnectionIterator();
-		Double tmpAmpl=null;
+		Iterator<LongCouple> it = n.getKeyConnectionIterator();
+		Double tmp_presynaptic_w=null;
 		while (it.hasNext()){
 			LongCouple tmpCouple = it.next();
-			tmpAmpl=r.getConnection(tmpCouple.getBurning(), tmpCouple.getFiring());
-			if (tmpAmpl!=null)
-				setPostSynapticWeight(
+			tmp_presynaptic_w=n.getConnectionPresynapticWeight(tmpCouple.getFiring(),tmpCouple.getBurning());
+			//kkk il presinaptico riceve il valore del receiver e non del sender?
+			if (tmp_presynaptic_w!=null)
+				setIntraNodeSynapse(
 						new Synapse(
-								r.getId(), 
+								n.getId(), 
 								tmpCouple.getFiring(), 
-								r.getId(), 
+								n.getId(), 
 								tmpCouple.getBurning(),
-								0.0, 
-								tmpAmpl), 
-						tmpAmpl);
+								0.0,
+								n.getMu_w(),
+								tmp_presynaptic_w,
+								false,
+								false));
 		}
-		
 	}
 	
-	
-	public void setPostSynapticWeight(Synapse syn, Double postSynapticWeight){
-		if (postSynapticWeight<=0.0)
-			return;
-		if (syn.getAxonNodeId().equals(r.getId()))
-			putFiringRegionSynapse(syn);
-		if ( (syn.getAxonNodeId().equals(r.getId())) &&
-				(syn.getDendriteNodeId().equals(r.getId())))
-			postSynapticWeights.put(syn, postSynapticWeight);
+	public void setIntraNodeSynapse(Synapse syn){
+		if (syn.getAxonNodeId().equals(n.getId()))
+			putFiringIntraNodeSynapse(syn);
+		if (syn.getDendriteNodeId().equals(n.getId()))
+			putBurningIntraNodeSynapse(syn);
+		if ( (syn.getAxonNodeId().equals(n.getId())) &&
+				(syn.getDendriteNodeId().equals(n.getId())))
+			synapses.put(syn, syn);
 		else
 			System.out.println("[SYNAPSES MANAGER SETPOSTSYNAPTICWEIGHT WARNING] adding an internode synapse as intranode");
 	}
 	
-	public void setInterNodePostSynapticWeight(Synapse syn, Double postSynapticWeight){
-		if (postSynapticWeight<=0.0)
-			return;
-//		if (syn.getAxonRegionId().equals(r.getId()))
-//			putFiringNeuronInterRegionConnection(syn.getFiring(), syn);
-		postSynapticWeights.put(syn, postSynapticWeight);
-	}
-	
-	public Double getPostSynapticWeight(Synapse syn){
-		if (postSynapticWeights.get(syn)!=null)
-			return postSynapticWeights.get(syn);
-		else{
-			if ((syn.getAxonNodeId()==r.getId()) && 
-					(r.isExternalInput(syn.getFiring())))
-				return Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL;
-			System.out.println("[syn man] syn:"+syn+" with amplitude null...");
-			return Constants.POST_SYNAPTIC_WEIGHT_DEF_VAL;
-		}
+	public void setIntraNodePostSynapticWeight(Synapse syn, Double postsynaptic_w) {
+		Synapse s = synapses.get(syn);
+		if (s!=null)
+			s.setPostsynapticWeight(postsynaptic_w);
+		
 	}
 	
 	
-	private void putFiringRegionSynapse(Synapse firingNeuronSynapse){
+	public void setInterNodeSynapse(Synapse syn){
+		Synapse s = synapses.get(syn);
+		//idempotency rule
+		if (s==null)		
+			synapses.put(syn, syn);
+	}
+	
+//	public Double getPostSynapticWeight(Synapse syn){
+//		if (synapses.get(syn)!=null)
+//			return synapses.get(syn).getPostSynapticWeight();
+//		else{
+//			if ((syn.getAxonNodeId()==n.getId()) && 
+//					(n.isExternalInput(syn.getFiring())))
+//				return Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL;
+//			System.out.println("[syn man] syn:"+syn+" with amplitude null...");
+//			return Constants.POST_SYNAPTIC_WEIGHT_DEF_VAL;
+//		}
+//	}
+	
+	private void putFiringIntraNodeSynapse(Synapse firingNeuronSynapse){
 		if (firingNeuronSynapses.size()>=Integer.MAX_VALUE){
 			throw new ArrayIndexOutOfBoundsException("You are triyng to add to much internode connection"
-					+ " to the same neuron:"+firingNeuronSynapse.getFiring()+ "of the region:"+r.getId());
+					+ " to the same neuron:"+firingNeuronSynapse.getFiring()+ "of the region:"+n.getId());
 		}
 		ArrayList<Synapse> list = firingNeuronSynapses.get(firingNeuronSynapse.getFiring());
 		if (list==null){
 			firingNeuronSynapses.put(firingNeuronSynapse.getFiring(), new ArrayList<Synapse>());
 			list = firingNeuronSynapses.get(firingNeuronSynapse.getFiring());
 		}
-		
-//		System.out.println("[Synapse Manager torem] - adding synapse:"+neuronIntraRegionSynapse.toString()+"firing neuron list size num:"+list.size());
 		list.add(firingNeuronSynapse);
 		
+	}
+	
+	private void putBurningIntraNodeSynapse(Synapse burningNeuronSynapse){
+		if (!n.getPlasticity())
+			return;
+		if (burningNeuronSynapses.size()>=Integer.MAX_VALUE){
+			throw new ArrayIndexOutOfBoundsException("You are triyng to add to much internode connection"
+					+ " to the same neuron:"+burningNeuronSynapse.getBurning()+ "of the region:"+n.getId());
+		}
+		ArrayList<Synapse> list = burningNeuronSynapses.get(burningNeuronSynapse.getBurning());
+		if (list==null){
+			burningNeuronSynapses.put(burningNeuronSynapse.getBurning(), new ArrayList<Synapse>());
+			list = burningNeuronSynapses.get(burningNeuronSynapse.getBurning());
+		}
+		list.add(burningNeuronSynapse);
 	}
 	
 	/**
@@ -199,14 +222,27 @@ public class SynapsesManager {
 		return retval;
 	}
 	
-	
+	/**
+	 * @return the list for the specified neuron;
+	 * if no such list exists, it creates a new htree map 
+	 * and returns its pointer
+	 */
+	public ArrayList<Synapse> getBurningNeuronConnections(Long burningNeuronId){
+		ArrayList<Synapse> retval = burningNeuronSynapses.get(burningNeuronId);
+		if (retval==null){
+			burningNeuronSynapses.put(burningNeuronId, new ArrayList<Synapse>());
+			retval = burningNeuronSynapses.get(burningNeuronId);
+		}
+		return retval;
+	}
 	
 	public void addInterNodeSynapse(
 			Integer firingRegionId,
 			Long firingNeuronId, 
 			Integer burningRegionId, 
 			Long burningNeuronId, 
-			Double amplitude, 
+			Double mu_w,
+			Double presynaptic_w,
 			Double length){
 		Synapse newSyn = new Synapse(
 				firingRegionId,
@@ -214,19 +250,21 @@ public class SynapsesManager {
 				burningRegionId,
 				burningNeuronId,
 				length, 
-				amplitude);
-		setInterNodePostSynapticWeight(newSyn, amplitude);
-//		addAxDelay(tmp);
-		if (firingRegionId.equals(r.getId()))
+				mu_w,
+				presynaptic_w,
+				false,
+				true);
+		setInterNodeSynapse(newSyn);
+		if (firingRegionId.equals(n.getId()))
 			putFiringNeuronInterRegionConnection(firingNeuronId,newSyn);
-		else if(burningRegionId.equals(r.getId()))
+		else if(burningRegionId.equals(n.getId()))
 			putBurningNeuronInterRegionConnection(burningNeuronId,newSyn);
 		else
-			System.out.println("[SYNAPSES MANAGER WARNING]adding an interregion synapse which does "
-					+ "not belong to the current region:\n\tsynapse:"+
+			System.out.println("[SYNAPSES MANAGER WARNING]adding an internode synapse which does "
+					+ "not belong to the current node:\n\tsynapse:"+
 					newSyn.toString()+
 					"\n\tcurrent region:"+
-					r.getId());
+					n.getId());
 	}
 	
 	public int interRegionConnectionsNum(){
@@ -236,7 +274,7 @@ public class SynapsesManager {
 	private void putFiringNeuronInterRegionConnection(Long firingNeuronId, Synapse neuronRegionConnection){
 		if (firingNeuronInterRegionSynapses.size()>=Integer.MAX_VALUE){
 			throw new ArrayIndexOutOfBoundsException("You are triyng to add too much interregion connections"
-					+ " to the same neuron:"+firingNeuronId+ "of the region:"+r.getId());
+					+ " to the same neuron:"+firingNeuronId+ "of the region:"+n.getId());
 		}
 		ArrayList<Synapse> list = firingNeuronInterRegionSynapses.get(firingNeuronId);
 		if (list==null){
@@ -264,7 +302,7 @@ public class SynapsesManager {
 	private void putBurningNeuronInterRegionConnection(Long burningNeuronId, Synapse neuronRegionConnection){
 		if (burningNeuronInterRegionConnections.size()>=Integer.MAX_VALUE){
 			throw new ArrayIndexOutOfBoundsException("You are triyng to add to much interregion connection"
-					+ " to the same neuron:"+burningNeuronId+ "of the region:"+r.getId());
+					+ " to the same neuron:"+burningNeuronId+ "of the region:"+n.getId());
 		}
 		ArrayList<Synapse> list = burningNeuronInterRegionConnections.get(burningNeuronId);
 		if (list==null){
@@ -288,29 +326,16 @@ public class SynapsesManager {
 		return retval;
 	}
 	
-	
-//	public void addAxDelay(Synapse syn){
-//		Double tmp = gd.sample();
-//		if (tmp<minAxDelay)
-//			minAxDelay=tmp;
-//		axmap.put(syn, tmp);		
-//	}
-	
 	public Double getMinAxDelay(){
 		return minAxDelay;
 	}
 	
 	public Double getAxDelay(Synapse syn){
-//		println("Syn:"+syn+" len:"+syn.getLenght());
-//		println("avgNeuronalSignalSpeed:"+avgNeuronalSignalSpeed);
-		
-//		Double delta = (syn.getLength()*1000.0)/(avgNeuronalSignalSpeed);
 		Double delta = (syn.getLength())/(avgNeuronalSignalSpeed);
-
-		//		println("---------------------------------->>>delta:"+delta);
 		if (delta<minAxDelay)
 			minAxDelay=delta;
-		return delta;//axmap.get(syn);
+		//println("Syn:"+syn+"\tlen:"+syn.getLength()+"\tspeed:"+avgNeuronalSignalSpeed+"\tdelta:"+delta);
+		return delta;
 	}
 	
 	public Iterator <Long> getNeuronIntermoduleConnectionIterator(){
@@ -334,52 +359,11 @@ public class SynapsesManager {
 	
 	private void println(String s){
 		if (verbose){
-			if (r != null)
-				System.out.println(TAG+r.getId()+"] "+s);
+			if (n != null)
+				System.out.println(TAG+n.getId()+"] "+s);
 			else 
-				System.out.println(TAG+r.getId()+"/???]"+s);
-		}
-			
-	}
-	
-	
-	
-//	public static void main(String[] args) {
-		
-//		double minVal=1000.0;
-//		double tmp;
-//		GammaDistribution gd = new GammaDistribution(1000000.0, 18.0/1000000.0);
-//		for (int i=0; i<Integer.MAX_VALUE;++i){
-//			tmp=gd.sample();
-//			if (tmp<minVal){
-//				minVal=tmp;
-//				System.out.println("\nnew min val:"+minVal);
-//			}
-//			if (i%1000000000==0)
-//				System.out.print(".");
-//		}
-//		System.out.println("\nbye!");
-		
-//		File f = new File ("torem.tmp");
-//		DB db = DBMaker.fileDB(f)
-//				.fileMmapEnable()
-//				.fileMmapEnableIfSupported()
-//				.fileMmapCleanerHackEnable()
-//				.make();
-//		HTreeMap<Integer, Integer> h = db.hashMap("toremhash");
-//		for (int i=0; i<100; ++i)
-//			h.put(i, i);
-//		Iterator<Integer> it = h.keySet().iterator();
-//		int i=0;
-//		while(it.hasNext()){
-//			Integer k = it.next();
-//			System.out.println((i++)+". "+k+" - "+h.get(k));
-//		}
-		
-//		System.out.println("madel:"+s.getMadel());
-		
-		
-//	}
-	
+				System.out.println(TAG+n.getId()+"/-]"+s);
+		}		
+	}	
 	
 }

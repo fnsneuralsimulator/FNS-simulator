@@ -50,14 +50,12 @@ import utils.constants.Constants;
 import utils.exceptions.BadParametersException;
 import utils.experiment.Experiment;
 import utils.statistics.StatisticsCollector;
+import org.apache.commons.cli.*; 
 
 public class SpikingNeuralSimulator extends Thread{
 	private final static String TAG = "[Spiking Neural Simulator] ";
 	private final static Boolean verbose = true;
 	private Boolean debug = false;
-	private Boolean activePassiveDebug = false;
-	private int debug_level = 3;
-	private Boolean plasticity = true;
 	private NodesManager nMan;
 	Double minQueuesValue = Double.MAX_VALUE;
 	NiceQueue minQueue=null;
@@ -84,50 +82,25 @@ public class SpikingNeuralSimulator extends Thread{
 	public static final Double ld4Test = 0.001; 
 	public static final Double kr4Test = 0.3;
 	public static final Double internalAmplitude4Test = 1.0;
+	public static final Integer BnTest=1;
+	public static final Double IBITest=0.001;
 	private static final Double epsilon = 0.00000001;
-	// Ne_en_ratio normalization factor
-	private Double Ne_en_ratioNormFactor=0.0;
 	long[] times= new long[10];
 	// the coefficient for which multiply the BOP to obtain a cycle: 
 	// 		1. if it is less than 1, than we fall into the optimistic simulation
 	//		2. if it is greater or equal to 1, than we have a conservative behavior
 	private static final Double bop_to_cycle_factor=1.0;
+	private StatisticsCollector sc=new StatisticsCollector();
 	
 	public SpikingNeuralSimulator (){
-		nMan = new NodesManager(this);
-		StatisticsCollector.setSimulatedTime(total_time);
-//		if (plasticity)
-//			affMan = new AfferentManager();
+		nMan = new NodesManager(this, sc);
+		sc.start();
 	}
 	
 	private void addNodeThread(NodeThread node){
 		nMan.addNodeThread(node);
 	}
 	
-	public void _addNodeThread(Integer id, Long n, Integer externalInputs, int externalInputType, int timeStep, double fireRate, int fireDuration, Double externalAmplitude){
-		addNodeThread(
-				new NodeThread(
-						nMan, id, n, 
-						externalInputs,
-						externalInputType, timeStep, 
-						fireRate,
-						fireDuration,
-						externalAmplitude,
-						excitProportion4Test, k4Test, 
-						prew4Test, internalAmplitude4Test, d4Test, ld4Test, kr4Test, 
-						Constants.EXCITATORY_PRESYNAPTIC_DEF_VAL, 
-						Constants.INHIBITORY_PRESYNAPTIC_DEF_VAL, 
-						Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 
-						plasticity, avgNeuronalSignalSpeed)
-				);
-	}
-	
-	public void _addNodeThread(Integer id, Long n){
-		addNodeThread(
-				new NodeThread(nMan, id, n, excitProportion4Test, k4Test, prew4Test,internalAmplitude4Test, d4Test,
-						ld4Test, kr4Test, Constants.EXCITATORY_PRESYNAPTIC_DEF_VAL, Constants.INHIBITORY_PRESYNAPTIC_DEF_VAL, 
-						Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, plasticity, avgNeuronalSignalSpeed));
-	}
 
 	public void init(){
 		if (nMan.getnSms()<=0){
@@ -145,7 +118,7 @@ public class SpikingNeuralSimulator extends Thread{
 
 	private void setTotalTime(double total_time){
 		this.total_time=total_time;
-		StatisticsCollector.setSimulatedTime(total_time);
+		//StatisticsCollector.setSimulatedTime(total_time);
 	}
 
 	/**
@@ -178,6 +151,9 @@ public class SpikingNeuralSimulator extends Thread{
 		}
 		keep_running=false;
 		println("node threads stopped.");
+		println("killing statistics collector...");
+		sc.kill();
+		println("statistics collector stopped.");
 	}
 
 	/**
@@ -194,7 +170,6 @@ public class SpikingNeuralSimulator extends Thread{
 	 */
 	
 	public void run(){
-		println("plasticity:"+plasticity);
 		long startTime = System.currentTimeMillis();
 		if (!initialized)
 			return;
@@ -228,6 +203,11 @@ public class SpikingNeuralSimulator extends Thread{
 				killAll();
 			else{
 				printBreakLine();
+				try {
+					sleep(5);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				currentTime+=cycle_time;
 				runNewSplit(currentTime);
 				completing=nMan.getNodeThreadsNum()-1;
@@ -237,30 +217,41 @@ public class SpikingNeuralSimulator extends Thread{
 		return true;
 	}
  
-	public void initFromConfigFileAndConnectivityPackage(String configPath, String connPkgPath) throws BadParametersException{
+	public void initFromConfigFileAndConnectivityPackage(String configPath, String connPkgPath, Boolean do_fast) 
+			throws BadParametersException{
 		long startTime = System.currentTimeMillis();
 		long lastTime = startTime;
-		System.out.println("reading connectivity package file:"+connPkgPath);
-		ConnectivityPackageManager cpm = new ConnectivityPackageManager();
+		println("reading connectivity package file:"+connPkgPath);
+		ConnectivityPackageManager cpm = new ConnectivityPackageManager(); 
 		cpm.readConnectivityPackage(connPkgPath);
-		StatisticsCollector.setMinMaxNe_en_ratios(cpm.getMinNe_en_ratio(), cpm.getMaxNe_en_ratio());
+		sc.setMinMaxNe_en_ratios(cpm.getMinNe_en_ratio(), cpm.getMaxNe_en_ratio());
 		ArrayList<NodesInterconnection> conns = cpm.getInterNodeConnections();
 		times[0]=System.currentTimeMillis()-lastTime;
 		lastTime+=times[0];
 		System.out.println("reading config file:"+configPath);
 		SpikingSimulatorCfg ssc = SpikingConfigManager.readConfigFile(configPath);
 		setTotalTime(new Double(ssc.getStop()));
-//		NeuManCfg nmcfg = ssc.getNeuron_manager();
 		ArrayList<NodeCfg> nodeCs =  ssc.getNodes();
-		plasticity=ssc.getPlasticity();
 		avgNeuronalSignalSpeed=ssc.getAvg_neuronal_signal_speed();
 		times[1]=System.currentTimeMillis()-lastTime;
 		lastTime+=times[1];
 		System.out.println("creating and adding nodes...\n");
 		NodeCfg tmp;
+		Boolean tmpPlasticity;
 		Long tmpN;
-		Integer  tmpK, tmpExternal;
-		Double tmpExcitRatio, tmpRewiringP,tmpInternalMu_w;
+		Integer  tmpK, tmpExternal, tmpBn;
+		Double tmpExcitRatio;
+		Double tmp_mu_w;
+		Double tmpW_pre_exc;
+		Double tmpW_pre_inh;
+		Double tmpRewiringP;
+		Double tmpIBI;
+		Double tmpEtap;
+		Double tmpEtam;
+		Double tmpTaup;
+		Double tmpTaum;
+		Double tmpPwMax;
+		Double tmpTo;
 		NeuManCfg nmcfg;
 		for (int i=0; i<cpm.getNodesNum();++i){
 			tmp = (nodeCs.size()>i)?nodeCs.get(i):null;
@@ -269,16 +260,41 @@ public class SpikingNeuralSimulator extends Thread{
 			tmpExcitRatio = ((tmp!=null)&&(tmp.getExcitatory_inhibitory_ratio()!=null))?
 					tmp.getExcitatory_inhibitory_ratio():
 					ssc.getR();
+			tmp_mu_w=((tmp!=null)&&(tmp.getMu_w()!=null))?
+					tmp.getMu_w():
+					ssc.getGlob_mu_w();
+			tmpW_pre_exc=((tmp!=null)&&(tmp.getW_pre_exc()!=null))?
+					tmp.getW_pre_exc():
+					ssc.getGlob_w_pre_exc();
+			tmpW_pre_inh=((tmp!=null)&&(tmp.getW_pre_inh()!=null))?
+					tmp.getW_pre_inh():
+					ssc.getGlob_w_pre_inh();
 			tmpK = ((tmp!=null)&&(tmp.getK()!=null))? 
 					tmp.getK(): ssc.getGlob_k();
 			tmpRewiringP = ((tmp!=null)&&(tmp.get_rewiring_P()!=null))?
 					tmp.get_rewiring_P() : ssc.getGlob_rewiring_P();
 			tmpExternal = ((tmp!=null)&&(tmp.getExternal_inputs_number()!=null))?
 					tmp.getExternal_inputs_number() : ssc.getGlob_external_inputs_number();
-			tmpInternalMu_w=((tmp!=null)&&(tmp.getMu_w()!=null))?
-					tmp.getMu_w() : ssc.getMu_w();
+			tmpBn=((tmp!=null)&&(tmp.getBn()!=null))?
+					tmp.getBn() : ssc.getGlob_Bn();
+			tmpIBI=((tmp!=null)&&(tmp.getIBI()!=null))?
+					tmp.getIBI() : ssc.getGlob_IBI();
 			nmcfg=((tmp!=null)&&(tmp.getNeuron_manager()!=null))?
 					tmp.getNeuron_manager() : ssc.getGlobal_neuron_manager();
+			tmpPlasticity=((tmp!=null)&&(tmp.getPlasticity()!=null))?
+					tmp.getPlasticity() : ssc.getPlasticity();
+			tmpEtap=((tmp!=null)&&(tmp.getEtap()!=null))?
+					tmp.getEtap() : ssc.getGlob_etap();
+			tmpEtam=((tmp!=null)&&(tmp.getEtam()!=null))?
+					tmp.getEtam() : ssc.getGlob_etam();
+			tmpTaup=((tmp!=null)&&(tmp.getTaup()!=null))?
+					tmp.getTaup() : ssc.getGlob_taup();
+			tmpTaum=((tmp!=null)&&(tmp.getTaum()!=null))?
+					tmp.getTaum() : ssc.getGlob_taum();	
+			tmpPwMax=((tmp!=null)&&(tmp.getPw_max()!=null))?
+					tmp.getPw_max() : ssc.getGlob_pw_max();	
+			tmpTo=((tmp!=null)&&(tmp.getTo()!=null))?
+					tmp.getTo() : ssc.getGlob_to();	
 			if (tmpK>=tmpN){
 				throw new BadParametersException("bad parameters exception, "
 						+ "n has to be greater than k (now n is "+tmpN+
@@ -286,30 +302,45 @@ public class SpikingNeuralSimulator extends Thread{
 			}
 			//add a new node with or without external inputs
 			println("adding node:"+i);
-			if (tmpExternal.equals(0))
+			if (tmpExternal.equals(0)) {
 				addNodeThread(
 						new NodeThread(
-								nMan, 
-								cpm.getNode(i).getId(),
-								tmpN,
-								tmpExcitRatio,
-								tmpK,
-								tmpRewiringP,
-								tmpInternalMu_w,
-								nmcfg.getC(),
-								nmcfg.getD(),
-								nmcfg.getT_arp(),
-								Constants.EXCITATORY_PRESYNAPTIC_DEF_VAL, 
-								Constants.INHIBITORY_PRESYNAPTIC_DEF_VAL,
-								Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 
-								plasticity,
-								avgNeuronalSignalSpeed)
-						);
+						nMan, 
+						cpm.getNode(i).getId(),
+						tmpN,
+						tmpExcitRatio,
+						tmpK,
+						tmpRewiringP,
+						tmpBn,
+						tmpIBI,
+						nmcfg.getC(),
+						nmcfg.getD(),
+						nmcfg.getT_arp(),
+						tmp_mu_w,
+						tmpW_pre_exc,
+						tmpW_pre_inh,
+						Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 
+						tmpPlasticity,
+						tmpEtap,
+						tmpEtam,
+						tmpTaup,
+						tmpTaum,
+						tmpPwMax,
+						tmpTo,
+						avgNeuronalSignalSpeed,
+						do_fast));
+			}
 			else{
-				Integer tmpExternalType, tmpExternalTimestep, tmpExternalFireDuration;
-				Double tmpExternalFirerate, tmpExternalFireAmplitude;
+				Integer tmpExternalType; 
+				Integer tmpExternalTimestep;
+				Integer tmpExternalFireDuration;
+				Double tmpExternalFirerate;
+				Double tmpExternalFireAmplitude;
+				Double tmpExternalInputsTimeOffset;
 				tmpExternalType=((tmp!=null)&&(tmp.getExternal_inputs_type()!=null))?
 						tmp.getExternal_inputs_type():ssc.getGlob_external_inputs_type();
+				tmpExternalInputsTimeOffset=((tmp!=null)&&(tmp.getExternal_inputs_time_phase()!=null))?
+						tmp.getExternal_inputs_time_phase():ssc.getGlob_external_inputs_time_offset();
 				tmpExternalTimestep=((tmp!=null)&&(tmp.getExternal_inputs_timestep()!=null))?
 						tmp.getExternal_inputs_timestep():ssc.getGlob_external_inputs_timestep();
 				tmpExternalFirerate=((tmp!=null)&&(tmp.getExternal_inputs_firerate()!=null))?
@@ -325,6 +356,7 @@ public class SpikingNeuralSimulator extends Thread{
 								tmpN,
 								tmpExternal,
 								tmpExternalType,
+								tmpExternalInputsTimeOffset,
 								tmpExternalTimestep,
 								tmpExternalFirerate,
 								tmpExternalFireDuration,
@@ -332,15 +364,24 @@ public class SpikingNeuralSimulator extends Thread{
 								tmpExcitRatio,
 								tmpK,
 								tmpRewiringP,
-								tmpInternalMu_w,
+								tmpBn,
+								tmpIBI,
 								nmcfg.getC(),
 								nmcfg.getD(), 
 								nmcfg.getT_arp(),
-								Constants.EXCITATORY_PRESYNAPTIC_DEF_VAL, 
-								Constants.INHIBITORY_PRESYNAPTIC_DEF_VAL,
+								tmp_mu_w,
+								tmpW_pre_exc,
+								tmpW_pre_inh,
 								Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 
-								plasticity,avgNeuronalSignalSpeed)
-								);
+								tmpPlasticity,
+								tmpEtap,
+								tmpEtam,
+								tmpTaup,
+								tmpTaum,
+								tmpPwMax,
+								tmpTo,
+								avgNeuronalSignalSpeed,
+								do_fast));
 			}
 		}
 		calculateCompressionFactor();
@@ -348,15 +389,15 @@ public class SpikingNeuralSimulator extends Thread{
 		lastTime+=times[2];
 		System.out.println("adding inter-node connection probability...\n");
 		for (int i=0; i<conns.size();++i){
-			System.out.println("[SPIKING NEURAL SIMULATOR] Ne en ratio:"+conns.get(i).getNe_en_ratio());
 			addInterNodeThreadConnection(
-					nMan.getNodeThread( conns.get(i).getSrc()), 
+					nMan.getNodeThread(conns.get(i).getSrc()), 
 					nMan.getNodeThread(conns.get(i).getDst()), 
 					conns.get(i).getNe_en_ratio(),
-					conns.get(i).getMu_w(),
+					conns.get(i).getMu_omega(),
 					conns.get(i).getSigma_w(),
 					conns.get(i).getLength(),
-					conns.get(i).getLengthShapeParameter());
+					conns.get(i).getLengthShapeParameter(),
+					conns.get(i).getType());
 		}
 		times[3]=System.currentTimeMillis()-lastTime;
 		lastTime+=times[3];
@@ -370,37 +411,39 @@ public class SpikingNeuralSimulator extends Thread{
 			NodeThread nd1, 
 			NodeThread nd2, 
 			Double Ne_en_ratio, 
-			Double amplitude, 
-			Double amplitudeStdDeviation, 
-			Double length, 
-			Double lengthShapeParameter){
+			Double mu_omega, 
+			Double sigma_omega, 
+			Double mu_lambda, 
+			Double alpha_lambda,
+			Integer inter_node_conn_type){
 		nMan.addInterNodeConnection(
 				nd1, 
 				nd2, 
 				Ne_en_ratio,
-				amplitude, 
-				amplitudeStdDeviation, 
-				length, 
-				lengthShapeParameter);
+				mu_omega, 
+				sigma_omega, 
+				mu_lambda, 
+				alpha_lambda,
+				inter_node_conn_type);
 	}
 	
-	public void addInterNodeConnection(
-			Integer nd1Id, 
-			Integer nd2Id, 
-			Double Ne_en_ratio, 
-			Double amplitude, 
-			Double amplitudesStdDeviations, 
-			Double length,
-			Double lengthShapeParameter){
-		nMan.addInterNodeConnectionParameters(
-				nd1Id, 
-				nd2Id, 
-				Ne_en_ratio, 
-				amplitude, 
-				amplitudesStdDeviations, 
-				length, 
-				lengthShapeParameter);
-	}
+//	public void addInterNodeConnection(
+//			Integer nd1Id,  
+//			Integer nd2Id, 
+//			Double Ne_en_ratio, 
+//			Double mu_omega, 
+//			Double sigma_omega, 
+//			Double mu_lambda,
+//			Double alpha_lambda){
+//		nMan.addInterNodeConnectionParameters(
+//				nd1Id, 
+//				nd2Id, 
+//				Ne_en_ratio, 
+//				mu_omega, 
+//				sigma_omega, 
+//				mu_lambda, 
+//				alpha_lambda);
+//	}
 	
 	public void setDebug(Boolean debug){
 		this.debug=debug;
@@ -409,9 +452,8 @@ public class SpikingNeuralSimulator extends Thread{
 	}
 
 	public void setExperimentName(String expName) {
-		println("setting experiment name:"+Experiment.DIR+expName);
-		Experiment.setExperimentName(Experiment.DIR+expName);
-		File expDir = new File (Experiment.DIR+expName);
+		Experiment.setExperimentName(expName);
+		File expDir = new File (Experiment.getExperimentDir());
 		if (!expDir.exists())
 			expDir.mkdirs();
 	}
@@ -428,9 +470,6 @@ public class SpikingNeuralSimulator extends Thread{
 		return compressionFactor;
 	}
 	
-	public String getExperimentName(){
-		return Experiment.expName; 
-	}
 	
 	public String getNodesNumMaxMask(){
 		println("nodes num:"+nMan.getNodeThreadsNum());
@@ -438,7 +477,7 @@ public class SpikingNeuralSimulator extends Thread{
 	}
 	
 	public void setMask(BigInteger mask){
-		StatisticsCollector.setNodes2checkMask(mask);
+		sc.setNodes2checkMask(mask);
 	}
 
 	//=======================================   printing functions =======================================
@@ -450,16 +489,6 @@ public class SpikingNeuralSimulator extends Thread{
 	
 	private void debprintln(String s){
 		if (verbose&&debug)
-			System.out.println(TAG+"[debug] "+s);
-	}
-	
-	private void leveldebprintln(String s, int level){
-		if (this.debug_level>=level)
-			debprintln(s);
-	}
-	
-	private void debActiveprintln(String s){
-		if (verbose&&debug&&activePassiveDebug)
 			System.out.println(TAG+"[debug] "+s);
 	}
 	
@@ -482,50 +511,70 @@ public class SpikingNeuralSimulator extends Thread{
 	//=======================================   main function =======================================
 
 	public static void main(String[] args) {		
-		System.out.println("\n\n\n\t\t\t\t\t=========================================");
-		System.out.println("\t\t\t\t\t=\t\tF. N. S.\t\t=");
-		System.out.println("\t\t\t\t\t=========================================\n\n\n");
-		System.out.println("creating simulator instance...");
+		System.out.println("\n\n\n\t\t\t\t\t=================================");
+		System.out.println("\t\t\t\t\t=\t    F N S\t\t=");
+		System.out.println("\t\t\t\t\t=\tNeural Simulator\t=");
+		System.out.println("\t\t\t\t\t=================================\n\n");
+		// options parsing and management
+		Options options= new Options();
+        Option expconfigopt = new Option("x", "exp-config", true, "the experiment configuration folder");
+        expconfigopt.setRequired(true);
+        options.addOption(expconfigopt);
+        options.addOption("m", "mask", true, "the mask for nodes of interest");
+        options.addOption("r", "runs", true, "the number of runs");
+        options.addOption("p", "plot", false, "plot a scatter plot of the experiment");
+        options.addOption("f", "fast", false, "fast algorithms, some approximations");
+        options.addOption("M", "matlab", false, "produce matlab compliant csv");
+        options.addOption("h", "help", false, "shows this help");
+        CommandLineParser parser = new DefaultParser();
+        HelpFormatter formatter = new HelpFormatter();
+        CommandLine cmd;
+        try {
+            cmd = parser.parse(options, args);
+            if (cmd.hasOption("help")){
+            	formatter.printHelp("FNS", options);
+            	System.out.println("\nExamples:");
+            	System.out.println("[Windows] \t> .\\start.bat -x exp01 -f -m 7 -p -M");
+            	System.out.println("[Linux] \t$ ./start -x exp01 -f -m 7 -p -M\n");
+                System.exit(0);
+                return;
+            }
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            formatter.printHelp("FNS", options);
+            System.out.println("\nExamples:");
+        	System.out.println("[Windows] > .\\start.bat -x -n exp01 -f -m 7 -p -M" );
+        	System.out.println("[Linux] > ./start -x exp01 -f -m 7 -p -M\n");
+            System.exit(1);
+            return;
+        }
+        // intializing simulator
+		System.out.println("initializing simulator");
 		SpikingNeuralSimulator sns = new SpikingNeuralSimulator();
-		Scanner scin = new Scanner(System.in);
+		sns.setExperimentName(cmd.getOptionValue("exp-config"));
+		String filename=null;
 		BigInteger checkNodessMask = null;
-		if (args.length==0){
-			Double pint1 = 0.05;
-			Double pint2 = 0.05;
-			System.out.println("creating node...\n");
-			System.out.println("adding node to simuator...\n");
-			sns._addNodeThread(0,SpikingNeuralSimulator.simulationNeurons,SpikingNeuralSimulator.externalNeurons,1,1,0.1,5, ExternalInput.EXTERNAL_AMPLITUDE_DEF_VALUE);
-			sns._addNodeThread(1,SpikingNeuralSimulator.simulationNeurons );
-			sns._addNodeThread(2,SpikingNeuralSimulator.simulationNeurons );
-			sns.calculateCompressionFactor();
-			System.out.println("\n\nadding inter/node connection probability...\n");
-			sns.addInterNodeConnection(0,1,pint1,1.0,1.0,40.8, 10.0);
-			sns.addInterNodeConnection(1,0,pint1,1.0,1.0,40.8, 10.0);
-			sns.addInterNodeConnection(1,2,pint2,1.0,1.0,40.8, 10.0);
-			sns.addInterNodeConnection(2,1,pint2,1.0,1.0,40.8, 10.0);
-			System.out.println("\n\ninitializing simulator...\n");
-			sns.init();
-			sns.setExperimentName("std_firnet");
-			checkNodessMask = new BigInteger("7");
+		Boolean do_plot=cmd.hasOption("plot");
+		Boolean do_fast=cmd.hasOption("fast");
+		checkNodessMask=new BigInteger(cmd.getOptionValue("mask","0"));
+		if (checkNodessMask==null || checkNodessMask.toString()=="0") {
+			filename = Experiment.getExperimentDir()+"mask_all_";
+			sns.sc.checkAll();
+		}
+		else{
+			filename = Experiment.getExperimentDir()+"mask_"+checkNodessMask;
 			sns.setMask(checkNodessMask);
 		}
-		else{			
-			if (args.length>=3)
-				sns.setExperimentName(args[2]);
-			if (args.length>=4){
-				checkNodessMask = new BigInteger(args[3]);
-				sns.setMask(checkNodessMask);
-			}
-			try {
-				sns.initFromConfigFileAndConnectivityPackage(args[0], args[1]);
-			} catch (BadParametersException e) {
-				e.printStackTrace();
-			}
-		}
-		if (checkNodessMask==null){
-			System.out.println("Insert the mask for the nodes to check ["+sns.getNodesNumMaxMask()+"] :");
-			checkNodessMask = new BigInteger(scin.nextLine());
-			sns.setMask(checkNodessMask);
+		sns.sc.set_filename(filename);
+		if (cmd.hasOption("matlab"))
+			sns.sc.setMatlab();
+		try {
+			sns.initFromConfigFileAndConnectivityPackage(
+					(new File(cmd.getOptionValue("exp-config")+"/config.xml")).getAbsolutePath(), 
+					(new File(cmd.getOptionValue("exp-config")+"/connectivity")).getAbsolutePath(),
+					do_fast);
+		} catch (BadParametersException e) {
+			e.printStackTrace();
 		}
 		System.out.println("nodes to check mask:"+checkNodessMask);		
 		System.out.println("running simulator...\n");
@@ -535,39 +584,25 @@ public class SpikingNeuralSimulator extends Thread{
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		StatisticsCollector.PrintResults();
+		sns.sc.PrintResults();
+		sns.sc.makeCsv(filename);
 		try{
-			String fireFileName= null;
-			if (checkNodessMask.compareTo(BigInteger.ZERO)!=0){
-				fireFileName = sns.getExperimentName()+"mask"+checkNodessMask;
-				System.out.println("writing the file "+fireFileName+".csv ...");
-				StatisticsCollector.makeCsv(fireFileName);
-				System.out.println("done.");
+			//filename = sns.getExperimentName()+"mask"+checkNodessMask+"_";
+			sns.sc.makeCsv(filename);
+			System.out.println("done.");
+			if (do_plot){
+				sns.sc.printFirePlot(filename);
+				System.out.println("Press enter twice to quit:");
+				System.in.read();
+				System.in.read();
+				System.in.read();
 			}
-			System.out.println("Plot? [y/n]:");
-			char in= (char) System.in.read();
-			System.out.println(in);
-			if ((in=='Y')||(in=='y')){
-				StatisticsCollector.printFirePlot(fireFileName);
-			}
-			in= (char) System.in.read();
-			System.out.println("in:"+in);
-			in= (char) System.in.read();
-			in= (char) System.in.read();
-			in= (char) System.in.read();
-			System.out.println(in);			
 		} catch (Exception e){
 			e.printStackTrace();
 		}
 		System.out.println("bye!");
 		System.exit(0);
 	}
-
-
-	
-	
-	
-
 }
 
 

@@ -42,11 +42,13 @@ public class AfferentManager {
 	HashMap<Synapse, Afferent> affMap = new HashMap<>();
 	private Double etap = 0.01;
 	private Double etam = 0.05;
-	private Double taup = 10.0;
-	private Double taum = 20.0;
-	private Double pwMax = 0.0;
+	private Double taup = 15.0;
+	private Double taum = 30.0;
+	private Double pwMax = 100.0;
+	// if the time delta is bigger than to, no effect is calculated - cutoff filter
+	private Double to=3.0;
 	
-
+	
 	public void addAfferent(Afferent aff){
 		affMap.put(aff.getSynapse(), aff);
 	}
@@ -59,10 +61,8 @@ public class AfferentManager {
 	
 	public Afferent popNoLtp(Synapse syn) {
 		Afferent retval = affMap.get(syn);
-		
 		if (retval==null)
 			return retval;
-			
 		retval=retval.getLtpFlag()?retval:null;
 		if (retval==null)
 			return retval;
@@ -99,6 +99,10 @@ public class AfferentManager {
 
 	public Double getPwMax() {
 		return pwMax;
+	}
+	
+	public Double getTo(){
+		return to;
 	}
 	
 	

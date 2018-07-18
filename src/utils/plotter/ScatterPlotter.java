@@ -31,33 +31,12 @@
 
 
 package utils.plotter;
-
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
-import java.awt.Dimension;
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.*;
-
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import org.jfree.chart.*;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.ApplicationFrame;
-import org.jfree.ui.RefineryUtilities;
-import org.jfree.util.ShapeUtilities;
 import org.math.plot.Plot2DPanel;
 import org.math.plot.plotObjects.BaseLabel;
-
 public class ScatterPlotter {
 
 
@@ -66,26 +45,6 @@ public class ScatterPlotter {
 	 */
 	private static final long serialVersionUID = 5840221804907296764L;
 	private JFrame frame;
-
-//	public ScatterPlotter(String s, JFreeChart jfreechart) {
-//		super(s);
-//		JPanel jpanel = createDemoPanel(jfreechart);
-//		jpanel.setPreferredSize(new Dimension(640, 480));
-//		add(jpanel);
-//	}
-//
-//	public static JPanel createDemoPanel(JFreeChart jfreechart) {
-//		double size = 2.0;
-//	    double delta = size / 2.0;
-//		Shape shp = new Ellipse2D.Double(-delta, -delta, size, size);
-//		XYPlot xyPlot = (XYPlot) jfreechart.getPlot();
-//		xyPlot.setDomainCrosshairVisible(true);
-//		xyPlot.setRangeCrosshairVisible(true);
-//		XYItemRenderer renderer = xyPlot.getRenderer();
-//		renderer.setSeriesShape(0, shp);
-//		renderer.setSeriesPaint(0, Color.blue);
-//		return new ChartPanel(jfreechart);
-//	}
 	
 	public ScatterPlotter(String s, double [] x, double[] y, Double simulatedTime){
 		int lastMillis = 15;
@@ -129,16 +88,6 @@ public class ScatterPlotter {
         	      BufferedImage.TYPE_INT_RGB
         	      );
         plot.paint( image.getGraphics() ); 
-//        try {
-//            // write the image as a PNG
-//            ImageIO.write(
-//              image,
-//              "png",
-//              new File(filename+".png"));
-//          } catch(Exception e) {
-//            e.printStackTrace();
-//          }
-       
         
 	}
 	

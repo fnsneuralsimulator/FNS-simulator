@@ -68,6 +68,7 @@ public class PackageReader {
 	private static final String TRACT_LENGTHS_SHAPE_PARAMETERS_FILE_NAME="alpha_lambda.txt";
 	private static final String CENTRES_FILE_NAME="centres.txt";
 	private static final String WEIGHTS_FILE_NAME="Ne_en_ratio.txt";
+	private static final String CONNECTIONS_TYPE_FILE_NAME="conns_type.txt";
 	
 	public PackageReader (ConnectivityPackageManager rm){
 		this.rm=rm;
@@ -88,6 +89,10 @@ public class PackageReader {
 		readAmplitudesStdDeviationFile();
 		println("reading the mu lambda file...");
 		readLengthsFile();
+		println("reading the alpha lambda file...");
+		readLengthsShapeParametersFile();
+		println("reading the conenctions type file...");
+		readConnectionsTypeFile();
 		println("done.");
 	}
 	
@@ -186,9 +191,9 @@ public class PackageReader {
 					d=new Double(goodTkns[j]);
 					if (d>maxAmplitude)
 						maxAmplitude=d;
-						if (d<minAmplitude)
-							minAmplitude=d;
-						rm.addAmplitude(i, j, (d));
+					if (d<minAmplitude)
+						minAmplitude=d;
+					rm.addAmplitude(i, j, (d));
 				}
 				++i;
 			}
@@ -281,6 +286,35 @@ public class PackageReader {
 					d=new Double(goodTkns[j]);
 					if (!d.equals(zeroDouble)){
 						rm.addLengthShapeParameter(i, j, d);
+					}
+				}
+				++i;
+			}
+		} catch (FileNotFoundException e) {
+			return;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void readConnectionsTypeFile(){
+		int i=0;
+		Integer d;
+		try (BufferedReader br = new BufferedReader(new FileReader(packagePath+CONNECTIONS_TYPE_FILE_NAME))){
+			for (String line; (line=br.readLine())!=null;){
+				String [] tokens = line.split(" ");
+				String [] goodTkns = new String [vertexNum];
+				int k=0;
+				for (int j=0; k<vertexNum ; ++j){
+					if (!tokens[j].equals(""))
+						goodTkns[k++]=tokens[j];						
+				}
+				for (int j=0; j<vertexNum; ++j){
+					if (i==j)
+						continue;
+					d=new Integer(goodTkns[j]);
+					if (!d.equals(0)){
+						rm.addType(i, j, d);
 					}
 				}
 				++i;

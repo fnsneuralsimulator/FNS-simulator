@@ -44,64 +44,81 @@ public class Synapse implements Comparable<Synapse>, Serializable{
 	
 	
 	private static final long serialVersionUID = -4428703256832002027L;
+	private final static String TAG = "[Syapse] ";
+	private final static Boolean verbose = true;
 	private Long axonNeuronId;
 	private Long dendriteNeuronId;
 	private Integer axonRegionId;
 	private Integer dendriteRegionId;
-	private Boolean fromExternalRegion=false;
+	private Boolean fromExternalNode=false;
 	private Boolean fromExternalInput=false;
 	private Double length;
-	private Double amplitude;
+	private Double mu_w;
+	private Double presynaptic_w;
+	private Double lastBurningTime;
 	
-//	public Synapse(Integer axonRegionId, Long axonNeuronId, Integer dendriteRegionId, Long dendriteNeuronId) {
+	
+//	public Synapse(
+//			Integer axonRegionId, 
+//			Long axonNeuronId, 
+//			Integer dendriteRegionId, 
+//			Long dendriteNeuronId, 
+//			Double length, 
+//			Double mu_w,
+//			Double presynaptic_w,
+//			Boolean fromExternalInput
+//			) {
 //		this.axonRegionId = axonRegionId;
 //		this.axonNeuronId = axonNeuronId;
 //		this.dendriteRegionId = dendriteRegionId;
 //		this.dendriteNeuronId = dendriteNeuronId;
+//		this.length=length;
+//		this.presynaptic_w=presynaptic_w;
+//		this.fromExternalInput=fromExternalInput;
+//		this.setPostsynapticWeight(mu_w);
 //		
 //	}
-//	
-//	public Synapse(Integer axonRegionId, Long axonNeuronId, Integer dendriteRegionId, Long dendriteNeuronId, Boolean fromExternal ) {
+	
+	public Synapse(
+//			Boolean torem,
+			Integer axonRegionId, 
+			Long axonNeuronId, 
+			Integer dendriteRegionId, 
+			Long dendriteNeuronId, 
+			Double length, 
+			Double mu_w,
+			Double presynaptic_w,
+			Boolean fromExternalInput,
+			Boolean fromExternalNode) {
+		this.axonRegionId = axonRegionId;
+		this.axonNeuronId = axonNeuronId;
+		this.dendriteRegionId = dendriteRegionId;
+		this.dendriteNeuronId = dendriteNeuronId;
+		this.fromExternalNode=fromExternalNode;
+		this.length=length;
+		this.presynaptic_w= presynaptic_w;
+		this.fromExternalInput=fromExternalInput;
+		this.setPostsynapticWeight(mu_w);		
+	}
+	
+//	public Synapse(
+//			Integer axonRegionId, 
+//			Long axonNeuronId, 
+//			Integer dendriteRegionId, 
+//			Long dendriteNeuronId, 
+//			Double length, 
+//			Boolean fromExternalInput ) {
 //		this.axonRegionId = axonRegionId;
 //		this.axonNeuronId = axonNeuronId;
 //		this.dendriteRegionId = dendriteRegionId;
 //		this.dendriteNeuronId = dendriteNeuronId;
-//		this.fromExternal=fromExternal;
+//		this.setFromExternalInput(fromExternalInput);
+//		this.length=length;
+//		this.setPostsynapticWeight(mu_w);
 //	}
 	
-	public Synapse(Integer axonRegionId, Long axonNeuronId, Integer dendriteRegionId, Long dendriteNeuronId, Double length, Double amplitude) {
-		this.axonRegionId = axonRegionId;
-		this.axonNeuronId = axonNeuronId;
-		this.dendriteRegionId = dendriteRegionId;
-		this.dendriteNeuronId = dendriteNeuronId;
-		this.length=length;
-		this.setAmplitude(amplitude);
-		
-	}
-	
-	public Synapse(Integer axonRegionId, Long axonNeuronId, Integer dendriteRegionId, Long dendriteNeuronId, Double length, Double amplitude, Boolean fromExternalRegion) {
-		this.axonRegionId = axonRegionId;
-		this.axonNeuronId = axonNeuronId;
-		this.dendriteRegionId = dendriteRegionId;
-		this.dendriteNeuronId = dendriteNeuronId;
-		this.fromExternalRegion=fromExternalRegion;
-		this.length=length;
-		this.setAmplitude(amplitude);
-		
-	}
-	
-	public Synapse(Integer axonRegionId, Long axonNeuronId, Integer dendriteRegionId, Long dendriteNeuronId, Double length, Boolean fromExternalInput ) {
-		this.axonRegionId = axonRegionId;
-		this.axonNeuronId = axonNeuronId;
-		this.dendriteRegionId = dendriteRegionId;
-		this.dendriteNeuronId = dendriteNeuronId;
-		this.setFromExternalInput(fromExternalInput);
-		this.length=length;
-		this.setAmplitude(amplitude);
-	}
-	
-	public Boolean fromExternalRegion(){
-		return fromExternalRegion;
+	public Boolean fromExternalNode(){
+		return fromExternalNode;
 	}
 	
 	
@@ -158,25 +175,41 @@ public class Synapse implements Comparable<Synapse>, Serializable{
 		this.length = length;
 	}
 	
-	public Double getAmplitude() {
-		return (amplitude==null)?1.0:amplitude;
+	public Double getPostSynapticWeight() {
+		return (mu_w==null)?1.0:mu_w;
 	}
 
-	public void setAmplitude(Double amplitude) {
-		if ((amplitude!=null)&&(amplitude==1.0))
-			this.amplitude=null;
+	public void setPostsynapticWeight(Double post_synaptic_weight) {
+		if ((post_synaptic_weight!=null)&&(post_synaptic_weight==1.0))
+			this.mu_w=null;
 		else
-			this.amplitude = amplitude;
+			this.mu_w = post_synaptic_weight;
 	}
 	
+	public Double getPreSynapticWeight() {
+		return presynaptic_w;
+	}
+
 	public Boolean fromExternal(){
-		return (fromExternalRegion||fromExternalInput);
+		return (fromExternalNode||fromExternalInput);
+	}
+	
+	public Double getLastBurningTime() {
+		return lastBurningTime;
+	}
+
+	public void setLastBurningTime(Double lastBurningTime) {
+		this.lastBurningTime = lastBurningTime;
+	}
+
+	public void resetLastBurningTime() {
+		this.lastBurningTime = null;
 	}
 
 	@Override
 	public String toString() {
 		return "[firing:" + axonRegionId+"-"+axonNeuronId
-				+ ", burning:"+dendriteRegionId +"-"+ dendriteNeuronId +" from external:"+ fromExternalRegion+"]";
+				+ ", burning:"+dendriteRegionId +"-"+ dendriteNeuronId +" from external:"+ fromExternalNode+"]";
 	}
 
 	@Override
@@ -226,11 +259,21 @@ public class Synapse implements Comparable<Synapse>, Serializable{
 	public Boolean fromExternalInput() {
 		return fromExternalInput;
 	}
+	
+	public Integer fromExternalInputInteger() {
+		return fromExternalInput ? 1 : 0;
+	}
 
 	public void setFromExternalInput(Boolean fromExternalInput) {
 		this.fromExternalInput = fromExternalInput;
 	}
 
+	
+	private void println(String s){
+		if (verbose){
+			System.out.println(TAG+s);
+		}		
+	}	
 	
 	
 

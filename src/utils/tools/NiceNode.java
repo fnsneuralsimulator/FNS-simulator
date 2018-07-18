@@ -50,6 +50,7 @@ public class NiceNode implements Comparable<NiceNode>, Serializable{
     }
     
     public int compareTo(NiceNode node){
-        return Double.compare(tf,node.tf);
+//        return Double.compare(tf,node.tf);
+        return tf.compareTo(node.tf);
     }
 }

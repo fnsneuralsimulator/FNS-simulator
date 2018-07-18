@@ -58,7 +58,9 @@ public class InterNodeBurningSpike implements Comparable<InterNodeBurningSpike>,
     }
     
     public int compareTo(InterNodeBurningSpike node){
-        return Double.compare(timeToBurn,node.getTimeToBurn());
+//        return Double.compare(timeToBurn,node.getTimeToBurn());
+        return timeToBurn.compareTo(node.getTimeToBurn());
+
     }
 
 }

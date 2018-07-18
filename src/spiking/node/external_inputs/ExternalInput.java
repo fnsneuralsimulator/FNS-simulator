@@ -32,7 +32,6 @@
 
 package spiking.node.external_inputs;
 
-import java.util.PriorityQueue;
 
 import spiking.node.Node;
 import utils.tools.NiceQueue;
@@ -40,7 +39,7 @@ import utils.tools.NiceNode;
 
 public class ExternalInput {
 	
-	public final static Double EXTERNAL_INPUT_TIME_ZERO = 0.1;
+	//private final static Double EXTERNAL_INPUT_TIME_ZERO = 0.1;
 	public final static int POISSON = 0;
 	public final static int CONSTANT = 1;
 	public final static int NOISE = 2;
@@ -51,6 +50,7 @@ public class ExternalInput {
 	private Node n;
 	//external input neuron number
 	private Integer externalInputs;
+	private Double externalInputsTimeOffset=0.1;
 	//Poisson distributed input variables
 	private Double firingRate=0.1;												//firing rate	
 	private Integer fireDuration=5; 											//duration in ms
@@ -71,9 +71,19 @@ public class ExternalInput {
 	private Double externalAmplitude = EXTERNAL_AMPLITUDE_DEF_VALUE;
 	
 		
-	public ExternalInput(Node n, int type, double firingRate, int fireDuration, Double externalAmplitude, int timeStep){
+	public ExternalInput(
+			Node n, 
+			int type, 
+			Double externalInputsTimeOffset, 
+			double firingRate, 
+			int fireDuration, 
+			Double externalAmplitude, 
+			int timeStep){
 		this.n=n;
 		this.type=type;
+		this.externalInputsTimeOffset=
+				((externalInputsTimeOffset!=null)&&(externalInputsTimeOffset>0))?
+				externalInputsTimeOffset:this.externalInputsTimeOffset;
 		this.firingRate=firingRate;
 		this.fireDuration=fireDuration;
 		this.timeStep=timeStep;
@@ -120,7 +130,9 @@ public class ExternalInput {
 			if (type==POISSON){
 				for (int j=0; j<nBins; ++j){
 					if (Math.random()<(firingRate*timeStep)){
-						timeMatrix[i].insert(EXTERNAL_INPUT_TIME_ZERO+(j*timeStep), new Long(j));
+						timeMatrix[i].insert(
+								externalInputsTimeOffset+(j*timeStep), 
+								new Long(j));
 						++externalSpikes;
 						amplitudeMatrix[i][j]=externalAmplitude;
 					}
@@ -128,7 +140,9 @@ public class ExternalInput {
 			}
 			if (type==CONSTANT){
 				for (int j=0; j<fireDuration; ++j){
-					timeMatrix[i].insert(EXTERNAL_INPUT_TIME_ZERO+(j*timeStep),new Long(j));
+					timeMatrix[i].insert(
+							externalInputsTimeOffset+(j*timeStep),
+							new Long(j));
 					++externalSpikes;
 					amplitudeMatrix[i][j]=externalAmplitude;
 				}
@@ -138,7 +152,7 @@ public class ExternalInput {
 	
 	
 	public Double getAmplitudeValue(int extNeuron, int bin){
-		if (type==NOISE)// || type==CONSTANT )
+		if (type==NOISE)
 			return externalAmplitude;
 		if (type==CONSTANT)
 			bin=amplitudeMatrix[extNeuron].length-1;

@@ -38,11 +38,7 @@ import spiking.node.Synapse;
 import utils.tools.IntegerCouple;
 
 public class Afferent {
-	
 	private Synapse syn;
-	
-	
-	
 	//false when a LTP occurs
 	private Boolean ltpFlag = true;
 	//false when a LTD occurs

@@ -76,11 +76,11 @@ public class LongCouple implements Comparable<LongCouple>, Serializable{
 		return b;
 	}
 
-	public Long getBurning(){
+	public Long getFiring(){
 		return a;
 	}
 	
-	public Long getFiring(){
+	public Long getBurning(){
 		return b;
 	}
 	
