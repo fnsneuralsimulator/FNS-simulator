@@ -34,7 +34,7 @@ package utils.experiment;
 public class Experiment {
 	
 	private static String expName="";
-	private static String dir="/experiments/";
+	private static String dir="/output/";
 	
 	public static void setExperimentName(String name){
 		expName=name;

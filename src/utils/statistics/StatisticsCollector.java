@@ -72,8 +72,8 @@ public class StatisticsCollector extends Thread {
 	private volatile HashMap<CompressedFire, Integer> compressor = new HashMap<CompressedFire, Integer>();
 	private volatile Double simulatedTime=0.0;
 	private volatile Double minMissedAxonalDelay = Double.MAX_VALUE;
-	private volatile Double minNe_en_ratio;
-	private volatile Double maxNe_en_ratio;
+	private volatile Double minNe_xn_ratio;
+	private volatile Double maxNe_xn_ratio;
 	private volatile Boolean badCurve=false;
 	private volatile long firingSpikesCounter=0l;
 	private volatile long burningSpikesCounter=0l;
@@ -514,22 +514,22 @@ public class StatisticsCollector extends Thread {
 	}
 	
 	
-	public void setMinMaxNe_en_ratios(Double minNe_en_ratio, Double maxNe_en_ratio){
-		this.minNe_en_ratio=minNe_en_ratio;
-		this.maxNe_en_ratio=maxNe_en_ratio;	
+	public void setMinMaxNe_xn_ratios(Double minNe_xn_ratio, Double maxNe_xn_ratio){
+		this.minNe_xn_ratio=minNe_xn_ratio;
+		this.maxNe_xn_ratio=maxNe_xn_ratio;	
 	}
 	
 	public void PrintResults(){
-		String minNe_en_ratioStr=(minNe_en_ratio==PackageReader.MIN_NE_EN_RATIO_DEF)?
-				"no connection between nodes":(""+minNe_en_ratio);
-		String maxNe_en_ratioStr=(maxNe_en_ratio==PackageReader.MAX_NE_EN_RATIO_DEF)?
-				"no connection between nodes":(""+maxNe_en_ratio);
+		String minNe_xn_ratioStr=(minNe_xn_ratio==PackageReader.MIN_NE_EN_RATIO_DEF)?
+				"no connection between nodes":(""+minNe_xn_ratio);
+		String maxNe_xn_ratioStr=(maxNe_xn_ratio==PackageReader.MAX_NE_EN_RATIO_DEF)?
+				"no connection between nodes":(""+maxNe_xn_ratio);
 		System.out.println("active:"+active);
 		System.out.println("passive:"+passive);
 		System.out.println("active to passive:"+active2passive);
 		System.out.println("passive to active:"+passive2active);
-		System.out.println("min Ne en ratio:"+minNe_en_ratioStr);
-		System.out.println("max Ne en ratio:"+maxNe_en_ratioStr);
+//		System.out.println("min Ne en ratio:"+minNe_xn_ratioStr);
+//		System.out.println("max Ne en ratio:"+maxNe_xn_ratioStr);
 		System.out.println("missed Fires:"+missedFires);
 		if (missedFires>0)
 			System.out.println("minimum missed fire axonal delay:"+minMissedAxonalDelay);

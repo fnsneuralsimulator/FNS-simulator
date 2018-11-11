@@ -113,7 +113,7 @@ public class SpikingNeuralSimulator extends Thread{
 		println("min tract length:"+minTractLengthStr);
 		println("avg neuronal signal speed:"+avgNeuronalSignalSpeed);
 		cycle_time=(nMan.getMinTractLength()+epsilon)/(avgNeuronalSignalSpeed*bop_to_cycle_factor);
-		println("cycle time:"+cycle_time);
+		//println("cycle time:"+cycle_time);
 	}
 
 	private void setTotalTime(double total_time){
@@ -134,7 +134,7 @@ public class SpikingNeuralSimulator extends Thread{
 	 */
 	public void runNewSplit(double newStopTime){
 		double stopTime=(newStopTime>total_time)?total_time:newStopTime;
-		println("running new splits with new stop time:"+stopTime+" - cycle time:"+cycle_time);
+		println("running new splits with new stop simulated time:"+stopTime);
 		nMan.runNewSplit(stopTime);
 	}
 	
@@ -184,9 +184,9 @@ public class SpikingNeuralSimulator extends Thread{
 			}
 		}
 		println("end of simulator run, "+(System.currentTimeMillis()-startTime)+" ms elapsed.");
-		println("init phases:\n\t conn pckg read:\t\t"+times[0]+"\n\t config file read:\t\t"+times[1]+
-				"\n\t node init:\t\t\t"+times[2]+"\n\t inter-nodes connections init:\t"+times[3]+
-				"\n\t simulator init:\t\t"+times[4]);
+		println("init phases:\n\t conn pckg read:\t\t"+times[0]+" ms\n\t config file read:\t\t"+times[1]+
+				" ms\n\t node init:\t\t\t"+times[2]+" ms\n\t inter-node connections init:\t"+times[3]+
+				" ms\n\t simulator init:\t\t"+times[4]+" ms");
 		println("min tract length:"+nMan.getMinTractLength());
 		println("avg neuronal signal speed:"+avgNeuronalSignalSpeed);
 		println("cycle time:"+cycle_time);
@@ -224,7 +224,7 @@ public class SpikingNeuralSimulator extends Thread{
 		println("reading connectivity package file:"+connPkgPath);
 		ConnectivityPackageManager cpm = new ConnectivityPackageManager(); 
 		cpm.readConnectivityPackage(connPkgPath);
-		sc.setMinMaxNe_en_ratios(cpm.getMinNe_en_ratio(), cpm.getMaxNe_en_ratio());
+		sc.setMinMaxNe_xn_ratios(cpm.getMinNe_xn_ratio(), cpm.getMaxNe_xn_ratio());
 		ArrayList<NodesInterconnection> conns = cpm.getInterNodeConnections();
 		times[0]=System.currentTimeMillis()-lastTime;
 		lastTime+=times[0];
@@ -392,7 +392,7 @@ public class SpikingNeuralSimulator extends Thread{
 			addInterNodeThreadConnection(
 					nMan.getNodeThread(conns.get(i).getSrc()), 
 					nMan.getNodeThread(conns.get(i).getDst()), 
-					conns.get(i).getNe_en_ratio(),
+					conns.get(i).getNe_xn_ratio(),
 					conns.get(i).getMu_omega(),
 					conns.get(i).getSigma_w(),
 					conns.get(i).getLength(),
@@ -410,7 +410,7 @@ public class SpikingNeuralSimulator extends Thread{
 	public void addInterNodeThreadConnection(
 			NodeThread nd1, 
 			NodeThread nd2, 
-			Double Ne_en_ratio, 
+			Double Ne_xn_ratio, 
 			Double mu_omega, 
 			Double sigma_omega, 
 			Double mu_lambda, 
@@ -419,7 +419,7 @@ public class SpikingNeuralSimulator extends Thread{
 		nMan.addInterNodeConnection(
 				nd1, 
 				nd2, 
-				Ne_en_ratio,
+				Ne_xn_ratio,
 				mu_omega, 
 				sigma_omega, 
 				mu_lambda, 
@@ -430,7 +430,7 @@ public class SpikingNeuralSimulator extends Thread{
 //	public void addInterNodeConnection(
 //			Integer nd1Id,  
 //			Integer nd2Id, 
-//			Double Ne_en_ratio, 
+//			Double Ne_xn_ratio, 
 //			Double mu_omega, 
 //			Double sigma_omega, 
 //			Double mu_lambda,
@@ -438,7 +438,7 @@ public class SpikingNeuralSimulator extends Thread{
 //		nMan.addInterNodeConnectionParameters(
 //				nd1Id, 
 //				nd2Id, 
-//				Ne_en_ratio, 
+//				Ne_xn_ratio, 
 //				mu_omega, 
 //				sigma_omega, 
 //				mu_lambda, 
@@ -517,14 +517,19 @@ public class SpikingNeuralSimulator extends Thread{
 		System.out.println("\t\t\t\t\t=================================\n\n");
 		// options parsing and management
 		Options options= new Options();
-        Option expconfigopt = new Option("x", "exp-config", true, "the experiment configuration folder");
-        expconfigopt.setRequired(true);
-        options.addOption(expconfigopt);
-        options.addOption("m", "mask", true, "the mask for nodes of interest");
-        options.addOption("r", "runs", true, "the number of runs");
-        options.addOption("p", "plot", false, "plot a scatter plot of the experiment");
-        options.addOption("f", "fast", false, "fast algorithms, some approximations");
-        options.addOption("M", "matlab", false, "produce matlab compliant csv");
+        //Option expconfigopt = new Option("x", "exp-config", true, "the experiment configuration folder");
+        //expconfigopt.setRequired(true);
+        //options.addOption(expconfigopt);
+        options.addOption("m", "mask", true, "followed by the mask number. The mask indicates "
+        		+ "the set of NOIs (node of interests) for which to store the output data. "
+        		+ "If this switch is not present, the entire set of nodes will be "
+        		+ "considered for the generation of output data.");
+        //options.addOption("r", "runs", true, "the number of runs");
+        //options.addOption("p", "plot", false, "plot a scatter plot of the experiment");
+        options.addOption("f", "fast", false, "enables faster algorithms at different levels, "
+        		+ "in return for some approximations (i.e., plasticity exponentials, etc.)");
+        options.addOption("M", "matlab", false, "provides with a set of matlab-compliant "
+        		+ "CSV files, in addition to the output CSVs.");
         options.addOption("h", "help", false, "shows this help");
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -534,8 +539,8 @@ public class SpikingNeuralSimulator extends Thread{
             if (cmd.hasOption("help")){
             	formatter.printHelp("FNS", options);
             	System.out.println("\nExamples:");
-            	System.out.println("[Windows] \t> .\\start.bat -x exp01 -f -m 7 -p -M");
-            	System.out.println("[Linux] \t$ ./start -x exp01 -f -m 7 -p -M\n");
+            	System.out.println("[Windows] \t> .\\start.bat exp01 -f -m 7 -p -M");
+            	System.out.println("[Linux] \t$ ./start exp01 -f -m 7 -p -M\n");
                 System.exit(0);
                 return;
             }
@@ -543,15 +548,15 @@ public class SpikingNeuralSimulator extends Thread{
             System.out.println(e.getMessage());
             formatter.printHelp("FNS", options);
             System.out.println("\nExamples:");
-        	System.out.println("[Windows] > .\\start.bat -x -n exp01 -f -m 7 -p -M" );
-        	System.out.println("[Linux] > ./start -x exp01 -f -m 7 -p -M\n");
+        	System.out.println("[Windows] > .\\start.bat exp01 -f -m 7 -p -M" );
+        	System.out.println("[Linux] > ./start exp01 -f -m 7 -p -M\n");
             System.exit(1);
             return;
         }
         // intializing simulator
 		System.out.println("initializing simulator");
 		SpikingNeuralSimulator sns = new SpikingNeuralSimulator();
-		sns.setExperimentName(cmd.getOptionValue("exp-config"));
+		sns.setExperimentName(args[0]);
 		String filename=null;
 		BigInteger checkNodessMask = null;
 		Boolean do_plot=cmd.hasOption("plot");
@@ -570,8 +575,8 @@ public class SpikingNeuralSimulator extends Thread{
 			sns.sc.setMatlab();
 		try {
 			sns.initFromConfigFileAndConnectivityPackage(
-					(new File(cmd.getOptionValue("exp-config")+"/config.xml")).getAbsolutePath(), 
-					(new File(cmd.getOptionValue("exp-config")+"/connectivity")).getAbsolutePath(),
+					(new File(args[0]+"/config.xml")).getAbsolutePath(), 
+					(new File(args[0]+"/connectivity")).getAbsolutePath(),
 					do_fast);
 		} catch (BadParametersException e) {
 			e.printStackTrace();

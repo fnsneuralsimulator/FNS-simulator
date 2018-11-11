@@ -58,17 +58,17 @@ public class PackageReader {
 	private final static Double zeroDouble = new Double (0);
 	private final static String TAG = "[Package Reader]";
 	private static Boolean verbose = true;
-	private Double maxNe_en_ratio=MAX_NE_EN_RATIO_DEF;
+	private Double maxNe_xn_ratio=MAX_NE_EN_RATIO_DEF;
 	private Double maxAmplitude=MAX_AMPLITUDE_DEF;
-	private Double minNe_en_ratio=MIN_NE_EN_RATIO_DEF;
+	private Double minNe_xn_ratio=MIN_NE_EN_RATIO_DEF;
 	private Double minAmplitude=MIN_AMPLITUDE_DEF;
 	private static final String AMPLITUDES_FILE_NAME="mu_omega.txt";
 	private static final String AMPLITUDES_STD_DEVIATION_FILE_NAME="sigma_omega.txt";
 	private static final String TRACT_LENGTHS_FILE_NAME="mu_lambda.txt";
 	private static final String TRACT_LENGTHS_SHAPE_PARAMETERS_FILE_NAME="alpha_lambda.txt";
 	private static final String CENTRES_FILE_NAME="centres.txt";
-	private static final String WEIGHTS_FILE_NAME="Ne_en_ratio.txt";
-	private static final String CONNECTIONS_TYPE_FILE_NAME="conns_type.txt";
+	private static final String WEIGHTS_FILE_NAME="Ne_xn_ratio.txt";
+	private static final String CONNECTIONS_TYPE_FILE_NAME="conn_type.txt";
 	
 	public PackageReader (ConnectivityPackageManager rm){
 		this.rm=rm;
@@ -151,12 +151,12 @@ public class PackageReader {
 					if (i==j)
 						continue;
 					d=new Double(goodTkns[j]);
-					if (d>maxNe_en_ratio)
-						maxNe_en_ratio=d;
+					if (d>maxNe_xn_ratio)
+						maxNe_xn_ratio=d;
 					
 					if (!d.equals(zeroDouble)){
-						if (d<minNe_en_ratio)
-							minNe_en_ratio=d;
+						if (d<minNe_xn_ratio)
+							minNe_xn_ratio=d;
 						rm.addEdge(i, j, (d));
 						++edgesNum;
 					}
@@ -223,8 +223,8 @@ public class PackageReader {
 					d=new Double(goodTkns[j]);
 					
 					if (!d.equals(zeroDouble)){
-						if (d<minNe_en_ratio)
-							minNe_en_ratio=d;
+						if (d<minNe_xn_ratio)
+							minNe_xn_ratio=d;
 						rm.addAmplitudeStdDeviation(i, j, (d));
 					}
 				}
@@ -334,12 +334,12 @@ public class PackageReader {
 		return edgesNum;
 	}
 	
-	public Double getMinNe_en_ratio(){
-		return minNe_en_ratio;
+	public Double getMinNe_xn_ratio(){
+		return minNe_xn_ratio;
 	}
 	
-	public Double getMaxNe_en_ratio(){
-		return maxNe_en_ratio;
+	public Double getMaxNe_xn_ratio(){
+		return maxNe_xn_ratio;
 	}
 	
 	private void println(String s){

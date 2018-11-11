@@ -62,7 +62,7 @@ public class NodesInterconnection extends IntegerCouple{
 	public static final Integer INH2EXC=7;
 	public static final Integer INH2INH=8;
 	//the sm interconnection probability
-	private Double Ne_en_ratio;
+	private Double Ne_xn_ratio;
 	private Double mu_lambda= Constants.LENGTH_DEF_VAL;
 	private Double mu_omega=1.0;
 	private Double sigma_omega=0.0;
@@ -73,14 +73,14 @@ public class NodesInterconnection extends IntegerCouple{
 	public NodesInterconnection(
 			NodeThread r1, 
 			NodeThread r2, 
-			Double Ne_en_ratio, 
+			Double Ne_xn_ratio, 
 			Double mu_omega, 
 			Double sigma_omega, 
 			Double mu_lambda, 
 			Double alpha_lambda,
 			int type){
 		super(r1.getNodeId() ,r2.getNodeId());
-		this.Ne_en_ratio=Ne_en_ratio;
+		this.Ne_xn_ratio=Ne_xn_ratio;
 		this.mu_omega=mu_omega;
 		this.sigma_omega=sigma_omega;
 		this.mu_lambda=mu_lambda;
@@ -89,13 +89,13 @@ public class NodesInterconnection extends IntegerCouple{
 			
 	}
 	
-	public NodesInterconnection(Integer r1, Integer r2, Double Ne_en_ratio){
+	public NodesInterconnection(Integer r1, Integer r2, Double Ne_xn_ratio){
 		super(r1,r2);
-		this.Ne_en_ratio=Ne_en_ratio;
+		this.Ne_xn_ratio=Ne_xn_ratio;
 	}
 	
-	public Double getNe_en_ratio(){
-		return Ne_en_ratio;
+	public Double getNe_xn_ratio(){
+		return Ne_xn_ratio;
 	}
 	
 	public void setLength(Double length){

@@ -152,12 +152,12 @@ public class ConnectivityPackageManager {
 		pr.readConnectivityPackage(path);
 	}
 	
-	public Double getMinNe_en_ratio(){
-		return pr.getMinNe_en_ratio();
+	public Double getMinNe_xn_ratio(){
+		return pr.getMinNe_xn_ratio();
 	}
 	
-	public Double getMaxNe_en_ratio(){
-		return pr.getMaxNe_en_ratio();
+	public Double getMaxNe_xn_ratio(){
+		return pr.getMaxNe_xn_ratio();
 	}
 	
 	

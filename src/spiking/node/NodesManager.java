@@ -125,7 +125,7 @@ public class NodesManager implements Serializable {
 	public void addInterNodeConnection(
 			NodeThread node1, 
 			NodeThread node2, 
-			Double Ne_en_ratio, 
+			Double Ne_xn_ratio, 
 			Double mu_omega, 
 			Double sigma_omega, 
 			Double mu_lambda, 
@@ -136,7 +136,7 @@ public class NodesManager implements Serializable {
 		NodesInterconnection n_conn = new NodesInterconnection(
 				node1, 
 				node2, 
-				Ne_en_ratio,
+				Ne_xn_ratio,
 				mu_omega,
 				sigma_omega,
 				mu_lambda,
@@ -146,7 +146,7 @@ public class NodesManager implements Serializable {
 		_addInterRegionConnection(
 				node1.getNodeId(),
 				node2.getNodeId(),
-				Ne_en_ratio,
+				Ne_xn_ratio,
 				mu_omega,
 				sigma_omega, 
 				mu_lambda, 
@@ -220,7 +220,7 @@ public class NodesManager implements Serializable {
 	private void __addInterRegionConnection(
 			Integer reg1Id, 
 			Integer reg2Id, 
-			Double Ne_en_ratio, 
+			Double Ne_xn_ratio, 
 			Double mu_omega, 
 			Double sigma_omega, 
 			Double mu_lambda, 
@@ -257,7 +257,7 @@ public class NodesManager implements Serializable {
         // case MIXED2*
         else
             Nsrc = nodeThreads.get(reg1Id).getN();
-		long tmp = (long)(Nsrc*Ne_en_ratio);
+		long tmp = (long)(Nsrc*Ne_xn_ratio);
 		Long i1, i2;
 		GammaDistribution gd = (alpha_lambda!=null)?
 				new GammaDistribution(alpha_lambda, alpha_lambda/mu_lambda)
