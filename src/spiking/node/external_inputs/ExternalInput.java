@@ -139,7 +139,7 @@ public class ExternalInput {
 				}
 			}
 			if (type==CONSTANT){
-				for (int j=0; j<fireDuration; ++j){
+				for (int j=0; j<nBins; ++j){
 					timeMatrix[i].insert(
 							externalInputsTimeOffset+(j*timeStep),
 							new Long(j));
