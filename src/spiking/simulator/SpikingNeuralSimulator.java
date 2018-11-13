@@ -539,8 +539,8 @@ public class SpikingNeuralSimulator extends Thread{
             if (cmd.hasOption("help")){
             	formatter.printHelp("FNS", options);
             	System.out.println("\nExamples:");
-            	System.out.println("[Windows] \t> .\\start.bat exp01 -f -m 7 -p -M");
-            	System.out.println("[Linux] \t$ ./start exp01 -f -m 7 -p -M\n");
+            	System.out.println("[Windows] \t> .\\start.bat exp01 -f -m 7 -M");
+            	System.out.println("[Linux] \t$ ./start exp01 -f -m 7 -M\n");
                 System.exit(0);
                 return;
             }

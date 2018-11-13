@@ -524,9 +524,9 @@ public class StatisticsCollector extends Thread {
 				"no connection between nodes":(""+minNe_xn_ratio);
 		String maxNe_xn_ratioStr=(maxNe_xn_ratio==PackageReader.MAX_NE_EN_RATIO_DEF)?
 				"no connection between nodes":(""+maxNe_xn_ratio);
-		System.out.println("active:"+active);
-		System.out.println("passive:"+passive);
+		System.out.println("active to active:"+active);
 		System.out.println("active to passive:"+active2passive);
+		System.out.println("passive to passive:"+passive);
 		System.out.println("passive to active:"+passive2active);
 //		System.out.println("min Ne en ratio:"+minNe_xn_ratioStr);
 //		System.out.println("max Ne en ratio:"+maxNe_xn_ratioStr);
