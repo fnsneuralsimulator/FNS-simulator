@@ -1,15 +1,15 @@
 /**
-* This file is part of FNS (Firnet NeuroScience), ver.1.0.1
+* This file is part of FNS (Firnet NeuroScience), ver.2.0
 *
-* (c) 2017, Mario Salerno, Gianluca Susi, Alessandro Cristini, Emanuele Paracone.
+* (c) 2018, Mario Salerno, Gianluca Susi, Alessandro Cristini, Emanuele Paracone,
+* Fernando Maestú.
 *
 * CITATION:
 * When using FNS for scientific publications, cite us as follows:
 *
 * Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, Mario 
-* Salerno, Fernando Maestú, Ernesto Pereda (2018). "FNS: An event-driven spiking 
-* neural network framework for efficient simulations of large-scale brain 
-* models". 
+* Salerno, Fernando Maestú, Ernesto Pereda (2018). "FNS: an event-driven spiking
+* neural network simulator based on the LIFL neuron model". 
 * Laboratory of Cognitive and Computational Neuroscience, UPM-UCM Centre for 
 * Biomedical Technology, Technical University of Madrid; University of Rome "Tor 
 * Vergata".   
