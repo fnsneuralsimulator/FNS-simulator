@@ -1,7 +1,0 @@
-*.class
-bin/
-experiments/*
-/target/
-.classpath
-.project
-torem*
