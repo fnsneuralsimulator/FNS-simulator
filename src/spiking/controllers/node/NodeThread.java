@@ -60,7 +60,8 @@ public class NodeThread extends Thread{
 	
 	private final static String TAG = "[Node Thread ";
 	private final static Boolean verbose = true;
-    private final static Boolean LIF = false;
+  private final static Boolean LIF = false;
+  private final static Boolean EXP_DECAY = true;
 
 	private Node n;
 	private NodeNeuronsManager nnMan;
@@ -720,16 +721,54 @@ public class NodeThread extends Thread{
 			tmp=nnMan.getState(s.getBurning());
 			//passive state linear decay
 			if (tmp<nnMan.getSpikingThr()){
-				Double decay= (
+                Double decay;
+			    //linear decay
+                if (!EXP_DECAY){
+				    decay = (
                         nnMan.getLinearDecayD()*
                         (burnTime-
                                 (nnMan.getLastBurningTime(
                                         s.getBurning())/* *arp*/)));
-				nnMan.setState(
-                        s.getBurning(), 
-						tmp-decay);
+                    nnMan.setState(
+                            s.getBurning(), 
+                            tmp-decay);
+                }
+                //exponential decay
+                //Sj = Spj + A W -Tl =  A W + Spj e^(-delta t / D)
+                //Tl  =  Spj (1 - e^(-delta t / D))
+                else{
+                    Double post_pre_w = 
+                            n.getMu_w()*
+                            s.getPreSynapticWeight();
+                    decay = do_fast? (
+                        post_pre_w + 
+                        tmp*fm.fastexp(-(burnTime-
+                                nnMan.getLastBurningTime(
+                                        s.getBurning()))/
+                                nnMan.getLinearDecayD())
+                    ):(
+                        post_pre_w + 
+                        tmp*Math.exp(-(burnTime-
+                                nnMan.getLastBurningTime(
+                                        s.getBurning()))/
+                                nnMan.getLinearDecayD())
+                    );
+                    nnMan.setState(
+                            s.getBurning(), 
+                            decay);
+                }
 				if (nnMan.getState(s.getBurning())<0.0)
 					nnMan.setState(s.getBurning(), 0.0);
+				// Double decay= (
+        //                 nnMan.getLinearDecayD()*
+        //                 (burnTime-
+        //                         (nnMan.getLastBurningTime(
+        //                                 s.getBurning())/* *arp*/)));
+				// nnMan.setState(
+        //                 s.getBurning(), 
+				// 		tmp-decay);
+				// if (nnMan.getState(s.getBurning())<0.0)
+				// 	nnMan.setState(s.getBurning(), 0.0);
 			}
 			times[0]+=System.currentTimeMillis()-startTime;
 			startTime = System.currentTimeMillis();
