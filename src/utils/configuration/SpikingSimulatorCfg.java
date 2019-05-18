@@ -50,6 +50,8 @@ public class SpikingSimulatorCfg {
 	private NeuManCfg global_neuron_manager;
 	private ArrayList<NodeCfg> node = new ArrayList<NodeCfg>();
 	private ArrayList<RegionInterconnectionCfg> connection = new ArrayList<RegionInterconnectionCfg>();
+  private Boolean LIF;
+  private Boolean exp_decay;
 	private Double glob_rewiring_P;
 	private Integer glob_k;
 	private Long glob_n;
@@ -90,6 +92,22 @@ public class SpikingSimulatorCfg {
 	public void setPlasticity(Boolean plasticity) {
 		this.glob_plasticity = plasticity;
 	}
+
+  public Boolean getLif(){
+    return lif;
+  }
+
+  public void setLif(Boolean lif) {
+    this.lif=lif;
+  }
+
+  public Boolean getExp_decay() {
+    return exp_decay;
+  }
+
+  public void setExp_decay() {
+    this.exp_decay=exp_decay;
+  }
 
 	public ArrayList<NodeCfg> getNodes() {
 		return node;

@@ -9,7 +9,7 @@
 *
 * Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, Mario 
 * Salerno, Fernando Maestú, Ernesto Pereda (2018). "FNS: an event-driven spiking
-* neural network simulator based on the LIFL neuron model". 
+* neural network simulator based on the lifL neuron model". 
 * Laboratory of Cognitive and Computational Neuroscience, UPM-UCM Centre for 
 * Biomedical Technology, Technical University of Madrid; University of Rome "Tor 
 * Vergata".   
@@ -60,8 +60,6 @@ public class NodeThread extends Thread{
 	
 	private final static String TAG = "[Node Thread ";
 	private final static Boolean verbose = true;
-  private final static Boolean LIF = false;
-  private final static Boolean EXP_DECAY = true;
 
 	private Node n;
 	private NodeNeuronsManager nnMan;
@@ -88,6 +86,8 @@ public class NodeThread extends Thread{
 	private FastMath fm = new FastMath();
 	private Double debugMaxWPDiff=0.0;
 	private Boolean do_fast;
+  private Boolean lif = false;
+  private Boolean exp_decay = true;
 	long[] times= new long[10];
 	private StatisticsCollector sc;
 	private int toremDebug=0;
@@ -117,6 +117,8 @@ public class NodeThread extends Thread{
 			Double pwMax,
 			Double to,
 			Double avgNeuronalSignalSpeed,
+      Boolean lif, 
+      Boolean exp_decay, 
 			Boolean do_fast){
 		this.n=new Node(
 				id,
@@ -145,6 +147,8 @@ public class NodeThread extends Thread{
 				w_pre_inh, 
 				externalPresynapticDefVal, 
 				avgNeuronalSignalSpeed,
+        lif,
+        exp_decay,
 				do_fast);
 	}
 	
@@ -727,7 +731,7 @@ public class NodeThread extends Thread{
 			if (tmp<nnMan.getSpikingThr()){
                 Double decay;
 			    //linear decay
-                if (!EXP_DECAY){
+                if (!exp_decay){
 				    decay = (
                         nnMan.getLinearDecayD()*
                         (burnTime-
@@ -793,7 +797,7 @@ public class NodeThread extends Thread{
 				nnMan.setState(s.getBurning(), sx);
 				//passive to active
 				if (sx>=nnMan.getSpikingThr()){
-                    Double activeTransitionDelay=LIF?Constants.EPSILON:(1.0/(sx-1));
+                    Double activeTransitionDelay=lif?Constants.EPSILON:(1.0/(sx-1));
 					//nnMan.setTimeToFire(s.getBurning(), burnTime+ 1.0/(sx-1));
 					nnMan.setTimeToFire(s.getBurning(), burnTime+ activeTransitionDelay);
 					sc.collectPassive2active();

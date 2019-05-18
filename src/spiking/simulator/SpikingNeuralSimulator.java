@@ -254,6 +254,8 @@ public class SpikingNeuralSimulator extends Thread{
 		Double tmpPwMax;
 		Double tmpTo;
 		NeuManCfg nmcfg;
+    Boolean lif=new Boolean(ssg.getLif());
+    Boolean exp_decay=new Booolean(ssg.getExp_decay());
 		for (int i=0; i<cpm.getNodesNum();++i){
 			tmp = (nodeCs.size()>i)?nodeCs.get(i):null;
 			tmpN=((tmp!=null)&&(tmp.getN()!=null))?
@@ -333,6 +335,8 @@ public class SpikingNeuralSimulator extends Thread{
 						tmpPwMax,
 						tmpTo,
 						avgNeuronalSignalSpeed,
+            lif,
+            exp_decay,
 						do_fast));
 			}
 			else{
@@ -387,6 +391,8 @@ public class SpikingNeuralSimulator extends Thread{
 								tmpPwMax,
 								tmpTo,
 								avgNeuronalSignalSpeed,
+                lif,
+                exp_decay,
 								do_fast));
 			}
 		}
