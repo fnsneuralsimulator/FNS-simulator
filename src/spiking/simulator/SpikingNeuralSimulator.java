@@ -241,7 +241,8 @@ public class SpikingNeuralSimulator extends Thread{
 		Long tmpN;
 		Integer  tmpK, tmpExternal, tmpBn;
 		Double tmpExcitRatio;
-		Double tmp_mu_w;
+		Double tmp_mu_w_exc;
+		Double tmp_mu_w_inh;
 		Double tmpW_pre_exc;
 		Double tmpW_pre_inh;
 		Double tmpRewiringP;
@@ -260,9 +261,12 @@ public class SpikingNeuralSimulator extends Thread{
 			tmpExcitRatio = ((tmp!=null)&&(tmp.getExcitatory_inhibitory_ratio()!=null))?
 					tmp.getExcitatory_inhibitory_ratio():
 					ssc.getR();
-			tmp_mu_w=((tmp!=null)&&(tmp.getMu_w()!=null))?
-					tmp.getMu_w():
-					ssc.getGlob_mu_w();
+			tmp_mu_w_exc=((tmp!=null)&&(tmp.getMu_w_exc()!=null))?
+					tmp.getMu_w_exc():
+					ssc.getGlob_mu_w_exc();
+			tmp_mu_w_inh=((tmp!=null)&&(tmp.getMu_w_inh()!=null))?
+					tmp.getMu_w_inh():
+					ssc.getGlob_mu_w_inh();
 			tmpW_pre_exc=((tmp!=null)&&(tmp.getW_pre_exc()!=null))?
 					tmp.getW_pre_exc():
 					ssc.getGlob_w_pre_exc();
@@ -316,7 +320,8 @@ public class SpikingNeuralSimulator extends Thread{
 						nmcfg.getC(),
 						nmcfg.getD(),
 						nmcfg.getT_arp(),
-						tmp_mu_w,
+						tmp_mu_w_exc,
+						tmp_mu_w_inh,
 						tmpW_pre_exc,
 						tmpW_pre_inh,
 						Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 
@@ -369,7 +374,8 @@ public class SpikingNeuralSimulator extends Thread{
 								nmcfg.getC(),
 								nmcfg.getD(), 
 								nmcfg.getT_arp(),
-								tmp_mu_w,
+								tmp_mu_w_exc,
+								tmp_mu_w_inh,
 								tmpW_pre_exc,
 								tmpW_pre_inh,
 								Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 

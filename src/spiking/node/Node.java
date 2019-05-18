@@ -67,7 +67,8 @@ public class Node {
 	//proportion between excitatory and inhibithory
 	private Double R=0.8;
 	// postsynaptic weight
-	private Double mu_w;
+	private Double mu_w_exc;
+	private Double mu_w_inh;
 	//excitatory amplitude
 	private Double w_pre_exc;
 	//inhibitory amplitude
@@ -98,7 +99,8 @@ public class Node {
 			Integer id, 
 			Long n, 
 			Double R,
-			Double mu_w,
+			Double mu_w_exc,
+			Double mu_w_inh,
 			Double w_pre_exc,
 			Double w_pre_inh,
 			Integer k, 
@@ -115,7 +117,8 @@ public class Node {
 		this.id=id;
 		this.n=n;
 		this.R=R;
-		this.mu_w=mu_w;
+		this.mu_w_exc=mu_w_exc;
+		this.mu_w_inh=mu_w_inh;
 		this.w_pre_exc=w_pre_exc;
 		this.w_pre_inh=w_pre_inh<0?w_pre_inh:(-w_pre_inh);
 		this.k=k;
@@ -145,7 +148,8 @@ public class Node {
 			int fireDuration, 
 			Double externalAmplitude,
 			Double R, 
-			Double mu_w,
+			Double mu_w_exc,
+			Double mu_w_inh,
 			Double w_pre_exc,
 			Double w_pre_inh,
 			Integer k, 
@@ -164,8 +168,8 @@ public class Node {
 		this.externalInputType=externalInputType;
 		this.externalInputsTimeOffset=externalInputsTimeOffset;
 		this.R=R;
-		this.mu_w = mu_w;
-		println("mu w:"+this.mu_w);
+		this.mu_w_exc = mu_w_exc;
+		this.mu_w_inh = mu_w_inh;
 		this.w_pre_exc=w_pre_exc;
 		this.w_pre_inh=w_pre_inh<0?w_pre_inh:(-w_pre_inh);
 		if (externalInputs>0){
@@ -312,12 +316,24 @@ public class Node {
 		return R;
 	}
 
-	public Double getMu_w() {
-		return mu_w;
+	public Double getMu_w_exc() {
+		return mu_w_exc;
 	}
 
-	public void setMu_w(Double mu_w) {
-		this.mu_w = mu_w;
+	public Double getMu_w_inh() {
+		return mu_w_inh;
+	}
+
+	public Double getMu_w_agnostic(Long neuronId) {
+		return (isExcitatory(neuronId)?mu_w_exc:mu_w_inh);
+	}
+
+	public void setMu_w_exc(Double mu_w_exc) {
+		this.mu_w_exc = mu_w_exc;
+	}
+
+	public void setMu_w_inh(Double mu_w_inh) {
+		this.mu_w_inh = mu_w_inh;
 	}
 
 	public Double getExc_ampl() {

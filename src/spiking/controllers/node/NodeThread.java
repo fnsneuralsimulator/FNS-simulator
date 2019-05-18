@@ -104,7 +104,8 @@ public class NodeThread extends Thread{
 			Double d, 
 			Double ld, 
 			Double kr,
-			Double mu_w,
+			Double mu_w_exc,
+			Double mu_w_inh,
 			Double w_pre_exc,
 			Double w_pre_inh,
 			Double externalPresynapticDefVal, 
@@ -121,7 +122,8 @@ public class NodeThread extends Thread{
 				id,
 				n, 
 				excitProportion,
-				mu_w,
+				mu_w_exc,
+				mu_w_inh,
 				w_pre_exc,
 				w_pre_inh,
 				k, 
@@ -165,7 +167,8 @@ public class NodeThread extends Thread{
 			Double c, 
 			Double D, 
 			Double t_arp,
-			Double mu_w,
+			Double mu_w_exc,
+			Double mu_w_inh,
 			Double w_pre_exc,
 			Double w_pre_inh,
 			Double externalPresynapticDefVal, 
@@ -188,7 +191,8 @@ public class NodeThread extends Thread{
 				fireDuration,
 				externalAmplitude, 
 				excitRatio,
-				mu_w,
+				mu_w_exc,
+				mu_w_inh,
 				w_pre_exc,
 				w_pre_inh,
 				k, 
@@ -665,7 +669,7 @@ public class NodeThread extends Thread{
 							n.getId(), 
 							firingNeuronId%n.getN(), 
 							0.1,
-							n.getMu_w(),
+							n.getMu_w_exc(),
 //							1.0,
 							n.getExternalAmplitude(),
 							true,
@@ -737,8 +741,10 @@ public class NodeThread extends Thread{
                 //Sj = Spj + A W -Tl =  A W + Spj e^(-delta t / D)
                 //Tl  =  Spj (1 - e^(-delta t / D))
                 else{
+                    // se postsyn è a 1.0, allora preleva post da 
+                    // node oppure correggi syn creation
                     Double post_pre_w = 
-                            n.getMu_w()*
+                            s.getPostSynapticWeight()*
                             s.getPreSynapticWeight();
                     decay = do_fast? (
                         post_pre_w + 

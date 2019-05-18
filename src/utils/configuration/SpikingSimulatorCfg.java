@@ -54,7 +54,8 @@ public class SpikingSimulatorCfg {
 	private Integer glob_k;
 	private Long glob_n;
 	private Double glob_R;
-	private Double glob_mu_w;
+	private Double glob_mu_w_exc;
+	private Double glob_mu_w_inh;
 	private Double glob_w_pre_exc;
 	private Double glob_w_pre_inh;
 	private Integer glob_Bn;
@@ -179,12 +180,20 @@ public class SpikingSimulatorCfg {
 		this.glob_R = R;
 	}
 
-	public Double getGlob_mu_w() {
-		return glob_mu_w;
+	public Double getGlob_mu_w_exc() {
+		return glob_mu_w_exc;
 	}
 
-	public void setGlob_mu_w(Double glob_mu_w) {
-		this.glob_mu_w = glob_mu_w;
+	public Double getGlob_mu_w_inh() {
+		return glob_mu_w_inh;
+	}
+
+	public void setGlob_mu_w_exc(Double glob_mu_w_exc) {
+		this.glob_mu_w_exc = glob_mu_w_exc;
+	}
+
+	public void setGlob_mu_w_inh(Double glob_mu_w_inh) {
+		this.glob_mu_w_inh = glob_mu_w_inh;
 	}
 
 	public Double getGlob_w_pre_exc() {

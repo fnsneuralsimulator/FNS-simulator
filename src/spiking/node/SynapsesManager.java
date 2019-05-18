@@ -133,7 +133,7 @@ public class SynapsesManager {
 								n.getId(), 
 								tmpCouple.getBurning(),
 								0.0,
-								n.getMu_w(),
+								n.getMu_w_agnostic(tmpCouple.getBurning()),
 								tmp_presynaptic_w,
 								false,
 								false));

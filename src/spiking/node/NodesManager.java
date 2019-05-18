@@ -229,15 +229,15 @@ public class NodesManager implements Serializable {
 		/*
 		 * The schema for internode connections
 		 * 
-		 *   \        |       |       |       |
-		 *    \  from |	mixed |	 exc  |  inh  |
-		 *  to \      |       |       |       |
+		 *      \     |       |       |       |
+		 *       \ to |	mixed |	 exc  |  inh  |
+		 *  from  \   |       |       |       |
 		 * ------------------------------------
-		 *    mixed   |   0   |   3   |   6   |
+		 *    mixed   |   0   |   1   |   2   |
 		 * ------------------------------------
-		 *     exc    |   1   |   4   |   7   |
+		 *     exc    |   3   |   4   |   5   |
 		 * ------------------------------------
-		 *     inh    |   2   |   5   |   8   |
+		 *     inh    |   6   |   7   |   8   |
 		 * ------------------------------------
 		 *  
 		 */
