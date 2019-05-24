@@ -50,8 +50,8 @@ public class SpikingSimulatorCfg {
 	private NeuManCfg global_neuron_manager;
 	private ArrayList<NodeCfg> node = new ArrayList<NodeCfg>();
 	private ArrayList<RegionInterconnectionCfg> connection = new ArrayList<RegionInterconnectionCfg>();
-  private Boolean LIF;
-  private Boolean exp_decay;
+    private Boolean lif;
+    private Boolean exp_decay;
 	private Double glob_rewiring_P;
 	private Integer glob_k;
 	private Long glob_n;

@@ -5,4 +5,3 @@ FNS_JAR=$(ls target/*.jar)
 echo FNS_JAR=$FNS_JAR
 echo "java -Xmx1024m -Dfile.encoding=Cp1252 -jar $FNS_JAR \$@" 
 echo "java -Xmx1024m -Dfile.encoding=Cp1252 -jar $FNS_JAR \$@" > start
-

@@ -117,8 +117,8 @@ public class NodeThread extends Thread{
 			Double pwMax,
 			Double to,
 			Double avgNeuronalSignalSpeed,
-      Boolean lif, 
-      Boolean exp_decay, 
+            Boolean lif,
+            Boolean exp_decay,
 			Boolean do_fast){
 		this.n=new Node(
 				id,
@@ -147,8 +147,8 @@ public class NodeThread extends Thread{
 				w_pre_inh, 
 				externalPresynapticDefVal, 
 				avgNeuronalSignalSpeed,
-        lif,
-        exp_decay,
+                lif,
+                exp_decay,
 				do_fast);
 	}
 	
@@ -184,6 +184,8 @@ public class NodeThread extends Thread{
 			Double pwMax,
 			Double to,
 			Double avgNeuronalSignalSpeed,
+            Boolean lif, 
+            Boolean exp_decay, 
 			Boolean do_fast){
 		this.n=new Node(id,
 				n,
@@ -218,6 +220,8 @@ public class NodeThread extends Thread{
 				w_pre_inh, 
 				externalPresynapticDefVal, 
 				avgNeuronalSignalSpeed,
+                lif, 
+                exp_decay, 
 				do_fast);
 		
 	}
@@ -231,6 +235,8 @@ public class NodeThread extends Thread{
 			Double inhibithoryPresynapticDefVal, 
 			Double externalPresynapticDefVal, 
 			Double avgNeuronalSignalSpeed,
+            Boolean lif, 
+            Boolean exp_decay, 
 			Boolean do_fast){
 		sc=nMan.getStatisticsCollector();
 		queuesMap = new HashMap<Synapse, NiceQueue>();
@@ -251,6 +257,8 @@ public class NodeThread extends Thread{
 		println("c: "+c);
 		println("D: "+D);
 		println("t arp: "+t_arp);
+        this.lif=lif;
+        this.exp_decay=exp_decay;
 		this.do_fast=do_fast;
 	}
 	
