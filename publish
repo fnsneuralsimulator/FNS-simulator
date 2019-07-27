@@ -6,6 +6,7 @@ typeset -i VERSION=$(cat $VERSIONPATH/version)
 typeset -i SUBVERSION=$(cat $VERSIONPATH/subversion)
 typeset -i RELEASE=$(cat $VERSIONPATH/release)
 RELEASE=$(( RELEASE + 1 ))
+echo $RELEASE > $VERSIONPATH/release
 echo version: V$VERSION.$SUBVERSION.$RELEASE
 sed "s+<VERSION>+V$VERSION\.$SUBVERSION\.$RELEASE+g" $VERSIONPATH/pom.xml > pom.xml
 ./compile
