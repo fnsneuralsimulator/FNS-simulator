@@ -49,6 +49,7 @@ public class FixedBurnSpike implements Comparable<FixedBurnSpike>, Serializable{
 	public FixedBurnSpike(Synapse syn, Double burnTime, Double fireTime) {
 		this.syn=syn;
 		this.burnTime=burnTime;
+    this.fireTime=fireTime;
 	}
 
 	public Synapse getSyn() {
