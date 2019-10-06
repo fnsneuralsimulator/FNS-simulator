@@ -117,8 +117,8 @@ public class NodeThread extends Thread{
 			Double pwMax,
 			Double to,
 			Double avgNeuronalSignalSpeed,
-            Boolean lif,
-            Boolean exp_decay,
+      Boolean lif,
+      Boolean exp_decay,
 			Boolean do_fast){
 		this.n=new Node(
 				id,
@@ -147,8 +147,8 @@ public class NodeThread extends Thread{
 				w_pre_inh, 
 				externalPresynapticDefVal, 
 				avgNeuronalSignalSpeed,
-                lif,
-                exp_decay,
+        lif,
+        exp_decay,
 				do_fast);
 	}
 	
@@ -184,8 +184,8 @@ public class NodeThread extends Thread{
 			Double pwMax,
 			Double to,
 			Double avgNeuronalSignalSpeed,
-            Boolean lif, 
-            Boolean exp_decay, 
+      Boolean lif, 
+      Boolean exp_decay, 
 			Boolean do_fast){
 		this.n=new Node(id,
 				n,
@@ -220,8 +220,8 @@ public class NodeThread extends Thread{
 				w_pre_inh, 
 				externalPresynapticDefVal, 
 				avgNeuronalSignalSpeed,
-                lif, 
-                exp_decay, 
+        lif, 
+        exp_decay, 
 				do_fast);
 		
 	}
@@ -235,8 +235,8 @@ public class NodeThread extends Thread{
 			Double inhibithoryPresynapticDefVal, 
 			Double externalPresynapticDefVal, 
 			Double avgNeuronalSignalSpeed,
-            Boolean lif, 
-            Boolean exp_decay, 
+      Boolean lif, 
+      Boolean exp_decay, 
 			Boolean do_fast){
 		sc=nMan.getStatisticsCollector();
 		queuesMap = new HashMap<Synapse, NiceQueue>();
@@ -257,8 +257,8 @@ public class NodeThread extends Thread{
 		println("c: "+c);
 		println("D: "+D);
 		println("t arp: "+t_arp);
-        this.lif=lif;
-        this.exp_decay=exp_decay;
+    this.lif=lif;
+    this.exp_decay=exp_decay;
 		this.do_fast=do_fast;
 	}
 	
@@ -358,21 +358,43 @@ public class NodeThread extends Thread{
 //								if (currentTime>minFixedBurnTime)
 //									println("\n\n\n=========================>torem:"+debug_last_event);
 								currentTime=minFixedBurnTime;
-								burnNeuron(fixedBurnSpike.getSyn(),fixedBurnSpike.getBurnTime(),fixedBurnSpike.getFireTime(),false);
+								burnNeuron(
+                    fixedBurnSpike.getSyn(),
+                    fixedBurnSpike.getBurnTime(),
+                    fixedBurnSpike.getFireTime(),
+                    false);
+                sc.collectFireSpike(
+                    n.getId(), 
+                    //firingNeuronId, 
+                    fixedBurnSpike.getSyn().getAxonNeuronId(),
+                    //currentTime;
+                    fixedBurnSpike.getFireTime(), 
+                    nMan.getMaxN(), 
+                    nMan.getCompressionFactor(),
+                    //(firingNeuronId<n.getExcitatory()),
+                    (fixedBurnSpike.getSyn().getAxonNeuronId()<n.getExcitatory()),
+                    //(firingNeuronId>=n.getN()) );
+                    (fixedBurnSpike.getSyn().getAxonNeuronId()>=n.getN()) );
 								continue;
 							}
 						}
 						else if (minFixedBurnTime<Double.MAX_VALUE) {
 							FixedBurnSpike fixedBurnSpike = burningQueueSpikes.poll();
 							debug_last_event=25;
-//							if (currentTime>minFixedBurnTime)
-//								println("\n\n\n=========================>torem:"+debug_last_event);
 							currentTime=minFixedBurnTime;
 							burnNeuron(
-                                    fixedBurnSpike.getSyn(),
-                                    fixedBurnSpike.getBurnTime(),
-                                    fixedBurnSpike.getFireTime(),
-                                    false);
+                  fixedBurnSpike.getSyn(),
+                  fixedBurnSpike.getBurnTime(),
+                  fixedBurnSpike.getFireTime(),
+                  false);
+              sc.collectFireSpike(
+                  n.getId(), 
+                  fixedBurnSpike.getSyn().getAxonNeuronId(),
+                  fixedBurnSpike.getFireTime(), 
+                  nMan.getMaxN(), 
+                  nMan.getCompressionFactor(),
+                  (fixedBurnSpike.getSyn().getAxonNeuronId()<n.getExcitatory()),
+                  (fixedBurnSpike.getSyn().getAxonNeuronId()>=n.getN()) );
 							continue;
 						}
 						else {
@@ -415,14 +437,14 @@ public class NodeThread extends Thread{
 				debug_last_event=1;
 				if (currentTime>spikeTime)
 					println(
-                            "\n=========================>torem:"+
-                            old_debug+
-                            "-->"+
-                            debug_last_event+
-                            "  current time:"+
-                            currentTime+
-                            " new time:"+
-                            spikeTime);
+              "\n=========================>torem:"+
+              old_debug+
+              "-->"+
+              debug_last_event+
+              "  current time:"+
+              currentTime+
+              " new time:"+
+              spikeTime);
 				currentTime = spikeTime;
 				sc.collectFireSpike(
 						n.getId(), 
@@ -805,7 +827,7 @@ public class NodeThread extends Thread{
 				nnMan.setState(s.getBurning(), sx);
 				//passive to active
 				if (sx>=nnMan.getSpikingThr()){
-                    Double activeTransitionDelay=lif?Constants.EPSILON:(1.0/(sx-1));
+          Double activeTransitionDelay=lif?Constants.EPSILON:(1.0/(sx-1));
 					//nnMan.setTimeToFire(s.getBurning(), burnTime+ 1.0/(sx-1));
 					nnMan.setTimeToFire(s.getBurning(), burnTime+ activeTransitionDelay);
 					sc.collectPassive2active();

@@ -209,7 +209,8 @@ public class Synapse implements Comparable<Synapse>, Serializable{
 	@Override
 	public String toString() {
 		return "[firing:" + axonRegionId+"-"+axonNeuronId
-				+ ", burning:"+dendriteRegionId +"-"+ dendriteNeuronId +" from external:"+ fromExternalNode+"]";
+				+ ", burning:"+dendriteRegionId +"-"+ dendriteNeuronId 
+        +" from external:"+ fromExternalNode+"]";
 	}
 
 	@Override
