@@ -36,6 +36,7 @@ import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.HashMap;
 import connectivity.nodes.ConnectivityPackageManager;
 import utils.tools.NiceQueue;
 import spiking.controllers.node.NodeThread;
@@ -231,7 +232,8 @@ public class SpikingNeuralSimulator extends Thread{
 		System.out.println("reading config file:"+configPath);
 		SpikingSimulatorCfg ssc = SpikingConfigManager.readConfigFile(configPath);
 		setTotalTime(new Double(ssc.getStop()));
-		ArrayList<NodeCfg> nodeCs =  ssc.getNodes();
+		//ArrayList<NodeCfg> nodeCs =  ssc.getNodes();
+		HashMap <Integer, NodeCfg> nodeCs =  ssc.getNodesMap();
 		avgNeuronalSignalSpeed=ssc.getAvg_neuronal_signal_speed();
 		times[1]=System.currentTimeMillis()-lastTime;
 		lastTime+=times[1];
@@ -257,7 +259,12 @@ public class SpikingNeuralSimulator extends Thread{
     Boolean lif=new Boolean(ssc.getLif());
     Boolean exp_decay=new Boolean(ssc.getExp_decay());
 		for (int i=0; i<cpm.getNodesNum();++i){
-			tmp = (nodeCs.size()>i)?nodeCs.get(i):null;
+			//tmp = (nodeCs.size()>i)?nodeCs.get(i):null;
+      //if (nodeCs.get(i) != null){
+      //  System.out.println("Node:"+ i);
+      //  System.exit(0);
+      //}
+			tmp = ( nodeCs.get(i) != null )?nodeCs.get(i):null;
 			tmpN=((tmp!=null)&&(tmp.getN()!=null))?
 					tmp.getN():ssc.getGlob_local_n();
 			tmpExcitRatio = ((tmp!=null)&&(tmp.getExcitatory_inhibitory_ratio()!=null))?

@@ -34,6 +34,7 @@ package utils.configuration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -111,6 +112,15 @@ public class SpikingSimulatorCfg {
 
 	public ArrayList<NodeCfg> getNodes() {
 		return node;
+	}
+
+	public HashMap<Integer,NodeCfg> getNodesMap() {
+    HashMap<Integer, NodeCfg> nodesMap = new HashMap<Integer, NodeCfg>();
+    for (NodeCfg tmpNode : node) {
+      nodesMap.put(tmpNode.getId(), tmpNode);
+      //System.out.println("tmpNode:" + tmpNode.getId() );
+    }
+		return nodesMap;
 	}
 
 	public void setNodes(ArrayList<NodeCfg> nodes) {
