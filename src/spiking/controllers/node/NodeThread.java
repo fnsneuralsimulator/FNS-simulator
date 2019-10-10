@@ -87,7 +87,7 @@ public class NodeThread extends Thread{
 	private Double debugMaxWPDiff=0.0;
 	private Boolean do_fast;
   private Boolean lif = false;
-  private Boolean exp_decay = true;
+  private Boolean exp_decay = false;
 	long[] times= new long[10];
 	private StatisticsCollector sc;
 	private int toremDebug=0;
@@ -753,62 +753,50 @@ public class NodeThread extends Thread{
 			long startTime = System.currentTimeMillis();
 			
 			burning_ltd(
-                    s, 
-                    burnTime, 
-                    nnMan.getLastFiringTime(s.getBurning()));
+          s, 
+          burnTime, 
+          nnMan.getLastFiringTime(s.getBurning()));
 			tmp=nnMan.getState(s.getBurning());
 			//passive state linear decay
 			if (tmp<nnMan.getSpikingThr()){
-                Double decay;
-			    //linear decay
-                if (!exp_decay){
-				    decay = (
-                        nnMan.getLinearDecayD()*
-                        (burnTime-
-                                (nnMan.getLastBurningTime(
-                                        s.getBurning())/* *arp*/)));
-                    nnMan.setState(
-                            s.getBurning(), 
-                            tmp-decay);
-                }
-                //exponential decay
-                //Sj = Spj + A W -Tl =  A W + Spj e^(-delta t / D)
-                //Tl  =  Spj (1 - e^(-delta t / D))
-                else{
-                    // se postsyn è a 1.0, allora preleva post da 
-                    // node oppure correggi syn creation
-                    Double post_pre_w = 
-                            s.getPostSynapticWeight()*
-                            s.getPreSynapticWeight();
-                    decay = do_fast? (
-                        post_pre_w + 
-                        tmp*fm.fastexp(-(burnTime-
-                                nnMan.getLastBurningTime(
-                                        s.getBurning()))/
-                                nnMan.getLinearDecayD())
-                    ):(
-                        post_pre_w + 
-                        tmp*Math.exp(-(burnTime-
-                                nnMan.getLastBurningTime(
-                                        s.getBurning()))/
-                                nnMan.getLinearDecayD())
-                    );
-                    nnMan.setState(
-                            s.getBurning(), 
-                            decay);
-                }
+        Double decay;
+        //linear decay
+        if (!exp_decay){
+            decay = (
+                nnMan.getLinearDecayD()*
+                (burnTime-
+                        (nnMan.getLastBurningTime(
+                                s.getBurning())/* *arp*/)));
+                nnMan.setState(
+                        s.getBurning(), 
+                        tmp-decay);
+        }
+        //exponential decay
+        //Sj = Spj + A * W -Tl =  A W + Spj e^(-delta t / D)
+        //Tl  =  Spj (1 - e^(-delta t / D))
+        //if (exp_decay){
+        else{
+            decay = do_fast? (
+                tmp * (
+                    1 - fm.fastexp(
+                        - ( burnTime -
+                            nnMan.getLastBurningTime(s.getBurning())
+                        )/
+                        nnMan.getLinearDecayD()))
+            ):(
+                tmp * (
+                    1 - Math.exp(
+                        -(burnTime-
+                            nnMan.getLastBurningTime(s.getBurning())
+                        )/
+                        nnMan.getLinearDecayD()))
+            );
+            nnMan.setState(
+                s.getBurning(), 
+                tmp-decay);
+        }
 				if (nnMan.getState(s.getBurning())<0.0)
 					nnMan.setState(s.getBurning(), 0.0);
-				// Double decay= (
-        //                 nnMan.getLinearDecayD()*
-        //                 (burnTime-
-        //                         (nnMan.getLastBurningTime(
-        //                                 s.getBurning())/* *arp*/)));
-				// nnMan.setState(
-        //                 s.getBurning(), 
-				// 		tmp-decay);
-				// if (nnMan.getState(s.getBurning())<0.0)
-				// 	nnMan.setState(s.getBurning(), 0.0);
 			}
 			times[0]+=System.currentTimeMillis()-startTime;
 			startTime = System.currentTimeMillis();
@@ -822,26 +810,25 @@ public class NodeThread extends Thread{
 			// UPDATING List of Active Neurons
 			// case of passive neuron
 			if (nnMan.getTimeToFire(s.getBurning()).equals(Constants.TIME_TO_FIRE_DEF_VAL)){
-				oldSx=sx;
-				sx = ((sx+sy)<0)?0:sx+sy;
-				nnMan.setState(s.getBurning(), sx);
-				//passive to active
-				if (sx>=nnMan.getSpikingThr()){
+        oldSx=sx;
+        sx = ((sx+sy)<0)?0:sx+sy;
+        nnMan.setState(s.getBurning(), sx);
+        //passive to active
+        if (sx>=nnMan.getSpikingThr()){
           Double activeTransitionDelay=lif?Constants.EPSILON:(1.0/(sx-1));
-					//nnMan.setTimeToFire(s.getBurning(), burnTime+ 1.0/(sx-1));
-					nnMan.setTimeToFire(s.getBurning(), burnTime+ activeTransitionDelay);
-					sc.collectPassive2active();
-					nnMan.addActiveNeuron(
-                            s.getBurning(), 
-                            nnMan.getTimeToFire(s.getBurning()), 
-                            currentTime, 
-                            2);
-				}
-				else{
-					sc.collectPassive();
-				}
+          //nnMan.setTimeToFire(s.getBurning(), burnTime+ 1.0/(sx-1));
+          nnMan.setTimeToFire(s.getBurning(), burnTime+ activeTransitionDelay);
+          sc.collectPassive2active();
+          nnMan.addActiveNeuron(
+              s.getBurning(), 
+              nnMan.getTimeToFire(s.getBurning()), 
+              currentTime, 
+              2);
+        }
+        else{
+          sc.collectPassive();
+        }
 				times[1]+=System.currentTimeMillis()-startTime;
-				
 			}
 			//case of active neuron
 			else{
