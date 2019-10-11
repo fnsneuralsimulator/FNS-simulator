@@ -290,6 +290,8 @@ public class SpikingNeuralSimulator extends Thread{
 					tmp.getExternal_inputs_number() : ssc.getGlob_external_inputs_number();
 			tmpBn=((tmp!=null)&&(tmp.getBn()!=null))?
 					tmp.getBn() : ssc.getGlob_Bn();
+      if (tmpBn==0)
+        tmpBn=1;
 			tmpIBI=((tmp!=null)&&(tmp.getIBI()!=null))?
 					tmp.getIBI() : ssc.getGlob_IBI();
 			nmcfg=((tmp!=null)&&(tmp.getNeuron_manager()!=null))?
