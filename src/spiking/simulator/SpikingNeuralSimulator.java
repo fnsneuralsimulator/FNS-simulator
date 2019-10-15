@@ -87,14 +87,23 @@ public class SpikingNeuralSimulator extends Thread{
 	public static final Double IBITest=0.001;
 	private static final Double epsilon = 0.00000001;
 	long[] times= new long[10];
-	// the coefficient for which multiply the BOP to obtain a cycle: 
-	// 		1. if it is less than 1, than we fall into the optimistic simulation
-	//		2. if it is greater or equal to 1, than we have a conservative behavior
-	private static final Double bop_to_cycle_factor=1.0;
-	private StatisticsCollector sc=new StatisticsCollector();
+	/* the coefficient for which multiply the BOP to obtain a cycle: 
+	* 	1. if it is less than 1, than we fall into the optimistic 
+  *      simulation
+	*		2. if it is greater or equal to 1, than we have a conservative 
+         behavior
+  *   Note: using a gamma distribution with shape parameter 
+  *         (alpha_lambda) for the connectivity topology lengths, we 
+  *         need to re-calculate such factor in order to controll 
+  *         lossess between nodes under the bop_conservative_p
+  *         probability.
+  */
+	private static final Double bop_to_cycle_factor = 1.0;
+	private static final Double bop_conservative_p = 0.9999;
+	private StatisticsCollector sc = new StatisticsCollector();
 	
 	public SpikingNeuralSimulator (){
-		nMan = new NodesManager(this, sc);
+		nMan = new NodesManager(this, sc, bop_conservative_p);
 		sc.start();
 	}
 	
@@ -113,7 +122,8 @@ public class SpikingNeuralSimulator extends Thread{
 				(""+nMan.getMinTractLength()):" there are no connection betwen regions.";
 		println("min tract length:"+minTractLengthStr);
 		println("avg neuronal signal speed:"+avgNeuronalSignalSpeed);
-		cycle_time=(nMan.getMinTractLength()+epsilon)/(avgNeuronalSignalSpeed*bop_to_cycle_factor);
+		cycle_time=(nMan.getMinTractLength()+epsilon)/
+        (avgNeuronalSignalSpeed*bop_to_cycle_factor);
 		//println("cycle time:"+cycle_time);
 	}
 
