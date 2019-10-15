@@ -297,83 +297,111 @@ public class NodeThread extends Thread{
 								tmpFixedBurnSpike.getBurnTime();
 					// case of first arrival of inter-node burn  
 					if (tmpInterNodeBurningSpike!=null){
-						tmpMinInterNodeBurningTime=tmpInterNodeBurningSpike.getTimeToBurn();
-						if ((tmpMinInterNodeBurningTime!=null)&&(tmpMinInterNodeBurningTime<stopTime)){
+						tmpMinInterNodeBurningTime = 
+                tmpInterNodeBurningSpike.getTimeToBurn();
+						if ((tmpMinInterNodeBurningTime!=null)&&
+                (tmpMinInterNodeBurningTime<stopTime)){
 							if (tmpMinFiringTime!=null){
+                // inter-node burn processing first
 								if ((tmpMinInterNodeBurningTime<tmpMinFiringTime) &&
 										(tmpMinInterNodeBurningTime<minFixedBurnTime)){
 									InterNodeSpike irs=interNodeBurningSpikes.poll().getInterNodeSpike();
 									if (tmpMinInterNodeBurningTime<currentTime) {
-										println("internode burning:"+tmpMinInterNodeBurningTime+" min FixedBurn:"+minFixedBurnTime+" tmpMinFiringTime:"+tmpMinFiringTime);
-										println("torem - current time last update:"+debug_last_event+", axonal del:"+tmpInterNodeBurningSpike.getInterNodeSpike().getAxonalDelay()+", current time:"+currentTime+", syn:"+tmpInterNodeBurningSpike.getInterNodeSpike().getSyn());
+										println("internode burning:"+
+                        tmpMinInterNodeBurningTime+
+                        " min FixedBurn:"+
+                        minFixedBurnTime+
+                        " tmpMinFiringTime:"+
+                        tmpMinFiringTime);
+										println("torem - current time last update:"+
+                        debug_last_event+
+                        ", axonal del:"+
+                        tmpInterNodeBurningSpike.getInterNodeSpike().getAxonalDelay()+
+                        ", current time:"+
+                        currentTime+
+                        ", syn:"+
+                        tmpInterNodeBurningSpike.getInterNodeSpike().getSyn());
 										if (interNodeBurningSpikes.peek()!=null)
-											println("polled:"+irs.getBurnTime()+" peeked:"+interNodeBurningSpikes.peek().getTimeToBurn()+"\n");
-//										println("torem - internode burning time:"+tmpMinInterNodeBurningTime+" current:"+currentTime);
+											println("polled:"+
+                          irs.getBurnTime()+
+                          " peeked:"+
+                          interNodeBurningSpikes.peek().getTimeToBurn()+
+                          "\n");
 									}
-									if ((interNodeBurningSpikes.peek()!=null)&&(irs.getBurnTime()>interNodeBurningSpikes.peek().getTimeToBurn()))
-										println("polled:"+irs.getBurnTime()+" peeked:"+interNodeBurningSpikes.peek().getTimeToBurn()+" syn:"+tmpInterNodeBurningSpike.getInterNodeSpike().getSyn());
+									if ((interNodeBurningSpikes.peek()!=null)&&
+                      (irs.getBurnTime()>interNodeBurningSpikes.peek().getTimeToBurn()))
+										println("polled:"+
+                        irs.getBurnTime()+
+                        " peeked:"+
+                        interNodeBurningSpikes.peek().getTimeToBurn()+
+                        " syn:"+
+                        tmpInterNodeBurningSpike.getInterNodeSpike().getSyn());
 									debug_last_event=35;
-//									if (currentTime>tmpMinInterNodeBurningTime)
-//										println("\n\n\n=========================>torem:"+debug_last_event);
 									currentTime=tmpMinInterNodeBurningTime;
-									burnNeuron(irs.getSyn(), irs.getBurnTime(), irs.getFireTime(), false);
+									burnNeuron(
+                      irs.getSyn(), 
+                      irs.getBurnTime(), 
+                      irs.getFireTime(), 
+                      false);
 									continue;
 								}
 							}
+              // there is no next node-internal spike, check inter-node 
+              // against fixed burn 
 							else if (tmpMinInterNodeBurningTime<minFixedBurnTime){
 								InterNodeSpike irs=interNodeBurningSpikes.poll().getInterNodeSpike();
 								debug_last_event=3;
-//								if (currentTime>tmpMinInterNodeBurningTime)
-//									println("\n\n\n=========================>torem:"+debug_last_event);
 								currentTime=tmpMinInterNodeBurningTime;
-								burnNeuron(irs.getSyn(), irs.getBurnTime(), irs.getFireTime(), false);
+								burnNeuron(
+                    irs.getSyn(), 
+                    irs.getBurnTime(), 
+                    irs.getFireTime(), 
+                    false);
 								continue;
 							}
 						}
 					}
 					// case of first arrival of bursting queue spike to be burn
 					if (minFixedBurnTime<stopTime) {
-						if (minFixedBurnTime<currentTime) {
-							println("min FixedBurn:"+
-                                    minFixedBurnTime+
-                                    " tmpMinFiringTime:"+
-                                    tmpMinFiringTime);
-							println("torem - current time last update:"+
-                                    debug_last_event+
-                                    ", axonal del:"+
-                                    tmpInterNodeBurningSpike.getInterNodeSpike().getAxonalDelay()+
-                                    ", current time:"+
-                                    currentTime+
-                                    ", syn:"+
-                                    tmpInterNodeBurningSpike.getInterNodeSpike().getSyn());
-						}					
+						//if (minFixedBurnTime<currentTime) {
+						//	println("min FixedBurn:"+
+            //                        minFixedBurnTime+
+            //                        " tmpMinFiringTime:"+
+            //                        tmpMinFiringTime);
+						//	println("torem - current time last update:"+
+            //                        debug_last_event+
+            //                        ", axonal del:"+
+            //                        tmpInterNodeBurningSpike.getInterNodeSpike().getAxonalDelay()+
+            //                        ", current time:"+
+            //                        currentTime+
+            //                        ", syn:"+
+            //                        tmpInterNodeBurningSpike.getInterNodeSpike().getSyn());
+						//}					
 						if (tmpMinFiringTime!=null){
 							if (minFixedBurnTime<tmpMinFiringTime) {
 								FixedBurnSpike fixedBurnSpike = burningQueueSpikes.poll();
 								debug_last_event=2;
 								if (tmpFixedBurnSpike.getBurnTime()!=fixedBurnSpike.getBurnTime()) {
-									println("tada!:"+tmpFixedBurnSpike.getBurnTime()+"!="+fixedBurnSpike.getBurnTime());
+									println("tada!:"+
+                      tmpFixedBurnSpike.getBurnTime()+
+                      "!="+
+                      fixedBurnSpike.getBurnTime());
 									System.exit(1);
 								}
-//								if (currentTime>minFixedBurnTime)
-//									println("\n\n\n=========================>torem:"+debug_last_event);
 								currentTime=minFixedBurnTime;
 								burnNeuron(
                     fixedBurnSpike.getSyn(),
                     fixedBurnSpike.getBurnTime(),
-                    fixedBurnSpike.getFireTime(),
+                    minFixedBurnTime,
                     false);
                 sc.collectFireSpike(
                     n.getId(), 
-                    //firingNeuronId, 
                     fixedBurnSpike.getSyn().getAxonNeuronId(),
-                    //currentTime;
-                    fixedBurnSpike.getFireTime(), 
+                    fixedBurnSpike.getBurnTime(), 
+                    //currentTime, 
                     nMan.getMaxN(), 
                     nMan.getCompressionFactor(),
-                    //(firingNeuronId<n.getExcitatory()),
                     (fixedBurnSpike.getSyn().getAxonNeuronId()<n.getExcitatory()),
-                    //(firingNeuronId>=n.getN()) );
                     (fixedBurnSpike.getSyn().getAxonNeuronId()>=n.getN()) );
 								continue;
 							}
@@ -390,7 +418,8 @@ public class NodeThread extends Thread{
               sc.collectFireSpike(
                   n.getId(), 
                   fixedBurnSpike.getSyn().getAxonNeuronId(),
-                  fixedBurnSpike.getFireTime(), 
+                  //fixedBurnSpike.getFireTime(), 
+                  fixedBurnSpike.getBurnTime(), 
                   nMan.getMaxN(), 
                   nMan.getCompressionFactor(),
                   (fixedBurnSpike.getSyn().getAxonNeuronId()<n.getExcitatory()),
@@ -422,13 +451,6 @@ public class NodeThread extends Thread{
 					}
 				}
 				else{
-//					if (spikeTime>stopTime){
-//						stopped=true;
-//						break;
-//					}
-//					else {
-//						stopped=false;
-//					}
 					break;
 				}
 				//case of first firing of a burst
@@ -449,7 +471,7 @@ public class NodeThread extends Thread{
 				sc.collectFireSpike(
 						n.getId(), 
 						firingNeuronId, 
-						currentTime, 
+						spikeTime, 
 						nMan.getMaxN(), 
 						nMan.getCompressionFactor(),
 						(firingNeuronId<n.getExcitatory()),
@@ -459,15 +481,6 @@ public class NodeThread extends Thread{
 					//State resetting to passive mode
 					nnMan.resetState(firingNeuronId);
 					nnMan.resetTimeToFire(firingNeuronId);
-					for (int i=1; i<n.getBn();++i)
-						sc.collectFireSpike(
-								n.getId(), 
-								firingNeuronId, 
-								currentTime+i*n.getIBI(), 
-								nMan.getMaxN(), 
-								nMan.getCompressionFactor(),
-								(firingNeuronId<n.getExcitatory()),
-								(firingNeuronId>=n.getN()) );
 				}
 				// last firing time for neuron
 				nnMan.setLastFiringTime(firingNeuronId, currentTime);
@@ -581,35 +594,18 @@ public class NodeThread extends Thread{
 	 * Multiplicative Learning Rule using STDP (soft-bound) Spike time depending plasticity
 	 * 
 	 *  LTP: Pw = Pwold + (pwmax - Pwold)*Etap*(-delta/taup)
-   	 *	LTD: Pw = Pwold - Pwold*Etam*(delta/taum)
-     *	with delta = tpost - tpre
-  
+ 	 *	LTD: Pw = Pwold - Pwold*Etam*(delta/taum)
+   *	with delta = tpost - tpre
+   *
  	 *	NB: in the case of LTD, tpost represents the burning neuron last burning 
-     *	time, whereas tpre is the current "tempo".
+   *	time, whereas tpre is the current "tempo".
  	 *	This rule is applied for only exc-exc intermolule connections   
- 
+   *
 	 * @param spikingNeuronId
 	 * @param presentNeuronId
 	 * @param currentTime
 	 */
 	
-//	private void plast(Long spikingNeuronId, Synapse syn, Double currentTime){
-//		if (syn.getBurning()==null)
-//			return;
-//		Afferent aff = affMan.popNoLtp(syn);
-//		Double delta;
-//		//LTP - Long Term Potentiation 
-//		if (aff!=null){
-//			delta = currentTime - aff.getLastFireTime();
-//			if (delta>0)
-//				aff.setOldPostsynapticWeight( aff.getOldPostSynapticWeight() + 
-//						(affMan.getPwMax()-aff.getOldPostSynapticWeight()) * affMan.getEtap() * 
-//						Math.exp(- delta / affMan.getTaup() ) );
-//			synMan.setPostSynapticWeight(syn, aff.getOldPostSynapticWeight());
-//			aff.setLtpFlag(false);
-//			affMan.addAfferent(aff);
-//		}
-//	}
 	
 	/**
 	 * Plasticity rule for firing events.
@@ -634,7 +630,6 @@ public class NodeThread extends Thread{
 			Double delta;
 			delta=fireTime-synapses.get(i).getLastBurningTime();
 			if (delta < n.getTo()){
-//				Double wp=synMan.getPostSynapticWeight(synapses.get(i)); 
 				Double wp=synapses.get(i).getPostSynapticWeight();
 				wp+=do_fast?
 						(n.getPwMax()-wp)*n.getEtap()*fm.fastexp(-delta/n.getTaup()):
@@ -648,7 +643,6 @@ public class NodeThread extends Thread{
 			Double delta;
 			delta=fireTime-interNodeSynapses.get(i).getLastBurningTime();
 			if (delta < n.getTo()){
-//				Double wp=synMan.getPostSynapticWeight(interNodeSynapses.get(i));
 				Double wp=interNodeSynapses.get(i).getPostSynapticWeight();
 				wp+=do_fast?
 						(n.getPwMax()-wp)*n.getEtap()*fm.fastexp(-delta/n.getTaup()):
