@@ -5,4 +5,4 @@ experiments/*
 .classpath
 .project
 torem*
-dev_compile
+dev_*
