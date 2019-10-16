@@ -272,6 +272,9 @@ public class NodeThread extends Thread{
 		Double minFixedBurnTime;
 		InterNodeBurningSpike tmpInterNodeBurningSpike;
 		FixedBurnSpike tmpFixedBurnSpike;
+    Integer lastCollectedBurstFiringNodeId=-1;
+    Long lastCollectedBurstFiringNeuronId=-1l;
+    Double lastCollectedBurstFiringBurnTime=-1.0;
 		int fires=0;
 		Boolean stopped=false;	
 		// debug variable for last event type: 
@@ -305,7 +308,8 @@ public class NodeThread extends Thread{
                 // inter-node burn processing first
 								if ((tmpMinInterNodeBurningTime<tmpMinFiringTime) &&
 										(tmpMinInterNodeBurningTime<minFixedBurnTime)){
-									InterNodeSpike irs=interNodeBurningSpikes.poll().getInterNodeSpike();
+									InterNodeSpike irs=
+                      interNodeBurningSpikes.poll().getInterNodeSpike();
 									if (tmpMinInterNodeBurningTime<currentTime) {
 										println("internode burning:"+
                         tmpMinInterNodeBurningTime+
@@ -349,7 +353,8 @@ public class NodeThread extends Thread{
               // there is no next node-internal spike, check inter-node 
               // against fixed burn 
 							else if (tmpMinInterNodeBurningTime<minFixedBurnTime){
-								InterNodeSpike irs=interNodeBurningSpikes.poll().getInterNodeSpike();
+								InterNodeSpike irs=
+                    interNodeBurningSpikes.poll().getInterNodeSpike();
 								debug_last_event=3;
 								currentTime=tmpMinInterNodeBurningTime;
 								burnNeuron(
@@ -363,25 +368,12 @@ public class NodeThread extends Thread{
 					}
 					// case of first arrival of bursting queue spike to be burn
 					if (minFixedBurnTime<stopTime) {
-						//if (minFixedBurnTime<currentTime) {
-						//	println("min FixedBurn:"+
-            //                        minFixedBurnTime+
-            //                        " tmpMinFiringTime:"+
-            //                        tmpMinFiringTime);
-						//	println("torem - current time last update:"+
-            //                        debug_last_event+
-            //                        ", axonal del:"+
-            //                        tmpInterNodeBurningSpike.getInterNodeSpike().getAxonalDelay()+
-            //                        ", current time:"+
-            //                        currentTime+
-            //                        ", syn:"+
-            //                        tmpInterNodeBurningSpike.getInterNodeSpike().getSyn());
-						//}					
 						if (tmpMinFiringTime!=null){
 							if (minFixedBurnTime<tmpMinFiringTime) {
 								FixedBurnSpike fixedBurnSpike = burningQueueSpikes.poll();
 								debug_last_event=2;
-								if (tmpFixedBurnSpike.getBurnTime()!=fixedBurnSpike.getBurnTime()) {
+								if (tmpFixedBurnSpike.getBurnTime()!=
+                    fixedBurnSpike.getBurnTime()) {
 									println("tada!:"+
                       tmpFixedBurnSpike.getBurnTime()+
                       "!="+
@@ -394,15 +386,25 @@ public class NodeThread extends Thread{
                     fixedBurnSpike.getBurnTime(),
                     minFixedBurnTime,
                     false);
-                sc.collectFireSpike(
-                    n.getId(), 
-                    fixedBurnSpike.getSyn().getAxonNeuronId(),
-                    fixedBurnSpike.getBurnTime(), 
-                    //currentTime, 
-                    nMan.getMaxN(), 
-                    nMan.getCompressionFactor(),
-                    (fixedBurnSpike.getSyn().getAxonNeuronId()<n.getExcitatory()),
-                    (fixedBurnSpike.getSyn().getAxonNeuronId()>=n.getN()) );
+                if(
+                    (! lastCollectedBurstFiringNodeId.equals(n.getId()))||
+                    (! lastCollectedBurstFiringNeuronId.equals(fixedBurnSpike.getSyn().getAxonNeuronId()))||
+                    (! lastCollectedBurstFiringBurnTime.equals(fixedBurnSpike.getBurnTime()))
+                ){
+                  lastCollectedBurstFiringNodeId=n.getId();
+                  lastCollectedBurstFiringNeuronId=
+                      fixedBurnSpike.getSyn().getAxonNeuronId();
+                  lastCollectedBurstFiringBurnTime=
+                      fixedBurnSpike.getBurnTime();
+                  sc.collectFireSpike(
+                      n.getId(), 
+                      fixedBurnSpike.getSyn().getAxonNeuronId(),
+                      fixedBurnSpike.getBurnTime(), 
+                      nMan.getMaxN(), 
+                      nMan.getCompressionFactor(),
+                      (fixedBurnSpike.getSyn().getAxonNeuronId()<n.getExcitatory()),
+                      (fixedBurnSpike.getSyn().getAxonNeuronId()>=n.getN()) );
+                }
 								continue;
 							}
 						}
@@ -415,15 +417,25 @@ public class NodeThread extends Thread{
                   fixedBurnSpike.getBurnTime(),
                   fixedBurnSpike.getFireTime(),
                   false);
-              sc.collectFireSpike(
-                  n.getId(), 
-                  fixedBurnSpike.getSyn().getAxonNeuronId(),
-                  //fixedBurnSpike.getFireTime(), 
-                  fixedBurnSpike.getBurnTime(), 
-                  nMan.getMaxN(), 
-                  nMan.getCompressionFactor(),
-                  (fixedBurnSpike.getSyn().getAxonNeuronId()<n.getExcitatory()),
-                  (fixedBurnSpike.getSyn().getAxonNeuronId()>=n.getN()) );
+              if(
+                  (! lastCollectedBurstFiringNodeId.equals(n.getId()))||
+                  (! lastCollectedBurstFiringNeuronId.equals(fixedBurnSpike.getSyn().getAxonNeuronId()))||
+                  (! lastCollectedBurstFiringBurnTime.equals(fixedBurnSpike.getBurnTime()))
+              ){
+                lastCollectedBurstFiringNodeId=n.getId();
+                lastCollectedBurstFiringNeuronId=
+                    fixedBurnSpike.getSyn().getAxonNeuronId();
+                lastCollectedBurstFiringBurnTime=
+                    fixedBurnSpike.getBurnTime();
+                sc.collectFireSpike(
+                    n.getId(), 
+                    fixedBurnSpike.getSyn().getAxonNeuronId(),
+                    fixedBurnSpike.getBurnTime(), 
+                    nMan.getMaxN(), 
+                    nMan.getCompressionFactor(),
+                    (fixedBurnSpike.getSyn().getAxonNeuronId()<n.getExcitatory()),
+                    (fixedBurnSpike.getSyn().getAxonNeuronId()>=n.getN()) );
+              }
 							continue;
 						}
 						else {
