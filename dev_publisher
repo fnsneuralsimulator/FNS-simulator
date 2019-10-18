@@ -1,0 +1,17 @@
+#! /bin/bash
+
+if [ -z $1 ]; then
+  echo -n "commit message:"
+  read -r COMMIT_M
+else COMMIT_M=$1
+fi
+BUILD_F="dev_version/build"
+MINOR_F="dev_version/minor"
+typeset -i MINOR_V=$(cat $MINOR_F)
+MINOR_V=$((MINOR_V+1))
+echo $MINOR_V > $MINOR_F
+echo -1 > $BUILD_F
+./dev_compile
+git add -A .
+git commit -m "$COMMIT_M"
+git push -u origin devel

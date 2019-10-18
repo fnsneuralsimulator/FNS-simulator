@@ -36,6 +36,7 @@ import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.HashMap;
 import connectivity.nodes.ConnectivityPackageManager;
 import utils.tools.NiceQueue;
 import spiking.controllers.node.NodeThread;
@@ -86,14 +87,23 @@ public class SpikingNeuralSimulator extends Thread{
 	public static final Double IBITest=0.001;
 	private static final Double epsilon = 0.00000001;
 	long[] times= new long[10];
-	// the coefficient for which multiply the BOP to obtain a cycle: 
-	// 		1. if it is less than 1, than we fall into the optimistic simulation
-	//		2. if it is greater or equal to 1, than we have a conservative behavior
-	private static final Double bop_to_cycle_factor=1.0;
-	private StatisticsCollector sc=new StatisticsCollector();
+	/* the coefficient for which multiply the BOP to obtain a cycle: 
+	* 	1. if it is less than 1, than we fall into the optimistic 
+  *      simulation
+	*		2. if it is greater or equal to 1, than we have a conservative 
+         behavior
+  *   Note: using a gamma distribution with shape parameter 
+  *         (alpha_lambda) for the connectivity topology lengths, we 
+  *         need to re-calculate such factor in order to controll 
+  *         lossess between nodes under the bop_conservative_p
+  *         probability.
+  */
+	private static final Double bop_to_cycle_factor = 1.0;
+	private static final Double bop_conservative_p = 0.9999;
+	private StatisticsCollector sc = new StatisticsCollector();
 	
 	public SpikingNeuralSimulator (){
-		nMan = new NodesManager(this, sc);
+		nMan = new NodesManager(this, sc, bop_conservative_p);
 		sc.start();
 	}
 	
@@ -112,7 +122,8 @@ public class SpikingNeuralSimulator extends Thread{
 				(""+nMan.getMinTractLength()):" there are no connection betwen regions.";
 		println("min tract length:"+minTractLengthStr);
 		println("avg neuronal signal speed:"+avgNeuronalSignalSpeed);
-		cycle_time=(nMan.getMinTractLength()+epsilon)/(avgNeuronalSignalSpeed*bop_to_cycle_factor);
+		cycle_time=(nMan.getMinTractLength()+epsilon)/
+        (avgNeuronalSignalSpeed*bop_to_cycle_factor);
 		//println("cycle time:"+cycle_time);
 	}
 
@@ -231,7 +242,8 @@ public class SpikingNeuralSimulator extends Thread{
 		System.out.println("reading config file:"+configPath);
 		SpikingSimulatorCfg ssc = SpikingConfigManager.readConfigFile(configPath);
 		setTotalTime(new Double(ssc.getStop()));
-		ArrayList<NodeCfg> nodeCs =  ssc.getNodes();
+		//ArrayList<NodeCfg> nodeCs =  ssc.getNodes();
+		HashMap <Integer, NodeCfg> nodeCs =  ssc.getNodesMap();
 		avgNeuronalSignalSpeed=ssc.getAvg_neuronal_signal_speed();
 		times[1]=System.currentTimeMillis()-lastTime;
 		lastTime+=times[1];
@@ -241,7 +253,8 @@ public class SpikingNeuralSimulator extends Thread{
 		Long tmpN;
 		Integer  tmpK, tmpExternal, tmpBn;
 		Double tmpExcitRatio;
-		Double tmp_mu_w;
+		Double tmp_mu_w_exc;
+		Double tmp_mu_w_inh;
 		Double tmpW_pre_exc;
 		Double tmpW_pre_inh;
 		Double tmpRewiringP;
@@ -253,16 +266,26 @@ public class SpikingNeuralSimulator extends Thread{
 		Double tmpPwMax;
 		Double tmpTo;
 		NeuManCfg nmcfg;
+    Boolean lif=new Boolean(ssc.getLif());
+    Boolean exp_decay=new Boolean(ssc.getExp_decay());
 		for (int i=0; i<cpm.getNodesNum();++i){
-			tmp = (nodeCs.size()>i)?nodeCs.get(i):null;
+			//tmp = (nodeCs.size()>i)?nodeCs.get(i):null;
+      //if (nodeCs.get(i) != null){
+      //  System.out.println("Node:"+ i);
+      //  System.exit(0);
+      //}
+			tmp = ( nodeCs.get(i) != null )?nodeCs.get(i):null;
 			tmpN=((tmp!=null)&&(tmp.getN()!=null))?
 					tmp.getN():ssc.getGlob_local_n();
 			tmpExcitRatio = ((tmp!=null)&&(tmp.getExcitatory_inhibitory_ratio()!=null))?
 					tmp.getExcitatory_inhibitory_ratio():
 					ssc.getR();
-			tmp_mu_w=((tmp!=null)&&(tmp.getMu_w()!=null))?
-					tmp.getMu_w():
-					ssc.getGlob_mu_w();
+			tmp_mu_w_exc=((tmp!=null)&&(tmp.getMu_w_exc()!=null))?
+					tmp.getMu_w_exc():
+					ssc.getGlob_mu_w_exc();
+			tmp_mu_w_inh=((tmp!=null)&&(tmp.getMu_w_inh()!=null))?
+					tmp.getMu_w_inh():
+					ssc.getGlob_mu_w_inh();
 			tmpW_pre_exc=((tmp!=null)&&(tmp.getW_pre_exc()!=null))?
 					tmp.getW_pre_exc():
 					ssc.getGlob_w_pre_exc();
@@ -277,6 +300,8 @@ public class SpikingNeuralSimulator extends Thread{
 					tmp.getExternal_inputs_number() : ssc.getGlob_external_inputs_number();
 			tmpBn=((tmp!=null)&&(tmp.getBn()!=null))?
 					tmp.getBn() : ssc.getGlob_Bn();
+      if (tmpBn==0)
+        tmpBn=1;
 			tmpIBI=((tmp!=null)&&(tmp.getIBI()!=null))?
 					tmp.getIBI() : ssc.getGlob_IBI();
 			nmcfg=((tmp!=null)&&(tmp.getNeuron_manager()!=null))?
@@ -316,7 +341,8 @@ public class SpikingNeuralSimulator extends Thread{
 						nmcfg.getC(),
 						nmcfg.getD(),
 						nmcfg.getT_arp(),
-						tmp_mu_w,
+						tmp_mu_w_exc,
+						tmp_mu_w_inh,
 						tmpW_pre_exc,
 						tmpW_pre_inh,
 						Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 
@@ -328,6 +354,8 @@ public class SpikingNeuralSimulator extends Thread{
 						tmpPwMax,
 						tmpTo,
 						avgNeuronalSignalSpeed,
+            lif,
+            exp_decay,
 						do_fast));
 			}
 			else{
@@ -369,7 +397,8 @@ public class SpikingNeuralSimulator extends Thread{
 								nmcfg.getC(),
 								nmcfg.getD(), 
 								nmcfg.getT_arp(),
-								tmp_mu_w,
+								tmp_mu_w_exc,
+								tmp_mu_w_inh,
 								tmpW_pre_exc,
 								tmpW_pre_inh,
 								Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 
@@ -381,6 +410,8 @@ public class SpikingNeuralSimulator extends Thread{
 								tmpPwMax,
 								tmpTo,
 								avgNeuronalSignalSpeed,
+                lif,
+                exp_decay,
 								do_fast));
 			}
 		}
@@ -517,15 +548,10 @@ public class SpikingNeuralSimulator extends Thread{
 		System.out.println("\t\t\t\t\t=================================\n\n");
 		// options parsing and management
 		Options options= new Options();
-        //Option expconfigopt = new Option("x", "exp-config", true, "the experiment configuration folder");
-        //expconfigopt.setRequired(true);
-        //options.addOption(expconfigopt);
         options.addOption("m", "mask", true, "followed by the mask number. The mask indicates "
         		+ "the set of NOIs (node of interests) for which to store the output data. "
         		+ "If this switch is not present, the entire set of nodes will be "
         		+ "considered for the generation of output data.");
-        //options.addOption("r", "runs", true, "the number of runs");
-        //options.addOption("p", "plot", false, "plot a scatter plot of the experiment");
         options.addOption("f", "fast", false, "enables faster algorithms at different levels, "
         		+ "in return for some approximations (i.e., plasticity exponentials, etc.)");
         options.addOption("M", "matlab", false, "provides with a set of matlab-compliant "

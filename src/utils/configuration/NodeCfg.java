@@ -46,7 +46,8 @@ public class NodeCfg {
 	private Integer k;
 	private Long n;
 	private Double R;
-	private Double mu_w;
+	private Double mu_w_exc;
+	private Double mu_w_inh;
 	private Double w_pre_exc;
 	private Double w_pre_inh;
 	private Integer external_inputs_number;
@@ -144,12 +145,20 @@ public class NodeCfg {
 		this.w_pre_inh = inh_ampl;
 	}
 
-	public Double getMu_w() {
-		return mu_w;
+	public Double getMu_w_exc() {
+		return mu_w_exc;
 	}
 
-	public void setMu_w(Double mu_w) {
-		this.mu_w = mu_w;
+	public Double getMu_w_inh() {
+		return mu_w_inh;
+	}
+
+	public void setMu_w_exc(Double mu_w_exc) {
+		this.mu_w_exc = mu_w_exc;
+	}
+
+	public void setMu_w_inh(Double mu_w_inh) {
+		this.mu_w_inh = mu_w_inh;
 	}
 
 	public Integer getExternal_inputs_number() {

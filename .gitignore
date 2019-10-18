@@ -5,3 +5,5 @@ experiments/*
 .classpath
 .project
 torem*
+dev_*
+*.swp

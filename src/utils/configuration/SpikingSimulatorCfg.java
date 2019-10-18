@@ -34,6 +34,7 @@ package utils.configuration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -50,11 +51,14 @@ public class SpikingSimulatorCfg {
 	private NeuManCfg global_neuron_manager;
 	private ArrayList<NodeCfg> node = new ArrayList<NodeCfg>();
 	private ArrayList<RegionInterconnectionCfg> connection = new ArrayList<RegionInterconnectionCfg>();
+    private Boolean lif;
+    private Boolean exp_decay;
 	private Double glob_rewiring_P;
 	private Integer glob_k;
 	private Long glob_n;
 	private Double glob_R;
-	private Double glob_mu_w;
+	private Double glob_mu_w_exc;
+	private Double glob_mu_w_inh;
 	private Double glob_w_pre_exc;
 	private Double glob_w_pre_inh;
 	private Integer glob_Bn;
@@ -90,8 +94,33 @@ public class SpikingSimulatorCfg {
 		this.glob_plasticity = plasticity;
 	}
 
+  public Boolean getLif(){
+    return lif;
+  }
+
+  public void setLif(Boolean lif) {
+    this.lif=lif;
+  }
+
+  public Boolean getExp_decay() {
+    return exp_decay;
+  }
+
+  public void setExp_decay() {
+    this.exp_decay=exp_decay;
+  }
+
 	public ArrayList<NodeCfg> getNodes() {
 		return node;
+	}
+
+	public HashMap<Integer,NodeCfg> getNodesMap() {
+    HashMap<Integer, NodeCfg> nodesMap = new HashMap<Integer, NodeCfg>();
+    for (NodeCfg tmpNode : node) {
+      nodesMap.put(tmpNode.getId(), tmpNode);
+      //System.out.println("tmpNode:" + tmpNode.getId() );
+    }
+		return nodesMap;
 	}
 
 	public void setNodes(ArrayList<NodeCfg> nodes) {
@@ -179,12 +208,20 @@ public class SpikingSimulatorCfg {
 		this.glob_R = R;
 	}
 
-	public Double getGlob_mu_w() {
-		return glob_mu_w;
+	public Double getGlob_mu_w_exc() {
+		return glob_mu_w_exc;
 	}
 
-	public void setGlob_mu_w(Double glob_mu_w) {
-		this.glob_mu_w = glob_mu_w;
+	public Double getGlob_mu_w_inh() {
+		return glob_mu_w_inh;
+	}
+
+	public void setGlob_mu_w_exc(Double glob_mu_w_exc) {
+		this.glob_mu_w_exc = glob_mu_w_exc;
+	}
+
+	public void setGlob_mu_w_inh(Double glob_mu_w_inh) {
+		this.glob_mu_w_inh = glob_mu_w_inh;
 	}
 
 	public Double getGlob_w_pre_exc() {

@@ -55,27 +55,16 @@ public class NodesManager implements Serializable {
 	private final static Integer goodCurveGuessThreshold= 5;
 	private final static Integer badCurveGuessThreshold= 15;
 	private StatisticsCollector sc;
-	
-	
 	private Boolean debug = false;
-
-	public StatisticsCollector getStatisticsCollector() {
-		return sc;
-	}
-	
 	//ergion threads array list 
 	private ArrayList<NodeThread> nodeThreads = new ArrayList<NodeThread>();
-	
 	//internodes connection probability
 	private HashMap<IntegerCouple, NodesInterconnection> nodesConnections = new HashMap<IntegerCouple, NodesInterconnection>();
-	
-	
 	//the total number of neuron
 	private Long n=0l;
 	//the maximum number of neurons within a single node
 	private Long maxN=0l;
 	private double compressionFactor=1.0;
-	
 	//the total number of burning neurons
 //	private Integer bn=1000;
 	//the total number of excitatory neuron
@@ -86,23 +75,29 @@ public class NodesManager implements Serializable {
 	private Integer externalInputs=0;
 	//the HasMap of small worlds with external inputs
 	private ArrayList<Integer> regsWithExternalInputs = new ArrayList<Integer>();
-	//private HashMap<Integer, Integer> swExternalInputsNumber = new HashMap<Integer, Integer>();
 	//the total number of inter-node connections
 	private Long inter_node_conns_num=0l;
-	
 	//is set, no more node addition are allowed
 	private Boolean initialized=false;
-
 	private SpikingNeuralSimulator sim;
-	
 	private Double minTractLength=MAX_TRACT_LENGTH;
-	
 	private Random randGen = new Random(System.currentTimeMillis());
+  //setting default to 1 means every x
+  private Double gammaInverseCumulativeProbX = 1.0;
+  private Double bop_conservative_p = null;
 	
 	
-	public NodesManager(SpikingNeuralSimulator sim, StatisticsCollector sc){
+	public NodesManager(
+      SpikingNeuralSimulator sim, 
+      StatisticsCollector sc,
+      Double bop_conservative_p){
 		this.sim=sim;
 		this.sc=sc;
+    this.bop_conservative_p = bop_conservative_p;
+	}
+
+	public StatisticsCollector getStatisticsCollector() {
+		return sc;
 	}
 	
 	public void addNodeThread(NodeThread regT){
@@ -229,15 +224,15 @@ public class NodesManager implements Serializable {
 		/*
 		 * The schema for internode connections
 		 * 
-		 *   \        |       |       |       |
-		 *    \  from |	mixed |	 exc  |  inh  |
-		 *  to \      |       |       |       |
+		 *      \     |       |       |       |
+		 *       \ to |	mixed |	 exc  |  inh  |
+		 *  from  \   |       |       |       |
 		 * ------------------------------------
-		 *    mixed   |   0   |   3   |   6   |
+		 *    mixed   |   0   |   1   |   2   |
 		 * ------------------------------------
-		 *     exc    |   1   |   4   |   7   |
+		 *     exc    |   3   |   4   |   5   |
 		 * ------------------------------------
-		 *     inh    |   2   |   5   |   8   |
+		 *     inh    |   6   |   7   |   8   |
 		 * ------------------------------------
 		 *  
 		 */
@@ -260,8 +255,13 @@ public class NodesManager implements Serializable {
 		long tmp = (long)(Nsrc*Ne_xn_ratio);
 		Long i1, i2;
 		GammaDistribution gd = (alpha_lambda!=null)?
-				new GammaDistribution(alpha_lambda, alpha_lambda/mu_lambda)
+				//new GammaDistribution(alpha_lambda, 1.0/mu_lambda)
+				new GammaDistribution(alpha_lambda, mu_lambda/alpha_lambda)
 				:null;
+    gammaInverseCumulativeProbX = 
+            ((alpha_lambda!=null)&&(bop_conservative_p != null))? 
+            gd.inverseCumulativeProbability(1.0 - bop_conservative_p ):
+            1.0;
 		for (long i=0; i<tmp;++i){
 			// case EXC2*
 			if ((inter_node_conn_type==NodesInterconnection.EXC2MIXED)||
@@ -303,9 +303,7 @@ public class NodesManager implements Serializable {
 				tmp_mu_w=-tmp_mu_w;
 			int goodCurveGuess=0;
 			while ((tmpLength<0)&&(goodCurveGuess<badCurveGuessThreshold)){
-				tmpLength = (gd!=null)?	
-						mu_lambda* (gd.sample())
-						: mu_lambda;
+				tmpLength = (gd!=null)?	gd.sample() : mu_lambda;
 				++goodCurveGuess;
 			}
 			if (goodCurveGuess>=goodCurveGuessThreshold){
@@ -362,8 +360,15 @@ public class NodesManager implements Serializable {
 	}
 	
 	public Double getMinTractLength(){
-		return minTractLength;
+		//return minTractLength;
+    return (gammaInverseCumulativeProbX == 1.0)?
+        minTractLength:
+        gammaInverseCumulativeProbX;
 	}
+
+  public Double getGammaInverseCumulativeProbX(){
+    return gammaInverseCumulativeProbX;
+  }
 
 	public Integer getnSms() {
 		return nodeThreads.size();
