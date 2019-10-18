@@ -548,15 +548,10 @@ public class SpikingNeuralSimulator extends Thread{
 		System.out.println("\t\t\t\t\t=================================\n\n");
 		// options parsing and management
 		Options options= new Options();
-        //Option expconfigopt = new Option("x", "exp-config", true, "the experiment configuration folder");
-        //expconfigopt.setRequired(true);
-        //options.addOption(expconfigopt);
         options.addOption("m", "mask", true, "followed by the mask number. The mask indicates "
         		+ "the set of NOIs (node of interests) for which to store the output data. "
         		+ "If this switch is not present, the entire set of nodes will be "
         		+ "considered for the generation of output data.");
-        //options.addOption("r", "runs", true, "the number of runs");
-        //options.addOption("p", "plot", false, "plot a scatter plot of the experiment");
         options.addOption("f", "fast", false, "enables faster algorithms at different levels, "
         		+ "in return for some approximations (i.e., plasticity exponentials, etc.)");
         options.addOption("M", "matlab", false, "provides with a set of matlab-compliant "

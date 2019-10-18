@@ -821,9 +821,13 @@ public class NodeThread extends Thread{
         nnMan.setState(s.getBurning(), sx);
         //passive to active
         if (sx>=nnMan.getSpikingThr()){
-          Double activeTransitionDelay=lif?Constants.EPSILON:(1.0/(sx-1));
           //nnMan.setTimeToFire(s.getBurning(), burnTime+ 1.0/(sx-1));
-          nnMan.setTimeToFire(s.getBurning(), burnTime+ activeTransitionDelay);
+          if (lif)
+            nnMan.setTimeToFire(s.getBurning(), burnTime+Constants.EPSILON);
+          else{
+            Double activeTransitionDelay=(1.0/(sx-1));
+            nnMan.setTimeToFire(s.getBurning(), burnTime+ activeTransitionDelay);
+          }
           sc.collectPassive2active();
           nnMan.addActiveNeuron(
               s.getBurning(), 
@@ -836,8 +840,10 @@ public class NodeThread extends Thread{
         }
 				times[1]+=System.currentTimeMillis()-startTime;
 			}
-			//case of active neuron
-			else{
+			// case of active neuron
+      // avoid update on lif
+			else if (!lif){
+			//else {
 				if (nnMan.getTimeToFire(s.getBurning())==0.0)
 					nnMan.setTimeToFire(s.getBurning(), Constants.EPSILON);
 				if (sx>=nnMan.getSpikingThr()){
@@ -890,9 +896,8 @@ public class NodeThread extends Thread{
 				}
 				times[2]+=System.currentTimeMillis()-startTime;
 			}
-			startTime = System.currentTimeMillis();
-			
 			//end of case of active neuron
+			startTime = System.currentTimeMillis();
 			nnMan.setLastBurningTime(s.getBurning(), burnTime);
 			times[4]+=System.currentTimeMillis()-startTime;
 			// collecting the spike
@@ -903,8 +908,6 @@ public class NodeThread extends Thread{
 					oldSx, 
 					sy, 
 					s.getPostSynapticWeight(),
-//					synMan.getPostSynapticWeight(s),
-//					nnMan.getPreSynapticWeight(s.getFiring()), 
 					s.getPreSynapticWeight(), 
 					nnMan.getTimeToFire(s.getBurning()),
 					fireTime);
