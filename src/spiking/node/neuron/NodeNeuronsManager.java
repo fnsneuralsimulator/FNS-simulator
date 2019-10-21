@@ -232,9 +232,6 @@ public class NodeNeuronsManager {
       setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId,(long)0));
       setTimeToFire(extNeuronId, fireTime);
       addActiveNeuron(extNeuronId, fireTime, currentTime, 0);
-      if (fireTime<currentTime){
-        println(".......................................constant firet:"+fireTime+" current:"+currentTime);
-      }
       return;
     }
     else if ((n.getExternalInputsType()==ExternalInput.NOISE) && (Math.random()<0.3)){
@@ -274,6 +271,7 @@ public class NodeNeuronsManager {
   public void addActiveNeuron(Long neuronId, Double fireTime, Double currentTime, Integer debug){
     if (fireTime<currentTime) {
       println("\n....................\ndebug"+debug+"\n....................");
+      println("fire time:"+fireTime+" current time:"+currentTime);
       System.exit(1);
     }
     activeNeurons.insert(fireTime, neuronId);
