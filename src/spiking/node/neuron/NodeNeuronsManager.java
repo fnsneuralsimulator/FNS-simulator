@@ -237,9 +237,10 @@ public class NodeNeuronsManager {
     else if ((n.getExternalInputsType()==ExternalInput.NOISE) && (Math.random()<0.3)){
       double fireTime;
       if (currentTime==0.0)
-        fireTime=n.getExternalInputsTimeOffset();
+        fireTime=Math.random()*n.getExternalInputsTimeOffset();
       else
         fireTime=currentTime+Math.random()*n.getExternalInput().getTimeStep();
+      println("fire time:"+fireTime+" current time:"+currentTime);
       setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId,(long)0));
       setTimeToFire(extNeuronId, fireTime);
       addActiveNeuron(extNeuronId, fireTime, currentTime, 4);
