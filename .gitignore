@@ -6,6 +6,4 @@ experiments/*
 .project
 torem*
 dev_*
-*.swp
-test_compile
-master_compile
+.*.swp
