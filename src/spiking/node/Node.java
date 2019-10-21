@@ -441,7 +441,9 @@ public class Node {
   }
   
   public Double getExternalInputsTimeOffset() {
-    return externalInputsTimeOffset;
+    double retval=externalInputsTimeOffset;
+    externalInputsTimeOffset=(double)timeStep;
+    return retval;
   }
   
   public boolean isExcitatory(Long neuronId){
