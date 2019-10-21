@@ -35,9 +35,9 @@ import java.io.Serializable;
 
 public class NiceNode implements Comparable<NiceNode>, Serializable{
    
-	
-	private static final long serialVersionUID = 4284840399532187183L;
-	public Long fn;
+  
+  private static final long serialVersionUID = 4284840399532187183L;
+  public Long fn;
     public Double tf;
     
     public NiceNode(Long fn, Double tf){
@@ -46,7 +46,7 @@ public class NiceNode implements Comparable<NiceNode>, Serializable{
     }
    
     public String toString(){
-    	return "fn:"+fn+",\ttf:"+tf;
+      return "fn:"+fn+",\ttf:"+tf;
     }
     
     public int compareTo(NiceNode node){

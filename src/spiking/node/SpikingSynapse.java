@@ -35,83 +35,83 @@ import java.io.Serializable;
 
 public class SpikingSynapse implements Serializable{
 
-	
-	private static final long serialVersionUID = -7182857769712861723L;
-	private Synapse s;
-	private Double fireTime;
-	private Double burnTime;
-	private Boolean fromExternalSource;
-	private Double fromState;
-	private Double stepInState;
-	private Double postSynapticWeight;
-	private Double presynapticWeight;
-	private Double instantToFire;
-	
-	public SpikingSynapse(
-			Synapse s, 
-			Double burnTime, 
-			Boolean externalSource, 
-			Double fromState, 
-			Double stepInState, 
-			Double postsynapticWeight, 
-			Double presynapticWeight, 
-			Double timeToFire, 
-			Double fireTime){
-		this.s=s;
-		this.burnTime=burnTime;
-		this.fromExternalSource=externalSource;
-		this.fromState=fromState;
-		this.stepInState=stepInState;
-		this.postSynapticWeight=postsynapticWeight;
-		this.presynapticWeight=presynapticWeight;
-		this.instantToFire=timeToFire;
-		this.fireTime=fireTime;
-	}
+  
+  private static final long serialVersionUID = -7182857769712861723L;
+  private Synapse s;
+  private Double fireTime;
+  private Double burnTime;
+  private Boolean fromExternalSource;
+  private Double fromState;
+  private Double stepInState;
+  private Double postSynapticWeight;
+  private Double presynapticWeight;
+  private Double instantToFire;
+  
+  public SpikingSynapse(
+      Synapse s, 
+      Double burnTime, 
+      Boolean externalSource, 
+      Double fromState, 
+      Double stepInState, 
+      Double postsynapticWeight, 
+      Double presynapticWeight, 
+      Double timeToFire, 
+      Double fireTime){
+    this.s=s;
+    this.burnTime=burnTime;
+    this.fromExternalSource=externalSource;
+    this.fromState=fromState;
+    this.stepInState=stepInState;
+    this.postSynapticWeight=postsynapticWeight;
+    this.presynapticWeight=presynapticWeight;
+    this.instantToFire=timeToFire;
+    this.fireTime=fireTime;
+  }
 
-	public Synapse getS() {
-		return s;
-	}
+  public Synapse getS() {
+    return s;
+  }
 
-	public Double getFireTime() {
-		return fireTime;
-	}
-	
-	public Boolean _externalSource(){
-		return fromExternalSource;
-	}
+  public Double getFireTime() {
+    return fireTime;
+  }
+  
+  public Boolean _externalSource(){
+    return fromExternalSource;
+  }
 
-	public Double getBurnTime() {
-		return burnTime;
-	}
+  public Double getBurnTime() {
+    return burnTime;
+  }
 
-	public void setBurnTime(Double burnTime) {
-		this.burnTime = burnTime;
-	}
+  public void setBurnTime(Double burnTime) {
+    this.burnTime = burnTime;
+  }
 
-	public Boolean _getFromExternalSource() {
-		return fromExternalSource;
-	}
-	
-	public Double getFromState(){
-		return fromState;
-	}
+  public Boolean _getFromExternalSource() {
+    return fromExternalSource;
+  }
+  
+  public Double getFromState(){
+    return fromState;
+  }
 
-	public Double getStepInState() {
-		return stepInState;
-	}
+  public Double getStepInState() {
+    return stepInState;
+  }
 
-	public Double getPostSynapticWeight() {
-		return postSynapticWeight;
-	}
+  public Double getPostSynapticWeight() {
+    return postSynapticWeight;
+  }
 
-	public Double getPresynapticWeight() {
-		return presynapticWeight;
-	}
+  public Double getPresynapticWeight() {
+    return presynapticWeight;
+  }
 
-	public Double getInstantToFire() {
-		return instantToFire;
-	}
-	
-	
-	
+  public Double getInstantToFire() {
+    return instantToFire;
+  }
+  
+  
+  
 }

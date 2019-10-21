@@ -7,5 +7,5 @@ package org.math.plot.plotObjects;
  */
 
 public interface BaseDependant {
-	public void resetBase();
+  public void resetBase();
 }

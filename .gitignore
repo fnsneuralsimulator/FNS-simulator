@@ -7,3 +7,5 @@ experiments/*
 torem*
 dev_*
 *.swp
+test_compile
+master_compile

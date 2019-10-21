@@ -33,41 +33,41 @@
 package utils.configuration;
 
 public class RegionInterconnectionCfg {
-	
-	private Integer sourceRegionId;
-	private Integer destinationRegionId;
-	private Double connection_probability;
-	
-	public RegionInterconnectionCfg(){}
-	
-	public RegionInterconnectionCfg(Integer sw1, Integer sw2, Double prob){
-		sourceRegionId=sw1;
-		destinationRegionId=sw2;
-		connection_probability=prob;
-	}
+  
+  private Integer sourceRegionId;
+  private Integer destinationRegionId;
+  private Double connection_probability;
+  
+  public RegionInterconnectionCfg(){}
+  
+  public RegionInterconnectionCfg(Integer sw1, Integer sw2, Double prob){
+    sourceRegionId=sw1;
+    destinationRegionId=sw2;
+    connection_probability=prob;
+  }
 
-	public Integer getSrcRegionId() {
-		return sourceRegionId;
-	}
+  public Integer getSrcRegionId() {
+    return sourceRegionId;
+  }
 
-	public void setSrcRegionId(Integer srcRegionId) {
-		this.sourceRegionId = srcRegionId;
-	}
+  public void setSrcRegionId(Integer srcRegionId) {
+    this.sourceRegionId = srcRegionId;
+  }
 
-	public Integer getDstRegionId() {
-		return destinationRegionId;
-	}
+  public Integer getDstRegionId() {
+    return destinationRegionId;
+  }
 
-	public void setDstRegionId(Integer second_small_world_id) {
-		this.destinationRegionId = second_small_world_id;
-	}
+  public void setDstRegionId(Integer second_small_world_id) {
+    this.destinationRegionId = second_small_world_id;
+  }
 
-	public Double getConnection_probability() {
-		return connection_probability;
-	}
+  public Double getConnection_probability() {
+    return connection_probability;
+  }
 
-	public void setConnection_probability(Double connection_probability) {
-		this.connection_probability = connection_probability;
-	}	
+  public void setConnection_probability(Double connection_probability) {
+    this.connection_probability = connection_probability;
+  }  
 
 }

@@ -117,7 +117,7 @@ public class HistogramPlot3D extends Plot {
                 if (fill_shape) {
                     draw.fillPolygon(0.2f, topNW[i], topNE[i], topSE[i], topSW[i]);
                     //draw.fillPolygon(bottomNW[i], bottomNE[i], bottomSE[i], bottomSW[i]);
-				/*draw.fillPolygon(topNW[i], topNE[i], bottomNE[i], bottomNW[i]);
+        /*draw.fillPolygon(topNW[i], topNE[i], bottomNE[i], bottomNW[i]);
                     draw.fillPolygon(topSW[i], topSE[i], bottomSE[i], bottomSW[i]);
                     draw.fillPolygon(topNE[i], topSE[i], bottomSE[i], bottomNE[i]);
                     draw.fillPolygon(topNW[i], topSW[i], bottomSW[i], bottomNW[i]);*/

@@ -15,69 +15,69 @@ import org.math.plot.*;
 
 public class DataToolBar extends JToolBar {
 
-	/**
-	 * Comment for <code>serialVersionUID</code>
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * Comment for <code>serialVersionUID</code>
+   */
+  private static final long serialVersionUID = 1L;
 
-	protected JButton buttonPasteToClipboard;
+  protected JButton buttonPasteToClipboard;
 
-	protected JButton buttonSaveFile;
+  protected JButton buttonSaveFile;
 
-	private boolean denySaveSecurity;
+  private boolean denySaveSecurity;
 
-	private JFileChooser fileChooser;
+  private JFileChooser fileChooser;
 
-	private DataPanel dataPanel;
+  private DataPanel dataPanel;
 
-	public DataToolBar(DataPanel dp) {
+  public DataToolBar(DataPanel dp) {
 
-		dataPanel = dp;
+    dataPanel = dp;
 
-		try {
-			fileChooser = new JFileChooser();
-		} catch (AccessControlException ace) {
-			denySaveSecurity = true;
-		}
+    try {
+      fileChooser = new JFileChooser();
+    } catch (AccessControlException ace) {
+      denySaveSecurity = true;
+    }
 
-		buttonPasteToClipboard = new JButton(new ImageIcon(org.math.plot.PlotPanel.class.getResource("icons/toclipboard.png")));
-		buttonPasteToClipboard.setToolTipText("Copy data to clipboard");
+    buttonPasteToClipboard = new JButton(new ImageIcon(org.math.plot.PlotPanel.class.getResource("icons/toclipboard.png")));
+    buttonPasteToClipboard.setToolTipText("Copy data to clipboard");
 
-		buttonSaveFile = new JButton(new ImageIcon(org.math.plot.PlotPanel.class.getResource("icons/tofile.png")));
-		buttonSaveFile.setToolTipText("Save data into ASCII file");
+    buttonSaveFile = new JButton(new ImageIcon(org.math.plot.PlotPanel.class.getResource("icons/tofile.png")));
+    buttonSaveFile.setToolTipText("Save data into ASCII file");
 
-		buttonPasteToClipboard.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dataPanel.toClipBoard();
-			}
-		});
-		buttonSaveFile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				chooseFile();
-			}
-		});
+    buttonPasteToClipboard.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        dataPanel.toClipBoard();
+      }
+    });
+    buttonSaveFile.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        chooseFile();
+      }
+    });
 
-		add(buttonPasteToClipboard, null);
-		add(buttonSaveFile, null);
+    add(buttonPasteToClipboard, null);
+    add(buttonSaveFile, null);
 
-		if (!denySaveSecurity) {
-			fileChooser.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					saveFile();
-				}
-			});
-		} else {
-			buttonSaveFile.setEnabled(false);
-		}
-	}
+    if (!denySaveSecurity) {
+      fileChooser.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          saveFile();
+        }
+      });
+    } else {
+      buttonSaveFile.setEnabled(false);
+    }
+  }
 
-	void saveFile() {
-		java.io.File file = fileChooser.getSelectedFile();
-		dataPanel.toASCIIFile(file);
-	}
+  void saveFile() {
+    java.io.File file = fileChooser.getSelectedFile();
+    dataPanel.toASCIIFile(file);
+  }
 
-	void chooseFile() {
-		fileChooser.showSaveDialog(this);
-	}
+  void chooseFile() {
+    fileChooser.showSaveDialog(this);
+  }
 
 }

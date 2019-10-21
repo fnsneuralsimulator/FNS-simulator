@@ -42,155 +42,155 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 
 public class IntegerCouple implements Comparable<IntegerCouple>{
-	
-	private Integer a;
-	private Integer b;
-	
-	public IntegerCouple(Integer src, Integer dst){
-		this.a=src;
-		this.b=dst;
-	}
-	
-	public Integer getA(){
-		return a;
-	}
-	
-	public Integer getB(){
-		return b;
-	}
-	
-	public Integer getSrc(){
-		return a;
-	}
-	
-	public Integer getDst(){
-		return b;
-	}
+  
+  private Integer a;
+  private Integer b;
+  
+  public IntegerCouple(Integer src, Integer dst){
+    this.a=src;
+    this.b=dst;
+  }
+  
+  public Integer getA(){
+    return a;
+  }
+  
+  public Integer getB(){
+    return b;
+  }
+  
+  public Integer getSrc(){
+    return a;
+  }
+  
+  public Integer getDst(){
+    return b;
+  }
 
-	public Integer getBurning(){
-		return a;
-	}
-	
-	public Integer getFiring(){
-		return b;
-	}
-	
-	@Override
-	public String toString() {
-		return "IntegerCouple [a=" + a + ", b=" + b + "]";
-	}
+  public Integer getBurning(){
+    return a;
+  }
+  
+  public Integer getFiring(){
+    return b;
+  }
+  
+  @Override
+  public String toString() {
+    return "IntegerCouple [a=" + a + ", b=" + b + "]";
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) 
-			return false; 
-		if (obj == this)
-			return true; 
-		if (obj.getClass() != getClass()) 
-			return false;
-		
-		IntegerCouple rhs = (IntegerCouple) obj;
-		return new EqualsBuilder()
-//				.appendSuper(super.equals(obj))
-				.append(a, rhs.a)
-				.append(b, rhs.b).isEquals();
-	}
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) 
+      return false; 
+    if (obj == this)
+      return true; 
+    if (obj.getClass() != getClass()) 
+      return false;
+    
+    IntegerCouple rhs = (IntegerCouple) obj;
+    return new EqualsBuilder()
+//        .appendSuper(super.equals(obj))
+        .append(a, rhs.a)
+        .append(b, rhs.b).isEquals();
+  }
 
-	@Override
-	public int hashCode() {
-		// you pick a hard-coded, randomly chosen, non-zero, odd number
-	     // ideally different for each class
-	     return new HashCodeBuilder(17, 37).append(7*a).append(b*b+3*b).toHashCode();		
-	}
-	
-	@Override
-	public int compareTo(IntegerCouple o) {
-		if (this==o)
-			return 0;
-		int retval = a.compareTo(o.getA());
-		if (retval!=0)
-			return retval;
-		retval = b.compareTo(o.getB());			
-		return retval;
-	}
-	
-	public void torem(Integer a){
-		System.out.println("torem");
-		a=new Integer(3);
-	}
-	
-	public static void main(String[] args) {
-		HashMap<Integer, Integer> h = new HashMap<>();
-		HashMap<IntegerCouple, Integer> kh= new HashMap<>();
-		TreeMap<Integer, Integer> t = new TreeMap<>();
-		TreeMap<IntegerCouple, Integer> kt = new TreeMap<>();
-		
-		h.put(new Integer(3), new Integer(3));
-		h.put(new Integer(3), new Integer(3));
-		h.put(new Integer(3), new Integer(3));
-		
-		kh.put(new IntegerCouple(3,9), new Integer(3));
-		kh.put(new IntegerCouple(3,9), new Integer(3));
-		kh.put(new IntegerCouple(3,9), new Integer(3));
-		
-		t.put(new Integer(3), new Integer(3));
-		t.put(new Integer(3), new Integer(3));
-		t.put(new Integer(3), new Integer(3));
-				
-		kt.put(new IntegerCouple(3,9), new Integer(3));
-		kt.put(new IntegerCouple(3,9), new Integer(3));
-		kt.put(new IntegerCouple(3,9), new Integer(3));
-		
-		Iterator<Entry<Integer, Integer>> it =h.entrySet().iterator();		
-		System.out.println("Integer hash:");
-		while (it.hasNext()){
-			Map.Entry pair = (Map.Entry)it.next();
-	        System.out.println(pair.getKey() + " --> " + pair.getValue());
-	        it.remove();
-		}
-		System.out.println();
+  @Override
+  public int hashCode() {
+    // you pick a hard-coded, randomly chosen, non-zero, odd number
+       // ideally different for each class
+       return new HashCodeBuilder(17, 37).append(7*a).append(b*b+3*b).toHashCode();    
+  }
+  
+  @Override
+  public int compareTo(IntegerCouple o) {
+    if (this==o)
+      return 0;
+    int retval = a.compareTo(o.getA());
+    if (retval!=0)
+      return retval;
+    retval = b.compareTo(o.getB());      
+    return retval;
+  }
+  
+  public void torem(Integer a){
+    System.out.println("torem");
+    a=new Integer(3);
+  }
+  
+  public static void main(String[] args) {
+    HashMap<Integer, Integer> h = new HashMap<>();
+    HashMap<IntegerCouple, Integer> kh= new HashMap<>();
+    TreeMap<Integer, Integer> t = new TreeMap<>();
+    TreeMap<IntegerCouple, Integer> kt = new TreeMap<>();
+    
+    h.put(new Integer(3), new Integer(3));
+    h.put(new Integer(3), new Integer(3));
+    h.put(new Integer(3), new Integer(3));
+    
+    kh.put(new IntegerCouple(3,9), new Integer(3));
+    kh.put(new IntegerCouple(3,9), new Integer(3));
+    kh.put(new IntegerCouple(3,9), new Integer(3));
+    
+    t.put(new Integer(3), new Integer(3));
+    t.put(new Integer(3), new Integer(3));
+    t.put(new Integer(3), new Integer(3));
+        
+    kt.put(new IntegerCouple(3,9), new Integer(3));
+    kt.put(new IntegerCouple(3,9), new Integer(3));
+    kt.put(new IntegerCouple(3,9), new Integer(3));
+    
+    Iterator<Entry<Integer, Integer>> it =h.entrySet().iterator();    
+    System.out.println("Integer hash:");
+    while (it.hasNext()){
+      Map.Entry pair = (Map.Entry)it.next();
+          System.out.println(pair.getKey() + " --> " + pair.getValue());
+          it.remove();
+    }
+    System.out.println();
 
-		Iterator<Entry<IntegerCouple, Integer>> itkh =kh.entrySet().iterator();		
-		System.out.println("IntegerCouple hash:");
-		while (itkh.hasNext()){
-			Map.Entry pair = (Map.Entry)itkh.next();
-	        System.out.println(pair.getKey() + " --> " + pair.getValue());
-	        itkh.remove();
-		}
-		System.out.println();
+    Iterator<Entry<IntegerCouple, Integer>> itkh =kh.entrySet().iterator();    
+    System.out.println("IntegerCouple hash:");
+    while (itkh.hasNext()){
+      Map.Entry pair = (Map.Entry)itkh.next();
+          System.out.println(pair.getKey() + " --> " + pair.getValue());
+          itkh.remove();
+    }
+    System.out.println();
 
-		Iterator<Entry<Integer, Integer>> itt =t.entrySet().iterator();		
-		System.out.println("Integer tree:");
-		while (itt.hasNext()){
-			Map.Entry pair = (Map.Entry)itt.next();
-	        System.out.println(pair.getKey() + " --> " + pair.getValue());
-	        itt.remove();
-		}
-		System.out.println();
+    Iterator<Entry<Integer, Integer>> itt =t.entrySet().iterator();    
+    System.out.println("Integer tree:");
+    while (itt.hasNext()){
+      Map.Entry pair = (Map.Entry)itt.next();
+          System.out.println(pair.getKey() + " --> " + pair.getValue());
+          itt.remove();
+    }
+    System.out.println();
 
-		
-		Iterator<Entry<IntegerCouple, Integer>> itkt =kt.entrySet().iterator();		
-		System.out.println("IntegerCouple tree:");
-		while (itkt.hasNext()){
-			Map.Entry pair = (Map.Entry)itkt.next();
-	        System.out.println(pair.getKey() + " --> " + pair.getValue());
-	        itkt.remove();
-		}
-		System.out.println();
-		
-		Double a = 2.0;
-//		if (a.equals(.excitatoryPresynapticDefVal))
-//			System.out.println("k!");
-//		else
-//			System.out.println("!k");
-		Integer b=9;
-		new IntegerCouple(3,4).torem(b);
-		System.out.println(b);
-		
-	}
+    
+    Iterator<Entry<IntegerCouple, Integer>> itkt =kt.entrySet().iterator();    
+    System.out.println("IntegerCouple tree:");
+    while (itkt.hasNext()){
+      Map.Entry pair = (Map.Entry)itkt.next();
+          System.out.println(pair.getKey() + " --> " + pair.getValue());
+          itkt.remove();
+    }
+    System.out.println();
+    
+    Double a = 2.0;
+//    if (a.equals(.excitatoryPresynapticDefVal))
+//      System.out.println("k!");
+//    else
+//      System.out.println("!k");
+    Integer b=9;
+    new IntegerCouple(3,4).torem(b);
+    System.out.println(b);
+    
+  }
 
-		
-	
-	
+    
+  
+  
 
 }

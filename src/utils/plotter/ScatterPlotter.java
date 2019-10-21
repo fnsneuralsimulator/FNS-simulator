@@ -40,63 +40,63 @@ import org.math.plot.plotObjects.BaseLabel;
 public class ScatterPlotter {
 
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5840221804907296764L;
-	private JFrame frame;
-	
-	public ScatterPlotter(String s, double [] x, double[] y, Double simulatedTime){
-		int lastMillis = 15;
-		if (simulatedTime!=null)
-			lastMillis = simulatedTime.intValue()+1;
-		Plot2DPanel plot = new Plot2DPanel();
-		plot.addScatterPlot(s, x, y);
-		plot.setFixedBounds(0, 0, (int)(lastMillis*1.3));
-		// add a title
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 5840221804907296764L;
+  private JFrame frame;
+  
+  public ScatterPlotter(String s, double [] x, double[] y, Double simulatedTime){
+    int lastMillis = 15;
+    if (simulatedTime!=null)
+      lastMillis = simulatedTime.intValue()+1;
+    Plot2DPanel plot = new Plot2DPanel();
+    plot.addScatterPlot(s, x, y);
+    plot.setFixedBounds(0, 0, (int)(lastMillis*1.3));
+    // add a title
         BaseLabel title = new BaseLabel("Fires", Color.RED, 0.5, 1.1);
         title.setFont(new Font("Courier", Font.BOLD, 20));
         plot.addPlotable(title);
-		// put the PlotPanel in a JFrame like a JPanel
+    // put the PlotPanel in a JFrame like a JPanel
         frame = new JFrame(s);
         frame.setSize(1500, 700);
         frame.setContentPane(plot);
         
-	}
-	
-	public ScatterPlotter(String s, double [] x, double[] y, Double simulatedTime, String filename){
-		int lastMillis = 15;
-		if (simulatedTime!=null)
-			lastMillis = simulatedTime.intValue()+1;
-		int width = 1500;
-		int height = 700;
-		Plot2DPanel plot = new Plot2DPanel();
-		plot.addScatterPlot(s, x, y);
-		plot.setFixedBounds(0, 0, (int)(lastMillis*1.1));
-		// add a title
+  }
+  
+  public ScatterPlotter(String s, double [] x, double[] y, Double simulatedTime, String filename){
+    int lastMillis = 15;
+    if (simulatedTime!=null)
+      lastMillis = simulatedTime.intValue()+1;
+    int width = 1500;
+    int height = 700;
+    Plot2DPanel plot = new Plot2DPanel();
+    plot.addScatterPlot(s, x, y);
+    plot.setFixedBounds(0, 0, (int)(lastMillis*1.1));
+    // add a title
         BaseLabel title = new BaseLabel("Fires", Color.RED, 0.5, 1.1);
         title.setFont(new Font("Courier", Font.BOLD, 20));
         plot.addPlotable(title);
-		// put the PlotPanel in a JFrame like a JPanel
+    // put the PlotPanel in a JFrame like a JPanel
         frame = new JFrame(s);
         frame.setSize(width, height);
         frame.setContentPane(plot);
 //        Component component =  frame.getContentPane();
         BufferedImage image = new BufferedImage(
-        	      width,
-        	      height,
-        	      BufferedImage.TYPE_INT_RGB
-        	      );
+                width,
+                height,
+                BufferedImage.TYPE_INT_RGB
+                );
         plot.paint( image.getGraphics() ); 
         
-	}
-	
-	public void setVisible(){
-		frame.setVisible(true);
-	}
+  }
+  
+  public void setVisible(){
+    frame.setVisible(true);
+  }
 
-	
-	
+  
+  
 
 
 }

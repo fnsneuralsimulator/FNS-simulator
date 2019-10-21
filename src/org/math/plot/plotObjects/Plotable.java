@@ -10,14 +10,14 @@ import org.math.plot.render.*;
  * @author Yann RICHET
  */
 public interface Plotable {
-	public void plot(AbstractDrawer draw);
+  public void plot(AbstractDrawer draw);
 
-	public void setVisible(boolean v);
+  public void setVisible(boolean v);
 
-	public boolean getVisible();
+  public boolean getVisible();
 
-	public void setColor(Color c);
+  public void setColor(Color c);
 
-	public Color getColor();
+  public Color getColor();
 
 }

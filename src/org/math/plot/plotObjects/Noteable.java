@@ -8,7 +8,7 @@ import org.math.plot.render.*;
  * @author Yann RICHET
  */
 public interface Noteable {
-	public double[] isSelected(int[] screenCoord, AbstractDrawer draw);
+  public double[] isSelected(int[] screenCoord, AbstractDrawer draw);
 
-	public void note(AbstractDrawer draw);
+  public void note(AbstractDrawer draw);
 }

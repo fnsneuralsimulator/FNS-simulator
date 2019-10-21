@@ -38,41 +38,41 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "neurons_manager")
 public class NeuManCfg {
-	private Double D;
-	private Double c;
-	private Double t_arp;
-	
-	public NeuManCfg(){	
-	}
-	
-	public NeuManCfg(Double D, Double c, Double t_arp){
-		this.D=D;
-		this.c=c;
-		this.t_arp=t_arp;
-	}
-	
-	public Double getD() {
-		return D;
-	}
-	public void setD(Double d) {
-		this.D = d;
-	}
-	public Double getC() {
-		return c;
-	}
-	public void setC(Double c) {
-		this.c = c;
-	}
-	public Double getT_arp() {
-		return t_arp;
-	}
-	public void setT_arp(Double t_arp) {
-		this.t_arp = t_arp;
-	}
-	
+  private Double D;
+  private Double c;
+  private Double t_arp;
+  
+  public NeuManCfg(){  
+  }
+  
+  public NeuManCfg(Double D, Double c, Double t_arp){
+    this.D=D;
+    this.c=c;
+    this.t_arp=t_arp;
+  }
+  
+  public Double getD() {
+    return D;
+  }
+  public void setD(Double d) {
+    this.D = d;
+  }
+  public Double getC() {
+    return c;
+  }
+  public void setC(Double c) {
+    this.c = c;
+  }
+  public Double getT_arp() {
+    return t_arp;
+  }
+  public void setT_arp(Double t_arp) {
+    this.t_arp = t_arp;
+  }
+  
 
-	
-	
-	
-	
+  
+  
+  
+  
 }

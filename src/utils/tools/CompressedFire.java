@@ -35,65 +35,65 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class CompressedFire implements Comparable<CompressedFire>{
-	
-	private Integer compressedNeuronId;
-	private Double compressedFireTime;
-	
-	public CompressedFire(int regionId, long neuronId, double fireTime, Long maxN, Double reducingFactor ){
-		this.compressedNeuronId= (int) (new Double((regionId*maxN)+neuronId)*reducingFactor);
-		this.compressedFireTime=fireTime;
-	}
+  
+  private Integer compressedNeuronId;
+  private Double compressedFireTime;
+  
+  public CompressedFire(int regionId, long neuronId, double fireTime, Long maxN, Double reducingFactor ){
+    this.compressedNeuronId= (int) (new Double((regionId*maxN)+neuronId)*reducingFactor);
+    this.compressedFireTime=fireTime;
+  }
 
-	
-	public Integer getCompressedNeuronId() {
-		return compressedNeuronId;
-	}
+  
+  public Integer getCompressedNeuronId() {
+    return compressedNeuronId;
+  }
 
-	public Double getCompressedFireTime() {
-		return compressedFireTime;
-	}
-	
-	@Override
-	public String toString() {
-		return "compressedFire [id:" + compressedNeuronId + ", t:" + compressedFireTime + "]";
-	}
+  public Double getCompressedFireTime() {
+    return compressedFireTime;
+  }
+  
+  @Override
+  public String toString() {
+    return "compressedFire [id:" + compressedNeuronId + ", t:" + compressedFireTime + "]";
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) 
-			return false; 
-		if (obj == this)
-			return true; 
-		if (obj.getClass() != getClass()) 
-			return false;
-		
-		CompressedFire cf = (CompressedFire) obj;
-		return new EqualsBuilder()
-//				.appendSuper(super.equals(obj))
-				.append(compressedNeuronId, cf.compressedNeuronId)
-				.append(compressedFireTime, cf.compressedFireTime).isEquals();
-	}
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) 
+      return false; 
+    if (obj == this)
+      return true; 
+    if (obj.getClass() != getClass()) 
+      return false;
+    
+    CompressedFire cf = (CompressedFire) obj;
+    return new EqualsBuilder()
+//        .appendSuper(super.equals(obj))
+        .append(compressedNeuronId, cf.compressedNeuronId)
+        .append(compressedFireTime, cf.compressedFireTime).isEquals();
+  }
 
-	@Override
-	public int hashCode() {
-		// you pick a hard-coded, randomly chosen, non-zero, odd number
-	     // ideally different for each class
-		
-		return new HashCodeBuilder(17, 37).append(7l<<compressedNeuronId+9l).append(compressedFireTime+compressedNeuronId+compressedFireTime+17l).toHashCode();		
-	}
-	
-	@Override
-	public int compareTo(CompressedFire o) {
-		if (this==o)
-			return 0;
-		int retval = compressedNeuronId.compareTo(o.getCompressedNeuronId());
-		if (retval!=0)
-			return retval;
-		retval = compressedFireTime.compareTo(o.getCompressedFireTime());			
-		return retval;
-	}
-	
-	
-	
+  @Override
+  public int hashCode() {
+    // you pick a hard-coded, randomly chosen, non-zero, odd number
+       // ideally different for each class
+    
+    return new HashCodeBuilder(17, 37).append(7l<<compressedNeuronId+9l).append(compressedFireTime+compressedNeuronId+compressedFireTime+17l).toHashCode();    
+  }
+  
+  @Override
+  public int compareTo(CompressedFire o) {
+    if (this==o)
+      return 0;
+    int retval = compressedNeuronId.compareTo(o.getCompressedNeuronId());
+    if (retval!=0)
+      return retval;
+    retval = compressedFireTime.compareTo(o.getCompressedFireTime());      
+    return retval;
+  }
+  
+  
+  
 
 }

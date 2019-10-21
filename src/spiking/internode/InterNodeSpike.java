@@ -36,48 +36,48 @@ import java.io.Serializable;
 import spiking.node.Synapse;
 
 public class InterNodeSpike implements Serializable{
-	
-	
-	private static final long serialVersionUID = -6892509210757020267L;
-	
-	private Synapse syn;
-	private Double burnTime;
-	private Double fireTime;
-	private Double axonalDelay;
-	
-	public InterNodeSpike (Synapse syn, Double burnTime, Double fireTime, Double axonalDelay){
-//		this.syn=new Synapse(
-//				syn.getAxonNodeId(), 
-//				syn.getAxonNeuronId(), 
-//				syn.getDendriteNodeId(), 
-//				syn.getDendriteNeuronId(), 
-//				syn.getLength(), 
-//				syn.getPostSynapticWeight(),
-//				syn.getPreSynapticWeight(),
-//				false,
-//				true);
-		this.syn=syn;
-		this.burnTime=burnTime;
-		this.fireTime=fireTime;
-		this.axonalDelay=axonalDelay;
-	}
+  
+  
+  private static final long serialVersionUID = -6892509210757020267L;
+  
+  private Synapse syn;
+  private Double burnTime;
+  private Double fireTime;
+  private Double axonalDelay;
+  
+  public InterNodeSpike (Synapse syn, Double burnTime, Double fireTime, Double axonalDelay){
+//    this.syn=new Synapse(
+//        syn.getAxonNodeId(), 
+//        syn.getAxonNeuronId(), 
+//        syn.getDendriteNodeId(), 
+//        syn.getDendriteNeuronId(), 
+//        syn.getLength(), 
+//        syn.getPostSynapticWeight(),
+//        syn.getPreSynapticWeight(),
+//        false,
+//        true);
+    this.syn=syn;
+    this.burnTime=burnTime;
+    this.fireTime=fireTime;
+    this.axonalDelay=axonalDelay;
+  }
 
-	public Synapse getSyn() {
-		return syn;
-	}
+  public Synapse getSyn() {
+    return syn;
+  }
 
-	public Double getBurnTime() {
-		return burnTime;
-	}
-	
-	public Double getFireTime(){
-		return fireTime;
-	}
-	
-	public Double getAxonalDelay(){
-		return axonalDelay;
-	}
-	
-	
+  public Double getBurnTime() {
+    return burnTime;
+  }
+  
+  public Double getFireTime(){
+    return fireTime;
+  }
+  
+  public Double getAxonalDelay(){
+    return axonalDelay;
+  }
+  
+  
 
 }

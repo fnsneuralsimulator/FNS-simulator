@@ -710,7 +710,7 @@ public abstract class PlotCanvas extends JPanel implements MouseListener, MouseM
 
     public void mousePressed(MouseEvent e) {
         //System.out.println("PlotCanvas.mousePressed");
-		/*
+    /*
          * System.out.println("PlotCanvas.mousePressed"); System.out.println("
          * mouseClick = [" + mouseClick[0] + " " + mouseClick[1] + "]");
          * System.out.println(" mouseCurent = [" + mouseCurent[0] + " " +
@@ -871,18 +871,18 @@ public abstract class PlotCanvas extends JPanel implements MouseListener, MouseM
         mouseCurent[0] = e.getX();
         mouseCurent[1] = e.getY();
         e.consume();
-        	for (int i = 0; i < plots.size(); i++) {
-        		if (getPlot(i).noted) {
-        			double[] _coordNoted = getPlot(i).isSelected(mouseCurent, draw);           
-        			if (_coordNoted != null) {
-        				getPlot(i).coordNoted = _coordNoted;
-        	        	repaint();
-        			}
-        		}
-        	}
+          for (int i = 0; i < plots.size(); i++) {
+            if (getPlot(i).noted) {
+              double[] _coordNoted = getPlot(i).isSelected(mouseCurent, draw);           
+              if (_coordNoted != null) {
+                getPlot(i).coordNoted = _coordNoted;
+                    repaint();
+              }
+            }
+          }
         
         //System.out.println("PlotCanvas.mouseMoved");
-		/*
+    /*
          * System.out.println("PlotCanvas.mouseClicked"); System.out.println("
          * mouseClick = [" + mouseClick[0] + " " + mouseClick[1] + "]");
          * System.out.println(" mouseCurent = [" + mouseCurent[0] + " " +
@@ -906,7 +906,7 @@ public abstract class PlotCanvas extends JPanel implements MouseListener, MouseM
 
     public void mouseWheelMoved(MouseWheelEvent e) {
         //System.out.println("PlotCanvas.mouseWheelMoved");
-		/*
+    /*
          * System.out.println("PlotCanvas.mouseWheelMoved");
          * System.out.println(" mouseClick = [" + mouseClick[0] + " " +
          * mouseClick[1] + "]"); System.out.println(" mouseCurent = [" +

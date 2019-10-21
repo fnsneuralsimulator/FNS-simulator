@@ -43,29 +43,29 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 public class NiceQueue implements Serializable{
-	
+  
     
-	private static final long serialVersionUID = 3248671994878955651L;
-	private PriorityQueue<NiceNode> queue;
+  private static final long serialVersionUID = 3248671994878955651L;
+  private PriorityQueue<NiceNode> queue;
     private HashMap<Long, NiceNode> nodesHash;
     
     
     
     public NiceQueue(String tmpHashName){
-    	queue=new PriorityQueue<NiceNode>();
-    	nodesHash = new HashMap<Long, NiceNode>();
+      queue=new PriorityQueue<NiceNode>();
+      nodesHash = new HashMap<Long, NiceNode>();
     }
     
 //    public NiceQueue(DB regionDb, String hashName){
-//    	this.regionDb=regionDb;
+//      this.regionDb=regionDb;
 //        queue=new PriorityQueue<NiceNode>();
 //        nodesHash = new HashMap<Long, NiceNode>();
 //    }
     
-//	public NiceNode[] toArray(){
-//		NiceNode[] aux=new NiceNode[queue.size()];
-//		return queue.toArray(aux);
-//	}
+//  public NiceNode[] toArray(){
+//    NiceNode[] aux=new NiceNode[queue.size()];
+//    return queue.toArray(aux);
+//  }
 
 
     public void insert(Double tf, Long fn){
@@ -73,90 +73,90 @@ public class NiceQueue implements Serializable{
         queue.add(node);
         nodesHash.put(fn, node);
     }
-   	
+     
 
-	public NiceNode min(){
-		return queue.peek();
-	}
+  public NiceNode min(){
+    return queue.peek();
+  }
 
-	public void _update(double x){
-		Iterator<NiceNode> it=queue.iterator();
-//		ArrayList<NiceNode> toremList = new ArrayList<NiceNode>();
-//		NiceNode tmp;
-//		
-//		while(it.hasNext()){
-//			if ((tmp=it.next()).tf<x)
-//				toremList.add(tmp);
-//		}
-//		for (int i=0; i<toremList.size();++i)
-//			queue.remove(toremList.get(i));
-		while(it.hasNext())
-			it.next().tf-=x;
-	}
+  public void _update(double x){
+    Iterator<NiceNode> it=queue.iterator();
+//    ArrayList<NiceNode> toremList = new ArrayList<NiceNode>();
+//    NiceNode tmp;
+//    
+//    while(it.hasNext()){
+//      if ((tmp=it.next()).tf<x)
+//        toremList.add(tmp);
+//    }
+//    for (int i=0; i<toremList.size();++i)
+//      queue.remove(toremList.get(i));
+    while(it.hasNext())
+      it.next().tf-=x;
+  }
 
-	/** 
-	 * @return the minimum time to fire for active neurons, 
-	 * without polling the value from the queue 
-	 * If the queue is empty, null is returned                                                                           
-	 */
-	public Double getMinTime(){
-		NiceNode min=min();
-		if (min==null)
-			return null;
-		return min.tf;
-	}
-	
+  /** 
+   * @return the minimum time to fire for active neurons, 
+   * without polling the value from the queue 
+   * If the queue is empty, null is returned                                                                           
+   */
+  public Double getMinTime(){
+    NiceNode min=min();
+    if (min==null)
+      return null;
+    return min.tf;
+  }
+  
     public NiceNode extractMin(){
-		NiceNode min=queue.poll();
-		if(min!=null){
-			nodesHash.remove(min.fn);
-//			this.update(min.tf);
-		}
-		return min;
-	}
+    NiceNode min=queue.poll();
+    if(min!=null){
+      nodesHash.remove(min.fn);
+//      this.update(min.tf);
+    }
+    return min;
+  }
     
     public void delete(Long fn){
-//    	System.out.println("nice queue deleting fn:"+fn+"...");
+//      System.out.println("nice queue deleting fn:"+fn+"...");
         NiceNode q = nodesHash.get(fn);
         if(q!=null){
             queue.remove(q);
 //            System.out.println("deleted.");
         }
 //        else
-//        	System.out.println("not found.");
+//          System.out.println("not found.");
         
     }
     
     public int size(){
-    	return queue.size();
+      return queue.size();
     }
     
     public void printQueue(){
-    	Iterator<NiceNode> it=queue.iterator();
+      Iterator<NiceNode> it=queue.iterator();
         while(it.hasNext()){
             System.out.println(it.next().toString());
         }
     }
     
     public static void main(String[] args) {
-    	
-		
-		NiceQueue nq = new NiceQueue("tmp"); 
-		for (long i=0; i<10;++i)
-			nq.insert(new Double((23+i+(i*i%7))%27), i);
-		
-		
-		nq.printQueue();
-		NiceNode nn = nq.min();
-		System.out.println("\n\n\nmin node:\t"+nn.toString());
-//		nq.update(7);
-		nq.printQueue();
-		
-	}
+      
+    
+    NiceQueue nq = new NiceQueue("tmp"); 
+    for (long i=0; i<10;++i)
+      nq.insert(new Double((23+i+(i*i%7))%27), i);
+    
+    
+    nq.printQueue();
+    NiceNode nn = nq.min();
+    System.out.println("\n\n\nmin node:\t"+nn.toString());
+//    nq.update(7);
+    nq.printQueue();
+    
+  }
 
     public NiceNode[] toArray(){
-		NiceNode[] aux=new NiceNode[queue.size()];
-		return queue.toArray(aux);
-	}
+    NiceNode[] aux=new NiceNode[queue.size()];
+    return queue.toArray(aux);
+  }
     
 }

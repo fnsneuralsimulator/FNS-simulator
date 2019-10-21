@@ -46,131 +46,131 @@ import utils.tools.IntegerCouple;
 //import grph.in_memory.InMemoryGrph;
 
 public class ConnectivityPackageManager {
-	//the nodes list sorted by Id
-	private ArrayList<Node> nodes = new ArrayList<>();
-	private PackageReader pr = new PackageReader(this);
-	private ArrayList <NodesInterconnection> ris = new ArrayList<>();
-	private HashMap<IntegerCouple, Integer> indexes = new HashMap<>();
-	
-	private void _addNode(Node r){
-		if (nodes==null)
-			return;
-		nodes.add(r);
-	}
-	
-	public void addNode(){
-		_addNode(new Node());
-	}
-	
-	public void addNode(Node r){
-		_addNode(r);
-	}
-	
-	public void addNode(String label, Double x, Double y, Double z ){
-		_addNode(new Node(this,label,x,y,z));
-	}
-	
-	public Node getNode(Integer id){
-		return nodes.get(id);
-	}
-	
-	public void addEdge(Integer src, Integer dst, Double weight){
-		if ((nodes.get(src)!=null)&&(nodes.get(dst)!=null)){
-			IntegerCouple tmp = new IntegerCouple(src, dst);
-			Integer index = indexes.get(tmp);
-			if (index==null){
-				indexes.put(tmp, ris.size());
-				ris.add(new NodesInterconnection(src, dst, weight));
-			}
-			
-		}
-	}
-	
-	public void addAmplitude(Integer src, Integer dst, Double amplitude){
-		if ((nodes.get(src)!=null)&&(nodes.get(dst)!=null)){
-			IntegerCouple tmp = new IntegerCouple(src, dst);
-			Integer index = indexes.get(tmp);			
-			if (index!=null)
-				ris.get(index).setAmplitude(amplitude);
-		}
-	}
-	
-	public void addAmplitudeStdDeviation(Integer src, Integer dst, Double amplitude){
-		if ((nodes.get(src)!=null)&&(nodes.get(dst)!=null)){
-			IntegerCouple tmp = new IntegerCouple(src, dst);
-			Integer index = indexes.get(tmp);			
-			if (index!=null)
-				ris.get(index).setAmplitudeStdDeviation(amplitude);
-		}
-	}
-	
-	public void addLength(Integer src, Integer dst, double lenght) {
-		if ((nodes.get(src)!=null)&&(nodes.get(dst)!=null)){
-			IntegerCouple tmp = new IntegerCouple(src, dst);
-			Integer index = indexes.get(tmp);			
-			if (index!=null)
-				ris.get(index).setLength(lenght);
-		}
-	}
+  //the nodes list sorted by Id
+  private ArrayList<Node> nodes = new ArrayList<>();
+  private PackageReader pr = new PackageReader(this);
+  private ArrayList <NodesInterconnection> ris = new ArrayList<>();
+  private HashMap<IntegerCouple, Integer> indexes = new HashMap<>();
+  
+  private void _addNode(Node r){
+    if (nodes==null)
+      return;
+    nodes.add(r);
+  }
+  
+  public void addNode(){
+    _addNode(new Node());
+  }
+  
+  public void addNode(Node r){
+    _addNode(r);
+  }
+  
+  public void addNode(String label, Double x, Double y, Double z ){
+    _addNode(new Node(this,label,x,y,z));
+  }
+  
+  public Node getNode(Integer id){
+    return nodes.get(id);
+  }
+  
+  public void addEdge(Integer src, Integer dst, Double weight){
+    if ((nodes.get(src)!=null)&&(nodes.get(dst)!=null)){
+      IntegerCouple tmp = new IntegerCouple(src, dst);
+      Integer index = indexes.get(tmp);
+      if (index==null){
+        indexes.put(tmp, ris.size());
+        ris.add(new NodesInterconnection(src, dst, weight));
+      }
+      
+    }
+  }
+  
+  public void addAmplitude(Integer src, Integer dst, Double amplitude){
+    if ((nodes.get(src)!=null)&&(nodes.get(dst)!=null)){
+      IntegerCouple tmp = new IntegerCouple(src, dst);
+      Integer index = indexes.get(tmp);      
+      if (index!=null)
+        ris.get(index).setAmplitude(amplitude);
+    }
+  }
+  
+  public void addAmplitudeStdDeviation(Integer src, Integer dst, Double amplitude){
+    if ((nodes.get(src)!=null)&&(nodes.get(dst)!=null)){
+      IntegerCouple tmp = new IntegerCouple(src, dst);
+      Integer index = indexes.get(tmp);      
+      if (index!=null)
+        ris.get(index).setAmplitudeStdDeviation(amplitude);
+    }
+  }
+  
+  public void addLength(Integer src, Integer dst, double lenght) {
+    if ((nodes.get(src)!=null)&&(nodes.get(dst)!=null)){
+      IntegerCouple tmp = new IntegerCouple(src, dst);
+      Integer index = indexes.get(tmp);      
+      if (index!=null)
+        ris.get(index).setLength(lenght);
+    }
+  }
 
-	
-	public void addLengthShapeParameter(Integer src, Integer dst, double lenghtShapeParameter) {
-		
-		if ((nodes.get(src)!=null)&&(nodes.get(dst)!=null)){
-			IntegerCouple tmp = new IntegerCouple(src, dst);
-			Integer index = indexes.get(tmp);			
-			if (index!=null)
-				ris.get(index).setLengthShapeParameter(lenghtShapeParameter);
-		}
-	}
-	
-	public void addType(Integer src, Integer dst, Integer type) {
-		if ((nodes.get(src)!=null)&&(nodes.get(dst)!=null)){
-			IntegerCouple tmp = new IntegerCouple(src, dst);
-			Integer index = indexes.get(tmp);			
-			if (index!=null)
-				ris.get(index).setType(type);
-		}
-	}
+  
+  public void addLengthShapeParameter(Integer src, Integer dst, double lenghtShapeParameter) {
+    
+    if ((nodes.get(src)!=null)&&(nodes.get(dst)!=null)){
+      IntegerCouple tmp = new IntegerCouple(src, dst);
+      Integer index = indexes.get(tmp);      
+      if (index!=null)
+        ris.get(index).setLengthShapeParameter(lenghtShapeParameter);
+    }
+  }
+  
+  public void addType(Integer src, Integer dst, Integer type) {
+    if ((nodes.get(src)!=null)&&(nodes.get(dst)!=null)){
+      IntegerCouple tmp = new IntegerCouple(src, dst);
+      Integer index = indexes.get(tmp);      
+      if (index!=null)
+        ris.get(index).setType(type);
+    }
+  }
 
-	
-	public Integer getNodesNum() {
-		return nodes.size();
-	}
+  
+  public Integer getNodesNum() {
+    return nodes.size();
+  }
 
-	public Integer getEdgesNum() {
-		return ris.size();
-	}
-	
-	
+  public Integer getEdgesNum() {
+    return ris.size();
+  }
+  
+  
 
-	public ArrayList<NodesInterconnection> getInterNodeConnections() {
-		return ris;
-	}
+  public ArrayList<NodesInterconnection> getInterNodeConnections() {
+    return ris;
+  }
 
-	public void readConnectivityPackage(String path){
-		pr.readConnectivityPackage(path);
-	}
-	
-	public Double getMinNe_xn_ratio(){
-		return pr.getMinNe_xn_ratio();
-	}
-	
-	public Double getMaxNe_xn_ratio(){
-		return pr.getMaxNe_xn_ratio();
-	}
-	
-	
-	
-	
-	public static void main(String[] args) {
-		ConnectivityPackageManager rm = new ConnectivityPackageManager();
-		//PackageReader pr = new PackageReader(rm);
-		rm.readConnectivityPackage("/home/knizontes/Documenti/uni/tesi/neural_network/connectivity_998");
-		System.out.println("Nodes:"+rm.getNodesNum());
-		System.out.println("Edges:"+rm.getEdgesNum());
-	}
+  public void readConnectivityPackage(String path){
+    pr.readConnectivityPackage(path);
+  }
+  
+  public Double getMinNe_xn_ratio(){
+    return pr.getMinNe_xn_ratio();
+  }
+  
+  public Double getMaxNe_xn_ratio(){
+    return pr.getMaxNe_xn_ratio();
+  }
+  
+  
+  
+  
+  public static void main(String[] args) {
+    ConnectivityPackageManager rm = new ConnectivityPackageManager();
+    //PackageReader pr = new PackageReader(rm);
+    rm.readConnectivityPackage("/home/knizontes/Documenti/uni/tesi/neural_network/connectivity_998");
+    System.out.println("Nodes:"+rm.getNodesNum());
+    System.out.println("Edges:"+rm.getEdgesNum());
+  }
 
-	
+  
 
 }

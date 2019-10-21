@@ -33,48 +33,48 @@ package spiking.node.neuron;
 
 public class Neuron {
 
-//	private Integer index;
-	private Double state;
-	private Double timeToFire; 
-	private Double lastFiringTime; 
-	private Double lastBurningTime; 
-	private Double preSynapticWeight;
-	
-	
-	
-	public Double getState() {
-		return state;
-	}
-	public void setState(Double state) {
-		this.state = state;
-	}
-	public Double getTimeToFire() {
-		return timeToFire;
-	}
-	public void setTimeToFire(Double timeToFire) {
-		this.timeToFire = timeToFire;
-	}
-	public Double getLastFiringTime() {
-		return lastFiringTime;
-	}
-	public void setLastFiringTime(Double lastFiringTime) {
-		this.lastFiringTime = lastFiringTime;
-	}
-	public Double getLastBurningTime() {
-		return lastBurningTime;
-	}
-	public void setLastBurningTime(Double lastBurningTime) {
-		this.lastBurningTime = lastBurningTime;
-	}
-	public Double getPreSynapticWeight() {
-		return preSynapticWeight;
-	}
-	public void setPreSynapticWeight(Double preSynapticWeight) {
-		this.preSynapticWeight = preSynapticWeight;
-	}
-	
-	
-	
-	
-	
+//  private Integer index;
+  private Double state;
+  private Double timeToFire; 
+  private Double lastFiringTime; 
+  private Double lastBurningTime; 
+  private Double preSynapticWeight;
+  
+  
+  
+  public Double getState() {
+    return state;
+  }
+  public void setState(Double state) {
+    this.state = state;
+  }
+  public Double getTimeToFire() {
+    return timeToFire;
+  }
+  public void setTimeToFire(Double timeToFire) {
+    this.timeToFire = timeToFire;
+  }
+  public Double getLastFiringTime() {
+    return lastFiringTime;
+  }
+  public void setLastFiringTime(Double lastFiringTime) {
+    this.lastFiringTime = lastFiringTime;
+  }
+  public Double getLastBurningTime() {
+    return lastBurningTime;
+  }
+  public void setLastBurningTime(Double lastBurningTime) {
+    this.lastBurningTime = lastBurningTime;
+  }
+  public Double getPreSynapticWeight() {
+    return preSynapticWeight;
+  }
+  public void setPreSynapticWeight(Double preSynapticWeight) {
+    this.preSynapticWeight = preSynapticWeight;
+  }
+  
+  
+  
+  
+  
 }

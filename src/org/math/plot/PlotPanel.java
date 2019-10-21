@@ -255,7 +255,7 @@ public abstract class PlotPanel extends JPanel {
         return plotCanvas.getAxisScales();
     }
 
-    //	 TODO axes labels are rested after addPlot... correct this.
+    //   TODO axes labels are rested after addPlot... correct this.
     /**
      * Sets the name of the axis, in this order: X, Y and Z.
      * @param labels One to three strings containing the name of each axis.

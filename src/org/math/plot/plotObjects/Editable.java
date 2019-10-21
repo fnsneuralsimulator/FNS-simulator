@@ -8,10 +8,10 @@ import org.math.plot.render.*;
  * @author Yann RICHET
  */
 public interface Editable {
-	public double[] isSelected(int[] screenCoord, AbstractDrawer draw);
+  public double[] isSelected(int[] screenCoord, AbstractDrawer draw);
 
-	public void edit(Object editParent);
+  public void edit(Object editParent);
 
-	public void editnote(AbstractDrawer draw);
+  public void editnote(AbstractDrawer draw);
 
 }

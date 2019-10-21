@@ -240,7 +240,7 @@ public class LegendPanel extends JPanel implements ComponentListener {
             color.setPreferredSize(new Dimension(size, size));
 
             // TODO change legend when plot is invisible
-			/*if (!plot.visible)
+      /*if (!plot.visible)
             color.setBackground(Color.LIGHT_GRAY);
             else*/
             color.setBackground(plot.getColor());

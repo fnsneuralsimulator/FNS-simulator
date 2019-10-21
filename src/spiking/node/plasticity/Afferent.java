@@ -38,83 +38,83 @@ import spiking.node.Synapse;
 import utils.tools.IntegerCouple;
 
 public class Afferent {
-	private Synapse syn;
-	//false when a LTP occurs
-	private Boolean ltpFlag = true;
-	//false when a LTD occurs
-	private Boolean ltdFlag = true;
-	//time to last firing of the firing neuron
-	private Double lastFireTime;
-	//store the old value of postsynaptic weight
-	private Double oldPostSynapticWeight;
-	private static final Double pwMax = 1.0;
-	//
-//	private ArrayList<Integer> 
-	
-	//kkk la firma precedente anteponeva i burning:
-	//Long burningNeuronId, Long spikingNeuronId, Double lastFireTime, Double oldPostSynapticWeight
-	public Afferent(Synapse syn, Double lastFireTime, Double oldPostSynapticWeight) {
-		this.syn=syn;
-		this.lastFireTime = lastFireTime;
-		this.oldPostSynapticWeight = oldPostSynapticWeight;
-	}
-	
+  private Synapse syn;
+  //false when a LTP occurs
+  private Boolean ltpFlag = true;
+  //false when a LTD occurs
+  private Boolean ltdFlag = true;
+  //time to last firing of the firing neuron
+  private Double lastFireTime;
+  //store the old value of postsynaptic weight
+  private Double oldPostSynapticWeight;
+  private static final Double pwMax = 1.0;
+  //
+//  private ArrayList<Integer> 
+  
+  //kkk la firma precedente anteponeva i burning:
+  //Long burningNeuronId, Long spikingNeuronId, Double lastFireTime, Double oldPostSynapticWeight
+  public Afferent(Synapse syn, Double lastFireTime, Double oldPostSynapticWeight) {
+    this.syn=syn;
+    this.lastFireTime = lastFireTime;
+    this.oldPostSynapticWeight = oldPostSynapticWeight;
+  }
+  
 
-	public Long getBurningNeuron(){
-		return syn.getBurning();
-	}
-	
-	public Long getSpikingNeuron(){
-		return syn.getFiring();
-	}
+  public Long getBurningNeuron(){
+    return syn.getBurning();
+  }
+  
+  public Long getSpikingNeuron(){
+    return syn.getFiring();
+  }
 
-	public Boolean getLtpFlag() {
-		return ltpFlag;
-	}
+  public Boolean getLtpFlag() {
+    return ltpFlag;
+  }
 
-	public void setLtpFlag(Boolean ltpFlag) {
-		this.ltpFlag = ltpFlag;
-	}
+  public void setLtpFlag(Boolean ltpFlag) {
+    this.ltpFlag = ltpFlag;
+  }
 
-	public Boolean getLtdFlag() {
-		return ltdFlag;
-	}
+  public Boolean getLtdFlag() {
+    return ltdFlag;
+  }
 
-	public void setLtdFlag(Boolean ltdFlag) {
-		this.ltdFlag = ltdFlag;
-	}
+  public void setLtdFlag(Boolean ltdFlag) {
+    this.ltdFlag = ltdFlag;
+  }
 
-	public Double getLastFireTime() {
-		return lastFireTime;
-	}
+  public Double getLastFireTime() {
+    return lastFireTime;
+  }
 
-	public void setLastFireTime(Double lastFireTime) {
-		this.lastFireTime = lastFireTime;
-	}
+  public void setLastFireTime(Double lastFireTime) {
+    this.lastFireTime = lastFireTime;
+  }
 
-	public Double getOldPostSynapticWeight() {
-		return oldPostSynapticWeight;
-	}
-	
-//	public IntegerCouple asIntegerCouple(){
-//		return new IntegerCouple(burningNeuronId, spikingNeuronId);
-//	}
-	
-	public Synapse getSynapse(){
-		return syn;
-	}
+  public Double getOldPostSynapticWeight() {
+    return oldPostSynapticWeight;
+  }
+  
+//  public IntegerCouple asIntegerCouple(){
+//    return new IntegerCouple(burningNeuronId, spikingNeuronId);
+//  }
+  
+  public Synapse getSynapse(){
+    return syn;
+  }
 
-	public void setOldPostsynapticWeight(Double oldPostSynapticWeight) {
-		//check Pw upper bound is not lower than 0
-			this.oldPostSynapticWeight = (oldPostSynapticWeight>=0)? 
-					((oldPostSynapticWeight>pwMax)? pwMax:oldPostSynapticWeight ) 
-					: 0.0;
-	}
-	
-	
-	
-	
-	
-	
+  public void setOldPostsynapticWeight(Double oldPostSynapticWeight) {
+    //check Pw upper bound is not lower than 0
+      this.oldPostSynapticWeight = (oldPostSynapticWeight>=0)? 
+          ((oldPostSynapticWeight>pwMax)? pwMax:oldPostSynapticWeight ) 
+          : 0.0;
+  }
+  
+  
+  
+  
+  
+  
 
 }

@@ -38,75 +38,75 @@ import spiking.node.neuron.NodeNeuronsManager;
 import utils.constants.Constants;
 
 public class AfferentManager {
-	
-	HashMap<Synapse, Afferent> affMap = new HashMap<>();
-	private Double etap = 0.01;
-	private Double etam = 0.05;
-	private Double taup = 15.0;
-	private Double taum = 30.0;
-	private Double pwMax = 100.0;
-	// if the time delta is bigger than to, no effect is calculated - cutoff filter
-	private Double to=3.0;
-	
-	
-	public void addAfferent(Afferent aff){
-		affMap.put(aff.getSynapse(), aff);
-	}
-	
-	public Afferent findNoLtp(Synapse syn) {
-		Afferent retval = affMap.get(syn);
-		retval=retval.getLtpFlag()?retval:null;
-		return retval;
-	}
-	
-	public Afferent popNoLtp(Synapse syn) {
-		Afferent retval = affMap.get(syn);
-		if (retval==null)
-			return retval;
-		retval=retval.getLtpFlag()?retval:null;
-		if (retval==null)
-			return retval;
-		retval=retval.getLastFireTime().equals(Constants.TIME_TO_FIRE_DEF_VAL)?null:retval;		
-		affMap.remove(retval);
-		return retval;
-	}
-	
-	public Afferent popNoLtd(Synapse syn) {
-		Afferent retval = affMap.get(syn);
-		if (retval==null)
-			return retval;
-		retval=retval.getLtdFlag()?retval:null;
-		retval=retval.getLastFireTime().equals(Constants.TIME_TO_FIRE_DEF_VAL)?null:retval;
-		affMap.remove(retval);
-		return retval;
-	}
+  
+  HashMap<Synapse, Afferent> affMap = new HashMap<>();
+  private Double etap = 0.01;
+  private Double etam = 0.05;
+  private Double taup = 15.0;
+  private Double taum = 30.0;
+  private Double pwMax = 100.0;
+  // if the time delta is bigger than to, no effect is calculated - cutoff filter
+  private Double to=3.0;
+  
+  
+  public void addAfferent(Afferent aff){
+    affMap.put(aff.getSynapse(), aff);
+  }
+  
+  public Afferent findNoLtp(Synapse syn) {
+    Afferent retval = affMap.get(syn);
+    retval=retval.getLtpFlag()?retval:null;
+    return retval;
+  }
+  
+  public Afferent popNoLtp(Synapse syn) {
+    Afferent retval = affMap.get(syn);
+    if (retval==null)
+      return retval;
+    retval=retval.getLtpFlag()?retval:null;
+    if (retval==null)
+      return retval;
+    retval=retval.getLastFireTime().equals(Constants.TIME_TO_FIRE_DEF_VAL)?null:retval;    
+    affMap.remove(retval);
+    return retval;
+  }
+  
+  public Afferent popNoLtd(Synapse syn) {
+    Afferent retval = affMap.get(syn);
+    if (retval==null)
+      return retval;
+    retval=retval.getLtdFlag()?retval:null;
+    retval=retval.getLastFireTime().equals(Constants.TIME_TO_FIRE_DEF_VAL)?null:retval;
+    affMap.remove(retval);
+    return retval;
+  }
 
-	public Double getEtap() {
-		return etap;
-	}
+  public Double getEtap() {
+    return etap;
+  }
 
-	public Double getEtam() {
-		return etam;
-	}
+  public Double getEtam() {
+    return etam;
+  }
 
-	public Double getTaup() {
-		return taup;
-	}
+  public Double getTaup() {
+    return taup;
+  }
 
-	public Double getTaum() {
-		return taum;
-	}
+  public Double getTaum() {
+    return taum;
+  }
 
-	public Double getPwMax() {
-		return pwMax;
-	}
-	
-	public Double getTo(){
-		return to;
-	}
-	
-	
-	
-	
+  public Double getPwMax() {
+    return pwMax;
+  }
+  
+  public Double getTo(){
+    return to;
+  }
+  
+  
+  
+  
 
 }

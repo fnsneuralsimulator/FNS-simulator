@@ -32,20 +32,20 @@
 package utils.experiment;
 
 public class Experiment {
-	
-	private static String expName="";
-	private static String dir="/output/";
-	
-	public static void setExperimentName(String name){
-		expName=name;
-	}
-	
-	public static String getExperimentName() {
-		return expName;
-	}
-	
-	public static String getExperimentDir() {
-		return expName+dir;
-	}
+  
+  private static String expName="";
+  private static String dir="/output/";
+  
+  public static void setExperimentName(String name){
+    expName=name;
+  }
+  
+  public static String getExperimentName() {
+    return expName;
+  }
+  
+  public static String getExperimentDir() {
+    return expName+dir;
+  }
 
 }

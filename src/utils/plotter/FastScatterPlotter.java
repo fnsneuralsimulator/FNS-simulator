@@ -43,42 +43,42 @@ import org.jfree.ui.ApplicationFrame;
 public class FastScatterPlotter extends ApplicationFrame{
 
 
-	private float [][]data;
+  private float [][]data;
 
-	public FastScatterPlotter(String title, float [] x, float[] y) {
-		super(title);
-		data = new float [2][x.length];
-		for (int i=0; i<x.length;++i){
-			data[0][i]=(float)x[i];
-			data[1][i]=(float)y[i];
-		}
-		final NumberAxis domainAxis = new NumberAxis("X");
-		domainAxis.setAutoRangeIncludesZero(false);
-		final NumberAxis rangeAxis = new NumberAxis("Y");
-		rangeAxis.setAutoRangeIncludesZero(false);
-		final FastScatterPlot plot = new FastScatterPlot();//(this.data, domainAxis, rangeAxis);
-		plot.setData(data);
-		plot.setDomainAxis(domainAxis);
-		plot.setRangeAxis(rangeAxis);
-		final JFreeChart chart = new JFreeChart("Fast Scatter Plot", plot);
-		//      chart.setLegend(null);
+  public FastScatterPlotter(String title, float [] x, float[] y) {
+    super(title);
+    data = new float [2][x.length];
+    for (int i=0; i<x.length;++i){
+      data[0][i]=(float)x[i];
+      data[1][i]=(float)y[i];
+    }
+    final NumberAxis domainAxis = new NumberAxis("X");
+    domainAxis.setAutoRangeIncludesZero(false);
+    final NumberAxis rangeAxis = new NumberAxis("Y");
+    rangeAxis.setAutoRangeIncludesZero(false);
+    final FastScatterPlot plot = new FastScatterPlot();//(this.data, domainAxis, rangeAxis);
+    plot.setData(data);
+    plot.setDomainAxis(domainAxis);
+    plot.setRangeAxis(rangeAxis);
+    final JFreeChart chart = new JFreeChart("Fast Scatter Plot", plot);
+    //      chart.setLegend(null);
 
-		// force aliasing of the rendered content..
-		chart.getRenderingHints().put
-		(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    // force aliasing of the rendered content..
+    chart.getRenderingHints().put
+    (RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		final ChartPanel panel = new ChartPanel(chart, true);
-		panel.setPreferredSize(new java.awt.Dimension(500, 270));
-		//      panel.setHorizontalZoom(true);
-		//    panel.setVerticalZoom(true);
-		panel.setMinimumDrawHeight(10);
-		panel.setMaximumDrawHeight(2000);
-		panel.setMinimumDrawWidth(20);
-		panel.setMaximumDrawWidth(2000);
+    final ChartPanel panel = new ChartPanel(chart, true);
+    panel.setPreferredSize(new java.awt.Dimension(500, 270));
+    //      panel.setHorizontalZoom(true);
+    //    panel.setVerticalZoom(true);
+    panel.setMinimumDrawHeight(10);
+    panel.setMaximumDrawHeight(2000);
+    panel.setMinimumDrawWidth(20);
+    panel.setMaximumDrawWidth(2000);
 
-		setContentPane(panel);	
-	}
-	
-	
+    setContentPane(panel);  
+  }
+  
+  
 
 }

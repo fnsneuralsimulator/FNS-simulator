@@ -38,39 +38,39 @@ import spiking.node.Synapse;
 
 public class FixedBurnSpike implements Comparable<FixedBurnSpike>, Serializable{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 202189250921075L;
-	private Synapse syn;
-	private Double burnTime;
-	private Double fireTime;
-	
-	public FixedBurnSpike(Synapse syn, Double burnTime, Double fireTime) {
-		this.syn=syn;
-		this.burnTime=burnTime;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 202189250921075L;
+  private Synapse syn;
+  private Double burnTime;
+  private Double fireTime;
+  
+  public FixedBurnSpike(Synapse syn, Double burnTime, Double fireTime) {
+    this.syn=syn;
+    this.burnTime=burnTime;
     this.fireTime=fireTime;
-	}
+  }
 
-	public Synapse getSyn() {
-		return syn;
-	}
+  public Synapse getSyn() {
+    return syn;
+  }
 
-	public Double getBurnTime() {
-		return burnTime;
-	}
-	
-	public Double getFireTime() {
-		return fireTime;
-	}
+  public Double getBurnTime() {
+    return burnTime;
+  }
+  
+  public Double getFireTime() {
+    return fireTime;
+  }
 
-	public int compareTo(FixedBurnSpike node){
+  public int compareTo(FixedBurnSpike node){
         return Double.compare(burnTime,node.getBurnTime());
     }
-	
-	public String toString() {
-		return "fixed burn spike: "+syn+", time to burn: "+burnTime;
-	}
+  
+  public String toString() {
+    return "fixed burn spike: "+syn+", time to burn: "+burnTime;
+  }
 
 
 }

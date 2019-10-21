@@ -10,8 +10,11 @@ MINOR_F="dev_version/minor"
 typeset -i MINOR_V=$(cat $MINOR_F)
 MINOR_V=$((MINOR_V+1))
 echo $MINOR_V > $MINOR_F
+
 echo -1 > $BUILD_F
-./dev_compile
-git add -A .
-git commit -m "$COMMIT_M"
-git push -u origin devel
+./dev_compile $COMMIT_M
+git checkout test
+git pull
+git merge devel
+git checkout devel
+git fetch

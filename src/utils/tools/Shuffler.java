@@ -40,50 +40,43 @@ import org.mapdb.HTreeMap;
 
 public class Shuffler {
 
-	public static int [] shuffleArray(int n){
-		int [] retval = new int[n];
-		for (int i=0;i<n;++i)
-			retval[i]=i;
-
-		// If running on Java 6 or older, use `new Random()` on RHS here
-		Random rnd = ThreadLocalRandom.current();
-		for (int i = n - 1; i > 0; i--)
-		{
-			int index = rnd.nextInt(i + 1);
-			// Simple swap
-			int a = retval[index];
-			retval[index] = retval[i];
-			retval[i] = a;
-		}
-		return retval;
-	}
-	
-	public static void shuffleArray(HTreeMap<Long, Long> shuffled, long n){
-		
-		for (long i=0;i<n;++i)
-			shuffled.put(i, i);
-
-		// If running on Java 6 or older, use `new Random()` on RHS here
-		Random rnd = ThreadLocalRandom.current();
-		for (long i = n - 1; i > 0; i--)
-		{
-			Long tmp = rnd.nextLong();
-			Long index = (tmp<0)?((-tmp)%(i)):(tmp%(i));
-			// Simple swap
-			//kkk controlla di non andare a sovrascrivere lo stesso valore
-			Long a = shuffled.get(index);
-			//System.out.println("tmp:"+tmp+", index:"+index+", a:"+a);
-			
-			shuffled.put(index, shuffled.get(i));
-			shuffled.put(i,a);
-		}
-	}
-	
-	
-	public static void main(String[] args) {
-		int [] a = Shuffler.shuffleArray(30);
-		for (int i=0; i<a.length;++i)
-			System.out.println(i+". "+a[i]);
-	}
-	
+  public static int [] shuffleArray(int n){
+    int [] retval = new int[n];
+    for (int i=0;i<n;++i)
+      retval[i]=i;
+    Random rnd = ThreadLocalRandom.current();
+    for (int i = n - 1; i > 0; i--)
+    {
+      int index = rnd.nextInt(i + 1);
+      // Simple swap
+      int a = retval[index];
+      retval[index] = retval[i];
+      retval[i] = a;
+    }
+    return retval;
+  }
+  
+  public static void shuffleArray(HTreeMap<Long, Long> shuffled, long n){
+    
+    for (long i=0;i<n;++i)
+      shuffled.put(i, i);
+    Random rnd = ThreadLocalRandom.current();
+    for (long i = n - 1; i > 0; i--)
+    {
+      Long tmp = rnd.nextLong();
+      Long index = (tmp<0)?((-tmp)%(i)):(tmp%(i));
+      // Simple swap
+      Long a = shuffled.get(index);
+      shuffled.put(index, shuffled.get(i));
+      shuffled.put(i,a);
+    }
+  }
+  
+  
+  public static void main(String[] args) {
+    int [] a = Shuffler.shuffleArray(30);
+    for (int i=0; i<a.length;++i)
+      System.out.println(i+". "+a[i]);
+  }
+  
 }
