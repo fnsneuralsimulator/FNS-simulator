@@ -10,11 +10,12 @@ MINOR_F="dev_version/minor"
 typeset -i MINOR_V=$(cat $MINOR_F)
 MINOR_V=$((MINOR_V+1))
 echo $MINOR_V > $MINOR_F
-
 echo -1 > $BUILD_F
 ./dev_compile $COMMIT_M
+tar -cjvf "../FNS-Simulator$(date +%F_%H-%M).tar.bz2" ../FNS-Simulator
 git checkout test
 git pull
 git merge devel
+git push
 git checkout devel
 git fetch
