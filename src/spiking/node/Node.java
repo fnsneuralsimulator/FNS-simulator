@@ -247,7 +247,6 @@ public class Node {
     //randomize adjacency
     DB tmpDb = DBMaker.memoryDirectDB().make();
     HTreeMap<Long, Long> shuffled = tmpDb.hashMap("shuffle", Serializer.LONG,Serializer.LONG).create();
-    ArrayList <Long> shuffled = new ArrayList <Long>();
     Shuffler.shuffleArray(shuffled,n);
     int k2=k/2;
     Double tmpAmpl;

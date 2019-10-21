@@ -478,12 +478,8 @@ public class NodeThread extends Thread{
       completed();
       stopped=false;
     }
-    closeDB();    
   }
   
-  private void closeDB(){
-    n.closeDb();
-  }
   
   private void addInterNodeFire(Synapse syn, Double fireTime){
     Double axonalDelay=synMan.getAxDelay(syn);
