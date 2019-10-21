@@ -123,5 +123,5 @@
         <scope>provided</scope>
     </dependency>
   </dependencies>
-  <version>V2.12.16</version>
+  <version>V2.12.17</version>
 </project>
