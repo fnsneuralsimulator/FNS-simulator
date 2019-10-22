@@ -152,6 +152,11 @@ public class ExternalInput {
    }
    
    
+   public Double getAmplitudeValue(int extNeuron){
+     return externalAmplitude;
+   }
+
+   //torem
    public Double getAmplitudeValue(int extNeuron, int bin){
      if (type==NOISE)
        return externalAmplitude;
@@ -174,6 +179,10 @@ public class ExternalInput {
    
    public int getTimeStep(){
      return timeStep;
+   }
+
+   public double getFiringRate(){
+     return firingRate;
    }
    
    protected Integer getExternalInputsNum(){

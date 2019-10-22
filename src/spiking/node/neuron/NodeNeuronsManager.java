@@ -38,6 +38,8 @@ import utils.constants.Constants;
 import utils.experiment.Experiment;
 import utils.tools.NiceNode;
 import utils.tools.NiceQueue;
+import org.apache.commons.math3.distribution.PoissonDistribution;
+
 
 public class NodeNeuronsManager {
 
@@ -65,6 +67,8 @@ public class NodeNeuronsManager {
   private HashMap<Long, Double> lastFiringTimes;
   private HashMap<Long, Double> lastBurningTimes;
   private HashMap<Long, Double> presynapticWeights;
+  private PoissonDistribution poissonD;
+  private final static int POISSON_ITERATIONS=15;
   
   public NodeNeuronsManager(
       Node r, 
@@ -92,6 +96,9 @@ public class NodeNeuronsManager {
     lastFiringTimes = new HashMap<Long, Double>();
     lastBurningTimes = new HashMap<Long, Double>();
     presynapticWeights = new HashMap<Long, Double>();
+    poissonD = new PoissonDistribution(
+        n.getExternalInput().getFiringRate()*10,
+        POISSON_ITERATIONS); 
   }
   
   public Double getT_arp(){
@@ -223,48 +230,48 @@ public class NodeNeuronsManager {
       removeActiveNeuron(extNeuronId);
       return;
     }
+    double fireTime;
     if (n.getExternalInputsType()==ExternalInput.CONSTANT){
-      double fireTime;
       if (currentTime==0.0)
         fireTime=n.getExternalInputsTimeOffset();
       else
         fireTime=currentTime+n.getExternalInput().getTimeStep();
-      setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId,(long)0));
+      setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId));
       setTimeToFire(extNeuronId, fireTime);
       addActiveNeuron(extNeuronId, fireTime, currentTime, 0);
       return;
     }
     else if (n.getExternalInputsType()==ExternalInput.NOISE){
-      double fireTime;
       if (currentTime==0.0)
         fireTime=Math.random()*2*n.getExternalInputsTimeOffset();
       else
         fireTime=currentTime+Math.random()*2*n.getExternalInput().getTimeStep();
-      setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId,(long)0));
+      setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId));
       setTimeToFire(extNeuronId, fireTime);
       addActiveNeuron(extNeuronId, fireTime, currentTime, 4);
       return;
     }
     /* Case of poissonian external inputs */
-    NiceNode minExternalSpike = n.extractExternalMinSpikeTime(extNeuronId);
-    if ((minExternalSpike!=null)&&(!(new Double(minExternalSpike.tf).equals(Constants.EXTERNAL_TIME_TO_FIRE_DEF_VAL)))){
-      Double tmpTimeToFire = getTimeToFire(extNeuronId);
-      if (tmpTimeToFire==null || tmpTimeToFire.equals(Constants.EXTERNAL_TIME_TO_FIRE_DEF_VAL)){
-        /* Presynaptic value for the external neuron = 
-         * Amplitude value in the row of Amplitude Matrix */
-        setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId, minExternalSpike.fn));
-        /* Assign the minimum of the row minus the current 
-         * minimum time-to-fire.*/
-        setTimeToFire(extNeuronId, minExternalSpike.tf);
-        /* If the time-to-fire is greater than zero, then 
-         * the firing neuron is added in the active neuron list. */
-        if (!getTimeToFire(extNeuronId).equals(Constants.EXTERNAL_TIME_TO_FIRE_DEF_VAL))
-          addActiveNeuron(extNeuronId, minExternalSpike.tf, currentTime, 1);
-      }
-    }
-    else{
-      removeActiveNeuron(extNeuronId); 
-    }
+    fireTime = currentTime+(((double)(poissonD.sample()))/10.0);
+    setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId ));
+    setTimeToFire(extNeuronId, fireTime);
+    addActiveNeuron(extNeuronId, fireTime, currentTime, 1);
+   // NiceNode minExternalSpike = n.extractExternalMinSpikeTime(extNeuronId);
+   // 
+   // if ((minExternalSpike!=null)&&(!(new Double(minExternalSpike.tf).equals(Constants.EXTERNAL_TIME_TO_FIRE_DEF_VAL)))){
+      //if (tmpTimeToFire==null || tmpTimeToFire.equals(Constants.EXTERNAL_TIME_TO_FIRE_DEF_VAL)){
+      /* Presynaptic value for the external neuron = 
+       * Amplitude value in the row of Amplitude Matrix */
+      //setTimeToFire(extNeuronId, minExternalSpike.tf);
+      //  /* If the time-to-fire is greater than zero, then 
+      //   * the firing neuron is added in the active neuron list. */
+      //  if (!getTimeToFire(extNeuronId).equals(Constants.EXTERNAL_TIME_TO_FIRE_DEF_VAL))
+      //    addActiveNeuron(extNeuronId, minExternalSpike.tf, currentTime, 1);
+      //}
+    //}
+    //else{
+    //  removeActiveNeuron(extNeuronId); 
+    //}
   }
   
   

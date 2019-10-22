@@ -378,6 +378,14 @@ public class Node {
     return ext;
   }
   
+  public Double getAmplitudeValue(Long extNeuronGlobalId){
+    if ((extNeuronGlobalId-n)>Integer.MAX_VALUE)
+      throw new IndexOutOfBoundsException("[NODE ERROR] The external input id is too big");
+    if (hasExternalInputs)
+      return ext.getAmplitudeValue((int)(long)(extNeuronGlobalId-n));
+    return null;
+  }
+
   public Double getAmplitudeValue(Long extNeuronGlobalId, Long bin){
     if ((extNeuronGlobalId-n)>Integer.MAX_VALUE)
       throw new IndexOutOfBoundsException("[NODE ERROR] The external input id is too big");
