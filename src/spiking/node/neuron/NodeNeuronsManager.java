@@ -69,6 +69,7 @@ public class NodeNeuronsManager {
   private HashMap<Long, Double> presynapticWeights;
   private PoissonDistribution poissonD;
   private final static int POISSON_ITERATIONS=15;
+  private final static double POISSON_PRECISION=1000.0;
   
   public NodeNeuronsManager(
       Node r, 
@@ -97,7 +98,7 @@ public class NodeNeuronsManager {
     lastBurningTimes = new HashMap<Long, Double>();
     presynapticWeights = new HashMap<Long, Double>();
     poissonD = new PoissonDistribution(
-        n.getExternalInput().getFiringRate()*10,
+        n.getExternalInput().getFiringRate()*POISSON_PRECISION,
         POISSON_ITERATIONS); 
   }
   
@@ -252,7 +253,7 @@ public class NodeNeuronsManager {
       return;
     }
     /* Case of poissonian external inputs */
-    fireTime = currentTime+(((double)(poissonD.sample()))/10.0);
+    fireTime = currentTime+(((double)(poissonD.sample()))/POISSON_PRECISION);
     setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId ));
     setTimeToFire(extNeuronId, fireTime);
     addActiveNeuron(extNeuronId, fireTime, currentTime, 1);
