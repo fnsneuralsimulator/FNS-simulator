@@ -354,7 +354,10 @@ public class SpikingSimulatorCfg {
   }
 
   public String toString(){
-    StringBuilder sb = new StringBuilder( "stop:"+stop+", ld:"+global_neuron_manager.getD()+
+    StringBuilder sb = new StringBuilder( 
+        "stop:"+stop+
+        ", ld exc:"+global_neuron_manager.getD_exc()+
+        ", ld inh:"+global_neuron_manager.getD_inh()+
         ", d:"+global_neuron_manager.getC()+", kr:"+global_neuron_manager.getT_arp()+"\nregions:");
     for (int i=0; i<node.size();++i)
       sb.append("\n"+i+". "+node.get(i).getId());

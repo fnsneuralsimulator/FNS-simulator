@@ -194,14 +194,27 @@ public class SpikingNeuralSimulator extends Thread{
         e.printStackTrace();
       }
     }
-    println("end of simulator run, "+(System.currentTimeMillis()-startTime)+" ms elapsed.");
-    println("init phases:\n\t conn pckg read:\t\t"+times[0]+" ms\n\t config file read:\t\t"+times[1]+
-        " ms\n\t node init:\t\t\t"+times[2]+" ms\n\t inter-node connections init:\t"+times[3]+
-        " ms\n\t simulator init:\t\t"+times[4]+" ms");
+    println(
+        "end of simulator run, "+
+        (System.currentTimeMillis()-startTime)+
+        " ms elapsed.");
+    println(
+        "init phases:\n\t conn pckg read:\t\t"+
+        times[0]+" ms\n\t config file read:\t\t"+
+        times[1]+
+        " ms\n\t node init:\t\t\t"+
+        times[2]+
+        " ms\n\t inter-node connections init:\t"+
+        times[3]+
+        " ms\n\t simulator init:\t\t"+
+        times[4]+
+        " ms");
     println("min tract length:"+nMan.getMinTractLength());
     println("avg neuronal signal speed:"+avgNeuronalSignalSpeed);
     println("cycle time:"+cycle_time);
-    println("total inter node axonal connections:"+nMan.getTotalInterNodeConnectionsNumber());
+    println(
+        "total inter node axonal connections:"+
+        nMan.getTotalInterNodeConnectionsNumber());
   }
   
   
@@ -228,19 +241,26 @@ public class SpikingNeuralSimulator extends Thread{
     return true;
   }
  
-  public void initFromConfigFileAndConnectivityPackage(String configPath, String connPkgPath, Boolean do_fast) 
+  public void initFromConfigFileAndConnectivityPackage(
+      String configPath, 
+      String connPkgPath, 
+      Boolean do_fast) 
       throws BadParametersException{
     long startTime = System.currentTimeMillis();
     long lastTime = startTime;
     println("reading connectivity package file:"+connPkgPath);
     ConnectivityPackageManager cpm = new ConnectivityPackageManager(); 
     cpm.readConnectivityPackage(connPkgPath);
-    sc.setMinMaxNe_xn_ratios(cpm.getMinNe_xn_ratio(), cpm.getMaxNe_xn_ratio());
-    ArrayList<NodesInterconnection> conns = cpm.getInterNodeConnections();
+    sc.setMinMaxNe_xn_ratios(
+        cpm.getMinNe_xn_ratio(), 
+        cpm.getMaxNe_xn_ratio());
+    ArrayList<NodesInterconnection> conns = 
+        cpm.getInterNodeConnections();
     times[0]=System.currentTimeMillis()-lastTime;
     lastTime+=times[0];
     System.out.println("reading config file:"+configPath);
-    SpikingSimulatorCfg ssc = SpikingConfigManager.readConfigFile(configPath);
+    SpikingSimulatorCfg ssc = 
+        SpikingConfigManager.readConfigFile(configPath);
     setTotalTime(new Double(ssc.getStop()));
     //ArrayList<NodeCfg> nodeCs =  ssc.getNodes();
     HashMap <Integer, NodeCfg> nodeCs =  ssc.getNodesMap();
@@ -330,33 +350,34 @@ public class SpikingNeuralSimulator extends Thread{
       if (tmpExternal.equals(0)) {
         addNodeThread(
             new NodeThread(
-            nMan, 
-            cpm.getNode(i).getId(),
-            tmpN,
-            tmpExcitRatio,
-            tmpK,
-            tmpRewiringP,
-            tmpBn,
-            tmpIBI,
-            nmcfg.getC(),
-            nmcfg.getD(),
-            nmcfg.getT_arp(),
-            tmp_mu_w_exc,
-            tmp_mu_w_inh,
-            tmpW_pre_exc,
-            tmpW_pre_inh,
-            Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 
-            tmpPlasticity,
-            tmpEtap,
-            tmpEtam,
-            tmpTaup,
-            tmpTaum,
-            tmpPwMax,
-            tmpTo,
-            avgNeuronalSignalSpeed,
-            lif,
-            exp_decay,
-            do_fast));
+                nMan, 
+                cpm.getNode(i).getId(),
+                tmpN,
+                tmpExcitRatio,
+                tmpK,
+                tmpRewiringP,
+                tmpBn,
+                tmpIBI,
+                nmcfg.getC(),
+                nmcfg.getD_exc(),
+                nmcfg.getD_inh(),
+                nmcfg.getT_arp(),
+                tmp_mu_w_exc,
+                tmp_mu_w_inh,
+                tmpW_pre_exc,
+                tmpW_pre_inh,
+                Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 
+                tmpPlasticity,
+                tmpEtap,
+                tmpEtam,
+                tmpTaup,
+                tmpTaum,
+                tmpPwMax,
+                tmpTo,
+                avgNeuronalSignalSpeed,
+                lif,
+                exp_decay,
+                do_fast));
       }
       else{
         Integer tmpExternalType; 
@@ -379,40 +400,41 @@ public class SpikingNeuralSimulator extends Thread{
             tmp.getExternal_inputs_amplitude():ssc.getGlob_external_inputs_amplitude();
         addNodeThread(
             new NodeThread(
-                nMan,
-                cpm.getNode(i).getId(),
-                tmpN,
-                tmpExternal,
-                tmpExternalType,
-                tmpExternalInputsTimeOffset,
-                tmpExternalTimestep,
-                tmpExternalFirerate,
-                tmpExternalFireDuration,
-                tmpExternalFireAmplitude,
-                tmpExcitRatio,
-                tmpK,
-                tmpRewiringP,
-                tmpBn,
-                tmpIBI,
-                nmcfg.getC(),
-                nmcfg.getD(), 
-                nmcfg.getT_arp(),
-                tmp_mu_w_exc,
-                tmp_mu_w_inh,
-                tmpW_pre_exc,
-                tmpW_pre_inh,
-                Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 
-                tmpPlasticity,
-                tmpEtap,
-                tmpEtam,
-                tmpTaup,
-                tmpTaum,
-                tmpPwMax,
-                tmpTo,
-                avgNeuronalSignalSpeed,
-                lif,
-                exp_decay,
-                do_fast));
+                    nMan,
+                    cpm.getNode(i).getId(),
+                    tmpN,
+                    tmpExternal,
+                    tmpExternalType,
+                    tmpExternalInputsTimeOffset,
+                    tmpExternalTimestep,
+                    tmpExternalFirerate,
+                    tmpExternalFireDuration,
+                    tmpExternalFireAmplitude,
+                    tmpExcitRatio,
+                    tmpK,
+                    tmpRewiringP,
+                    tmpBn,
+                    tmpIBI,
+                    nmcfg.getC(),
+                    nmcfg.getD_exc(), 
+                    nmcfg.getD_inh(), 
+                    nmcfg.getT_arp(),
+                    tmp_mu_w_exc,
+                    tmp_mu_w_inh,
+                    tmpW_pre_exc,
+                    tmpW_pre_inh,
+                    Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 
+                    tmpPlasticity,
+                    tmpEtap,
+                    tmpEtam,
+                    tmpTaup,
+                    tmpTaum,
+                    tmpPwMax,
+                    tmpTo,
+                    avgNeuronalSignalSpeed,
+                    lif,
+                    exp_decay,
+                    do_fast));
       }
     }
     calculateCompressionFactor();

@@ -49,7 +49,8 @@ public class NodeNeuronsManager {
   private Node n;
   private Boolean debug = false;
   //linear decay constant
-  private Double D=0.001;
+  private Double D_exc=0.001;
+  private Double D_inh=0.001;
   //threshold
   private Double c=0.04;
   //refractory time constant
@@ -74,7 +75,8 @@ public class NodeNeuronsManager {
   public NodeNeuronsManager(
       Node r, 
       Double c, 
-      Double D, 
+      Double D_exc, 
+      Double D_inh, 
       Double t_arp, 
       Double excitatoryPresynapticDefVal, 
       Double inhibithoryPresynapticDefVal,
@@ -82,7 +84,8 @@ public class NodeNeuronsManager {
     this.n=r;
     this.c=c;
     this.sth=1+c;
-    this.D=D;
+    this.D_exc=D_exc;
+    this.D_inh=D_inh;
     this.t_arp=t_arp;
     this.excitatoryPresynapticDefVal=excitatoryPresynapticDefVal;
     this.inhibithoryPresynapticDefVal=inhibithoryPresynapticDefVal;
@@ -110,11 +113,18 @@ public class NodeNeuronsManager {
     return sth;
   }
   
-  public Double getLinearDecayD(){
-    return D;
+  public Double getLinearDecayD(Long neuronId){
+    return (n.isExcitatory(neuronId))? D_exc: D_inh;
   }
   
+  public Double getLinearDecayD_exc(){
+    return D_exc;
+  }
   
+  public Double getLinearDecayD_inh(){
+    return D_inh;
+  }
+
   public Double getExcitatoryPresynapticDefVal() {
     return excitatoryPresynapticDefVal;
   }

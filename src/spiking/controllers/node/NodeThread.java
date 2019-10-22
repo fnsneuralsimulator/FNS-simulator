@@ -99,7 +99,8 @@ public class NodeThread extends Thread{
       Double prew,
       Integer Bn,
       Double IBI,      
-      Double d, 
+      Double D_exc, 
+      Double D_inh, 
       Double ld, 
       Double kr,
       Double mu_w_exc,
@@ -138,7 +139,8 @@ public class NodeThread extends Thread{
         pwMax,
         to);
     init(nMan, 
-        d, 
+        D_exc, 
+        D_inh, 
         ld, 
         kr, 
         w_pre_exc, 
@@ -167,7 +169,8 @@ public class NodeThread extends Thread{
       Integer Bn,
       Double IBI,
       Double c, 
-      Double D, 
+      Double D_exc, 
+      Double D_inh, 
       Double t_arp,
       Double mu_w_exc,
       Double mu_w_inh,
@@ -212,7 +215,8 @@ public class NodeThread extends Thread{
         to);
     init(rMan, 
         c, 
-        D, 
+        D_exc, 
+        D_inh, 
         t_arp, 
         w_pre_exc, 
         w_pre_inh, 
@@ -227,7 +231,8 @@ public class NodeThread extends Thread{
   public void init(
       NodesManager nMan, 
       Double c, 
-      Double D, 
+      Double D_exc, 
+      Double D_inh, 
       Double t_arp, 
       Double excitatoryPresynapticDefVal, 
       Double inhibithoryPresynapticDefVal, 
@@ -241,7 +246,8 @@ public class NodeThread extends Thread{
     internodeFires = new ArrayList<InterNodeSpike>();
     nnMan = new NodeNeuronsManager(n, 
         c, 
-        D, 
+        D_exc, 
+        D_inh, 
         t_arp, 
         excitatoryPresynapticDefVal, 
         inhibithoryPresynapticDefVal, 
@@ -253,7 +259,8 @@ public class NodeThread extends Thread{
     println("Bn: "+n.getBn());
     println("IBI: "+n.getIBI());
     println("c: "+c);
-    println("D: "+D);
+    println("D exc: "+D_exc);
+    println("D inh: "+D_inh);
     println("t arp: "+t_arp);
     this.lif=lif;
     this.exp_decay=exp_decay;
@@ -733,10 +740,10 @@ public class NodeThread extends Thread{
         //linear decay
         if (!exp_decay){
             decay = (
-                nnMan.getLinearDecayD()*
+                nnMan.getLinearDecayD(s.getBurning())*
                 (burnTime-
                         (nnMan.getLastBurningTime(
-                                s.getBurning())/* *arp*/)));
+                                s.getBurning()))));
                 nnMan.setState(
                         s.getBurning(), 
                         tmp-decay);
@@ -752,14 +759,14 @@ public class NodeThread extends Thread{
                         - ( burnTime -
                             nnMan.getLastBurningTime(s.getBurning())
                         )/
-                        nnMan.getLinearDecayD()))
+                        nnMan.getLinearDecayD(s.getBurning())))
             ):(
                 tmp * (
                     1 - Math.exp(
                         -(burnTime-
                             nnMan.getLastBurningTime(s.getBurning())
                         )/
-                        nnMan.getLinearDecayD()))
+                        nnMan.getLinearDecayD(s.getBurning())))
             );
             nnMan.setState(
                 s.getBurning(), 
