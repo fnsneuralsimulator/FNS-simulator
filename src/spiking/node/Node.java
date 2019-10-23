@@ -94,7 +94,7 @@ public class Node {
   private Double to;
   private HashMap <Long,Boolean> external_init= 
       new HashMap <Long, Boolean>();
-  
+
   public Node(
       Integer id, 
       Long n, 
