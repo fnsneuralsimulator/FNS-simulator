@@ -242,27 +242,46 @@ public class NodeNeuronsManager {
       return;
     }
     double fireTime;
+    // case of constant external inputs
     if (n.getExternalInputsType()==ExternalInput.CONSTANT){
       if (currentTime==0.0)
-        fireTime=n.getExternalInputsTimeOffset();
+        fireTime=n.getExternalInputsTimeOffset(extNeuronId);
       else
         fireTime=currentTime+n.getExternalInput().getTimeStep();
-      setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId));
+      setPreSynapticWeight(
+          extNeuronId, 
+          n.getAmplitudeValue(extNeuronId));
       setTimeToFire(extNeuronId, fireTime);
       addActiveNeuron(extNeuronId, fireTime, currentTime, 0);
+      //System.out.println("constant current time:"+currentTime+" fireTime:"+fireTime);
+      //if (fireTime>2)
+      //  System.exit(0);
       return;
     }
+    // case of noise external inputs
     else if (n.getExternalInputsType()==ExternalInput.NOISE){
       if (currentTime==0.0)
-        fireTime=Math.random()*2*n.getExternalInputsTimeOffset();
+        fireTime=
+            n.getExternalInputsTimeOffset(extNeuronId)+
+            Math.random()*
+            2*
+            n.getExternalInput().getTimeStep();
       else
-        fireTime=currentTime+Math.random()*2*n.getExternalInput().getTimeStep();
-      setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId));
+        fireTime=
+            currentTime+
+            Math.random()*
+            2*
+            n.getExternalInput().getTimeStep();
+      setPreSynapticWeight(
+          extNeuronId, 
+          n.getAmplitudeValue(extNeuronId));
       setTimeToFire(extNeuronId, fireTime);
       addActiveNeuron(extNeuronId, fireTime, currentTime, 4);
       return;
     }
     /* Case of poissonian external inputs */
+      System.out.println("poisson");
+      System.exit(0);
     fireTime = currentTime+(((double)(poissonD.sample()))/POISSON_PRECISION);
     setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId ));
     setTimeToFire(extNeuronId, fireTime);

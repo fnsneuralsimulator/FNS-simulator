@@ -83,7 +83,8 @@ public class Node {
   private int timeStep = -1;
   private double fireRate = -1;
   private int fireDuration = 1;
-  private Double externalAmplitude=ExternalInput.EXTERNAL_AMPLITUDE_DEF_VALUE;
+  private Double externalAmplitude=
+      ExternalInput.EXTERNAL_AMPLITUDE_DEF_VALUE;
   private Boolean plasticity;
   private Double etap;
   private Double etam;
@@ -91,7 +92,9 @@ public class Node {
   private Double taum;
   private Double pwMax;
   private Double to;
-  
+  private HashMap <Long,Boolean> external_init= 
+      new HashMap <Long, Boolean>();
+
   public Node(
       Integer id, 
       Long n, 
@@ -448,9 +451,13 @@ public class Node {
     return externalAmplitude;
   }
   
-  public Double getExternalInputsTimeOffset() {
+  public Double getExternalInputsTimeOffset(Long extNeuronId) {
+    Boolean ext_init=external_init.get(extNeuronId);
     double retval=externalInputsTimeOffset;
-    externalInputsTimeOffset=(double)timeStep;
+    if (ext_init==null)
+      external_init.put(extNeuronId, true);
+    else
+      externalInputsTimeOffset=(double)timeStep;
     return retval;
   }
   

@@ -52,7 +52,7 @@ public class NodeCfg {
   private Double w_pre_inh;
   private Integer external_inputs_number;
   private Integer external_inputs_type;
-  private Double external_inputs_time_phase;
+  private Double external_inputs_time_offset;
   private Integer external_inputs_fireduration;
   private Integer external_inputs_timestep;
   private Double external_inputs_firerate;
@@ -185,12 +185,12 @@ public class NodeCfg {
     this.external_inputs_type = external_inputs_type;
   }
 
-  public Double getExternal_inputs_time_phase() {
-    return external_inputs_time_phase;
+  public Double getExternal_inputs_time_offset() {
+    return external_inputs_time_offset;
   }
 
-  public void setExternal_inputs_time_phase(Double external_inputs_time_phase) {
-    this.external_inputs_time_phase = external_inputs_time_phase;
+  public void setExternal_inputs_time_offset(Double external_inputs_time_offset) {
+    this.external_inputs_time_offset = external_inputs_time_offset;
   }
 
   public Integer getExternal_inputs_timestep() {
