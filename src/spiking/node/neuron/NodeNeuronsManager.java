@@ -57,7 +57,8 @@ public class NodeNeuronsManager {
   private Double t_arp=0.3;
   //spiking threshold
   private Double sth=1+c;
-  //the list of active neurons - a map ordered by time values (as key) mapping neuronsId
+  //the list of active neurons - a map ordered on time 
+  //values (as key) mapping neuronsId
   private NiceQueue activeNeurons;
   private Double excitatoryPresynapticDefVal=2.0;
   private Double inhibithoryPresynapticDefVal=-1.0;
@@ -101,7 +102,9 @@ public class NodeNeuronsManager {
     lastBurningTimes = new HashMap<Long, Double>();
     presynapticWeights = new HashMap<Long, Double>();
     poissonD = new PoissonDistribution(
-        (1.0/n.getExternalInput().getFiringRate())*POISSON_PRECISION,
+        n.getExternalInput().getTimeStep()*
+        n.getExternalInput().getFiringRate()*
+        POISSON_PRECISION,
         POISSON_ITERATIONS); 
   }
   
@@ -233,8 +236,9 @@ public class NodeNeuronsManager {
   }
   
   /**
-   * @param extNeuronId    the id of the external input as referred into the node reg
-   * @param currentTime    the current simulation time
+   * @param extNeuronId   the id of the external input as 
+   *                      referred into the node reg
+   * @param currentTime   the current simulation time
    */
   public void extInputReset(Long extNeuronId, double currentTime){
     if (currentTime>n.getExternalInput().getFireDuration()){
