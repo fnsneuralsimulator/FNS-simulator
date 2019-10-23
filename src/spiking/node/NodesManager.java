@@ -59,14 +59,14 @@ public class NodesManager implements Serializable {
   //ergion threads array list 
   private ArrayList<NodeThread> nodeThreads = new ArrayList<NodeThread>();
   //internodes connection probability
-  private HashMap<IntegerCouple, NodesInterconnection> nodesConnections = new HashMap<IntegerCouple, NodesInterconnection>();
+  private HashMap<IntegerCouple, NodesInterconnection> nodesConnections = 
+      new HashMap<IntegerCouple, NodesInterconnection>();
   //the total number of neuron
   private Long n=0l;
   //the maximum number of neurons within a single node
   private Long maxN=0l;
   private double compressionFactor=1.0;
   //the total number of burning neurons
-//  private Integer bn=1000;
   //the total number of excitatory neuron
   private Long excitatory=0l;
   //the total number of inhibithory neuron
@@ -137,7 +137,10 @@ public class NodesManager implements Serializable {
         mu_lambda,
         alpha_lambda,
         inter_node_conn_type);
-    nodesConnections.put(new IntegerCouple(node1.getNodeId(), node2.getNodeId()), n_conn);
+    nodesConnections.put(
+        new IntegerCouple(node1.getNodeId(), 
+        node2.getNodeId()), 
+        n_conn);
     _addInterRegionConnection(
         node1.getNodeId(),
         node2.getNodeId(),
@@ -332,11 +335,11 @@ public class NodesManager implements Serializable {
     }
   }
   
-  public NodesInterconnection _getInterworldConnectionProb(Node reg1, Node reg2){
-    Integer src=  (reg1.getId()<reg2.getId())? reg1.getId(): reg2.getId();
-    Integer dst=  (reg1.getId()<reg2.getId())? reg2.getId(): reg1.getId();
-    return nodesConnections.get(new IntegerCouple(src, dst));
-  }
+  //public NodesInterconnection _getInterworldConnectionProb(Node reg1, Node reg2){
+  //  Integer src=  (reg1.getId()<reg2.getId())? reg1.getId(): reg2.getId();
+  //  Integer dst=  (reg1.getId()<reg2.getId())? reg2.getId(): reg1.getId();
+  //  return nodesConnections.get(new IntegerCouple(src, dst));
+  //}
   
   public Long getTotalN(){
     return n;

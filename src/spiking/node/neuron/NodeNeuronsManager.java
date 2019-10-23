@@ -101,7 +101,7 @@ public class NodeNeuronsManager {
     lastBurningTimes = new HashMap<Long, Double>();
     presynapticWeights = new HashMap<Long, Double>();
     poissonD = new PoissonDistribution(
-        n.getExternalInput().getFiringRate()*POISSON_PRECISION,
+        (1.0/n.getExternalInput().getFiringRate())*POISSON_PRECISION,
         POISSON_ITERATIONS); 
   }
   
@@ -253,9 +253,6 @@ public class NodeNeuronsManager {
           n.getAmplitudeValue(extNeuronId));
       setTimeToFire(extNeuronId, fireTime);
       addActiveNeuron(extNeuronId, fireTime, currentTime, 0);
-      //System.out.println("constant current time:"+currentTime+" fireTime:"+fireTime);
-      //if (fireTime>2)
-      //  System.exit(0);
       return;
     }
     // case of noise external inputs
@@ -280,28 +277,10 @@ public class NodeNeuronsManager {
       return;
     }
     /* Case of poissonian external inputs */
-      System.out.println("poisson");
-      System.exit(0);
     fireTime = currentTime+(((double)(poissonD.sample()))/POISSON_PRECISION);
     setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId ));
     setTimeToFire(extNeuronId, fireTime);
     addActiveNeuron(extNeuronId, fireTime, currentTime, 1);
-   // NiceNode minExternalSpike = n.extractExternalMinSpikeTime(extNeuronId);
-   // 
-   // if ((minExternalSpike!=null)&&(!(new Double(minExternalSpike.tf).equals(Constants.EXTERNAL_TIME_TO_FIRE_DEF_VAL)))){
-      //if (tmpTimeToFire==null || tmpTimeToFire.equals(Constants.EXTERNAL_TIME_TO_FIRE_DEF_VAL)){
-      /* Presynaptic value for the external neuron = 
-       * Amplitude value in the row of Amplitude Matrix */
-      //setTimeToFire(extNeuronId, minExternalSpike.tf);
-      //  /* If the time-to-fire is greater than zero, then 
-      //   * the firing neuron is added in the active neuron list. */
-      //  if (!getTimeToFire(extNeuronId).equals(Constants.EXTERNAL_TIME_TO_FIRE_DEF_VAL))
-      //    addActiveNeuron(extNeuronId, minExternalSpike.tf, currentTime, 1);
-      //}
-    //}
-    //else{
-    //  removeActiveNeuron(extNeuronId); 
-    //}
   }
   
   
