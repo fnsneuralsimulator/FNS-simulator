@@ -50,15 +50,18 @@ public class SpikingSimulatorCfg {
   private Double avg_neuronal_signal_speed;
   private NeuManCfg global_neuron_manager;
   private ArrayList<NodeCfg> node = new ArrayList<NodeCfg>();
-  private ArrayList<RegionInterconnectionCfg> connection = new ArrayList<RegionInterconnectionCfg>();
-    private Boolean lif;
-    private Boolean exp_decay;
+  private ArrayList<RegionInterconnectionCfg> connection = 
+      new ArrayList<RegionInterconnectionCfg>();
+  private Boolean lif;
+  private Boolean exp_decay;
   private Double glob_rewiring_P;
   private Integer glob_k;
   private Long glob_n;
   private Double glob_R;
   private Double glob_mu_w_exc;
   private Double glob_mu_w_inh;
+  private Double glob_sigma_w_exc;
+  private Double glob_sigma_w_inh;
   private Double glob_w_pre_exc;
   private Double glob_w_pre_inh;
   private Integer glob_Bn;
@@ -222,6 +225,22 @@ public class SpikingSimulatorCfg {
 
   public void setGlob_mu_w_inh(Double glob_mu_w_inh) {
     this.glob_mu_w_inh = glob_mu_w_inh;
+  }
+
+  public Double getGlob_sigma_w_exc() {
+    return glob_sigma_w_exc;
+  }
+
+  public Double getGlob_sigma_w_inh() {
+    return glob_sigma_w_inh;
+  }
+
+  public void setGlob_sigma_w_exc(Double glob_sigma_w_exc) {
+    this.glob_sigma_w_exc = glob_sigma_w_exc;
+  }
+
+  public void setGlob_sigma_w_inh(Double glob_sigma_w_inh) {
+    this.glob_sigma_w_inh = glob_sigma_w_inh;
   }
 
   public Double getGlob_w_pre_exc() {
