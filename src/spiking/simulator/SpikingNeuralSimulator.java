@@ -275,6 +275,8 @@ public class SpikingNeuralSimulator extends Thread{
     Double tmpExcitRatio;
     Double tmp_mu_w_exc;
     Double tmp_mu_w_inh;
+    Double tmp_sigma_w_exc;
+    Double tmp_sigma_w_inh;
     Double tmpW_pre_exc;
     Double tmpW_pre_inh;
     Double tmpRewiringP;
@@ -306,6 +308,12 @@ public class SpikingNeuralSimulator extends Thread{
       tmp_mu_w_inh=((tmp!=null)&&(tmp.getMu_w_inh()!=null))?
           tmp.getMu_w_inh():
           ssc.getGlob_mu_w_inh();
+      tmp_sigma_w_exc=((tmp!=null)&&(tmp.getSigma_w_exc()!=null))?
+          tmp.getSigma_w_exc():
+          ssc.getGlob_sigma_w_exc();
+      tmp_sigma_w_inh=((tmp!=null)&&(tmp.getSigma_w_inh()!=null))?
+          tmp.getSigma_w_inh():
+          ssc.getGlob_sigma_w_inh();
       tmpW_pre_exc=((tmp!=null)&&(tmp.getW_pre_exc()!=null))?
           tmp.getW_pre_exc():
           ssc.getGlob_w_pre_exc();
@@ -364,6 +372,8 @@ public class SpikingNeuralSimulator extends Thread{
                 nmcfg.getT_arp(),
                 tmp_mu_w_exc,
                 tmp_mu_w_inh,
+                tmp_sigma_w_exc,
+                tmp_sigma_w_inh,
                 tmpW_pre_exc,
                 tmpW_pre_inh,
                 Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 
@@ -421,6 +431,8 @@ public class SpikingNeuralSimulator extends Thread{
                     nmcfg.getT_arp(),
                     tmp_mu_w_exc,
                     tmp_mu_w_inh,
+                    tmp_sigma_w_exc,
+                    tmp_sigma_w_inh,
                     tmpW_pre_exc,
                     tmpW_pre_inh,
                     Constants.EXTERNAL_SOURCES_PRESYNAPTIC_DEF_VAL, 
@@ -480,23 +492,6 @@ public class SpikingNeuralSimulator extends Thread{
         inter_node_conn_type);
   }
   
-//  public void addInterNodeConnection(
-//      Integer nd1Id,  
-//      Integer nd2Id, 
-//      Double Ne_xn_ratio, 
-//      Double mu_omega, 
-//      Double sigma_omega, 
-//      Double mu_lambda,
-//      Double alpha_lambda){
-//    nMan.addInterNodeConnectionParameters(
-//        nd1Id, 
-//        nd2Id, 
-//        Ne_xn_ratio, 
-//        mu_omega, 
-//        sigma_omega, 
-//        mu_lambda, 
-//        alpha_lambda);
-//  }
   
   public void setDebug(Boolean debug){
     this.debug=debug;

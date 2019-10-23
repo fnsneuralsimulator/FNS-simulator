@@ -66,6 +66,9 @@ public class Node {
   // postsynaptic weight
   private Double mu_w_exc;
   private Double mu_w_inh;
+  // postsynaptic std dev
+  private Double sigma_w_exc;
+  private Double sigma_w_inh;
   //excitatory amplitude
   private Double w_pre_exc;
   //inhibitory amplitude
@@ -101,6 +104,8 @@ public class Node {
       Double R,
       Double mu_w_exc,
       Double mu_w_inh,
+      Double sigma_w_exc,
+      Double sigma_w_inh,
       Double w_pre_exc,
       Double w_pre_inh,
       Integer k, 
@@ -119,6 +124,8 @@ public class Node {
     this.R=R;
     this.mu_w_exc=mu_w_exc;
     this.mu_w_inh=mu_w_inh;
+    this.sigma_w_exc=sigma_w_exc;
+    this.sigma_w_inh=sigma_w_inh;
     this.w_pre_exc=w_pre_exc;
     this.w_pre_inh=w_pre_inh<0?w_pre_inh:(-w_pre_inh);
     this.k=k;
@@ -150,6 +157,8 @@ public class Node {
       Double R, 
       Double mu_w_exc,
       Double mu_w_inh,
+      Double sigma_w_exc,
+      Double sigma_w_inh,
       Double w_pre_exc,
       Double w_pre_inh,
       Integer k, 
@@ -170,6 +179,8 @@ public class Node {
     this.R=R;
     this.mu_w_exc = mu_w_exc;
     this.mu_w_inh = mu_w_inh;
+    this.sigma_w_exc=sigma_w_exc;
+    this.sigma_w_inh=sigma_w_inh;
     this.w_pre_exc=w_pre_exc;
     this.w_pre_inh=w_pre_inh<0?w_pre_inh:(-w_pre_inh);
     if (externalInputs>0){
@@ -323,6 +334,19 @@ public class Node {
 
   public Double getMu_w_agnostic(Long neuronId) {
     return (isExcitatory(neuronId)?mu_w_exc:mu_w_inh);
+  }
+
+  public Double getSigma_w_exc(){
+    return sigma_w_exc;
+  }
+
+  public Double getSigma_w_inh(){
+    return sigma_w_inh;
+  }
+
+  public Double getSigma_w_agnostic(Long neuronId) {
+    Double retval=isExcitatory(neuronId)?sigma_w_exc:sigma_w_inh;
+    return (retval==null)?1:retval;
   }
 
   public void setMu_w_exc(Double mu_w_exc) {

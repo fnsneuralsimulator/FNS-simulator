@@ -48,6 +48,8 @@ public class NodeCfg {
   private Double R;
   private Double mu_w_exc;
   private Double mu_w_inh;
+  private Double sigma_w_exc;
+  private Double sigma_w_inh;
   private Double w_pre_exc;
   private Double w_pre_inh;
   private Integer external_inputs_number;
@@ -69,25 +71,6 @@ public class NodeCfg {
   private Double pw_max;
   private Double to;
   
-//  public NodeCfg(){}
-//  public NodeCfg(
-//      Integer id, 
-//      Double prew, 
-//      Integer k, 
-//      Long n, 
-//      Double R, 
-//      Integer external, 
-//      Integer externalInputType, 
-//      Boolean smallWorld){
-//    this.id=id;
-//    this.rewiring_P=prew;
-//    this.k=k;
-//    this.n=n;
-//    this.R=R;
-//    this.external_inputs_number=external;
-//    this.external_inputs_type=externalInputType;
-//    this.small_world_topology=smallWorld;
-//  }
 
   public Integer getId() {
     return id;
@@ -159,6 +142,22 @@ public class NodeCfg {
 
   public void setMu_w_inh(Double mu_w_inh) {
     this.mu_w_inh = mu_w_inh;
+  }
+
+  public Double getSigma_w_exc() {
+    return sigma_w_exc;
+  }
+
+  public Double getSigma_w_inh() {
+    return sigma_w_inh;
+  }
+
+  public void setSigma_w_exc(Double sigma_w_exc) {
+    this.sigma_w_exc = sigma_w_exc;
+  }
+
+  public void setSigma_w_inh(Double sigma_w_inh) {
+    this.sigma_w_inh = sigma_w_inh;
   }
 
   public Integer getExternal_inputs_number() {
