@@ -388,8 +388,8 @@ public class SpikingNeuralSimulator extends Thread{
         Double tmpExternalInputsTimeOffset;
         tmpExternalType=((tmp!=null)&&(tmp.getExternal_inputs_type()!=null))?
             tmp.getExternal_inputs_type():ssc.getGlob_external_inputs_type();
-        tmpExternalInputsTimeOffset=((tmp!=null)&&(tmp.getExternal_inputs_time_phase()!=null))?
-            tmp.getExternal_inputs_time_phase():ssc.getGlob_external_inputs_time_offset();
+        tmpExternalInputsTimeOffset=((tmp!=null)&&(tmp.getExternal_inputs_time_offset()!=null))?
+            tmp.getExternal_inputs_time_offset():ssc.getGlob_external_inputs_time_offset();
         tmpExternalTimestep=((tmp!=null)&&(tmp.getExternal_inputs_timestep()!=null))?
             tmp.getExternal_inputs_timestep():ssc.getGlob_external_inputs_timestep();
         tmpExternalFirerate=((tmp!=null)&&(tmp.getExternal_inputs_firerate()!=null))?
