@@ -90,6 +90,46 @@ public class NodeThread extends Thread{
   private StatisticsCollector sc;
   private int toremDebug=0;
   
+
+  /**
+  *   The NodeThread object
+  *
+  *   @param nMan             the simulation NodesManager object
+  *   @param id               the node id
+  *   @param n                the number of neurons of the node
+  *   @param excitProportion  the ratio of excitatory neurons over the total
+  *                           number of neurons 'n'
+  *   @param k                the conn-degree of each neuron
+  *   @param prew             the prob of small-world topology rewinig
+  *   @param Bn               the number of bursts spike for each 
+  *                           firing neuron
+  *   @param IBI              the burst inter-spike time 
+  *   @param D_exc
+  *   @param D_inh
+  *   @param mu_w_exc         the mean of the postsynaptic weight 
+  *                           distribution for excitatory neurons
+  *   @param mu_w_inh         the mean of the postsynaptic weight 
+  *                           distribution for inhibitory neurons
+  *   @param sigma_w_exc      the std deviation of the postsynaptic weight
+  *                           distribution for excitatory neurons
+  *   @param sigma_w_inh      the std deviation of the postsynaptic weight
+  *                           distribution for inhibitory neurons
+  *   @param w_pre_exc        the presynaptic weight for excitatory neurons
+  *   @param w_pre_inh        the presynaptic weight for inhibitory neurons
+  *   @param externalPresynapticDefVal
+  *   @param plasticity       simulate neuron plasticity
+  *   @param etap             the Etap for plasticity
+  *   @param etam             the Etam for plasticity
+  *   @param taup             the Taup for plasticity
+  *   @param taum             the Taum for plasticity
+  *   @param pwMax            the pwMax for plasticity
+  *   @param to               the to for plasticity
+  *   @param avgNeuronalSignalSpeed the signal speed through synapsis
+  *   @param lif              do lif simulation
+  *   @param exp_decay        use exponential sub-threashold decay
+  *   @param do_fast          use fastest algorithms (some aproximations)
+  *
+  */
   public NodeThread(
       NodesManager nMan, 
       Integer id, 
@@ -604,7 +644,6 @@ public class NodeThread extends Thread{
    * and the last burning time of the firing neuron.
    * 
    * @param syn
-   * @param lastBurningTime
    * @param fireTime
    */
   private void fire_ltp(Synapse syn, Double fireTime){
