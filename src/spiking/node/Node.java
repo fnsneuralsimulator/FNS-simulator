@@ -98,6 +98,37 @@ public class Node {
   private HashMap <Long,Boolean> external_init= 
       new HashMap <Long, Boolean>();
 
+  /**
+  *   The Node object
+  *
+  *   @param id           the node id
+  *   @param n            the number of neurons of the node
+  *   @param R            the ratio of excitatory neurons over the total
+  *                       number of neurons 'n'
+  *   @param mu_w_exc     the mean of the postsynaptic weight 
+  *                       distribution for excitatory neurons
+  *   @param mu_w_inh     the mean of the postsynaptic weight 
+  *                       distribution for inhibitory neurons
+  *   @param sigma_w_exc  the std deviation of the postsynaptic weight
+  *                       distribution for excitatory neurons
+  *   @param sigma_w_inh  the std deviation of the postsynaptic weight
+  *                       distribution for inhibitory neurons
+  *   @param w_pre_exc    the presynaptic weight for excitatory neurons
+  *   @param w_pre_inh    the presynaptic weight for inhibitory neurons
+  *   @param k            the conn-degree of each neuron
+  *   @param prew         the prob of small-world topology rewinig
+  *   @param Bn           the number of bursts spike for each 
+  *                       firing neuron
+  *   @param IBI          the burst inter-spike time 
+  *   @param plasticity   simulate neuron plasticity
+  *   @param etap         the Etap for plasticity
+  *   @param etam         the Etam for plasticity
+  *   @param taup         the Taup for plasticity
+  *   @param taum         the Taum for plasticity
+  *   @param pwMax        the pwMax for plasticity
+  *   @param to           the to for plasticity
+  *
+  */
   public Node(
       Integer id, 
       Long n, 

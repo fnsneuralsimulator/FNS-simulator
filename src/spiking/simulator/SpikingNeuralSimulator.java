@@ -247,6 +247,17 @@ public class SpikingNeuralSimulator extends Thread{
     return true;
   }
  
+  /**
+  *   Read the config files for nodes and connectivity topology,
+  *   creates a thread for each network node with the corersponding
+  *   parameters and parametrizes the inter-node synapses
+  *
+  *   @param configPath   the path of the config package
+  *   @param connPkgPath  the path of che connectivity package (the  
+  *                       folder in which all the topology parameters
+  *                       are stored
+  *   @param do_fast      if true, 
+  */
   public void initFromConfigFileAndConnectivityPackage(
       String configPath, 
       String connPkgPath, 
@@ -473,6 +484,21 @@ public class SpikingNeuralSimulator extends Thread{
     lastTime+=times[4];
   }
   
+  /**
+  *   Creates a new inter-node connection
+  *   Each connection is to be intended as a couple of boundle of 
+  *   synapsis between two nodes, one per each direction
+  *
+  *   @param nd1                  one node of the connection
+  *   @param nd2                  the other node of the connection
+  *   @param Ne_xn_ratio          the ratio of excitatory connections
+  *   @param mu_omega             the mean of postsynaptic weght distribution
+  *   @param sigma_omega          the std dev of postsynaptic weights distribution
+  *   @param mu_lambda            the mean of synapsis length distribution
+  *   @param alpha_lambda         the shape factor of the synapsys length distribution
+  *   @param inter_node_conn_type the type of inter node connection
+  *
+  */
   public void addInterNodeThreadConnection(
       NodeThread nd1, 
       NodeThread nd2, 
@@ -496,7 +522,6 @@ public class SpikingNeuralSimulator extends Thread{
   
   public void setDebug(Boolean debug){
     this.debug=debug;
-    //nMan.setDebug(debug);
     nMan.setDebug(debug);
   }
 
