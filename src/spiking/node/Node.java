@@ -42,7 +42,6 @@ import utils.tools.Shuffler;
 import spiking.node.external_inputs.ExternalInput;
 import org.mapdb.*;
 
-//import utils.constants.Constants;
 
 public class Node {
   
@@ -79,12 +78,10 @@ public class Node {
   private Integer k=20;  
   //rewiring probability
   private Double prew=0.5;
-//  private Double internalAmplitude;
   private Boolean hasExternalInputs = false;
   private int externalInputType=-1;
   private Double externalInputsTimeOffset;
-  private int timeStep = -1;
-  private double fireRate = -1;
+  private double timeStep = -1;
   private int fireDuration = 1;
   private Double externalAmplitude=
       ExternalInput.EXTERNAL_AMPLITUDE_DEF_VALUE;
@@ -161,7 +158,6 @@ public class Node {
     this.w_pre_inh=w_pre_inh<0?w_pre_inh:(-w_pre_inh);
     this.k=k;
     this.prew=prew;
-//    this.internalAmplitude=internalAmplitude;
     this.Bn=Bn;
     this.IBI=IBI;
     this.plasticity=plasticity;
@@ -181,8 +177,7 @@ public class Node {
       Integer externalInputs, 
       int externalInputType,
       Double externalInputsTimeOffset,
-      int timeStep, 
-      double fireRate, 
+      double timeStep, 
       int fireDuration, 
       Double externalAmplitude,
       Double R, 
@@ -218,13 +213,11 @@ public class Node {
       hasExternalInputs=true;
       this.externalInputs=externalInputs;
       this.timeStep=timeStep;
-      this.fireRate=fireRate;
       this.fireDuration=fireDuration;
       this.externalAmplitude=externalAmplitude;
     }
     this.k=k;
     this.prew=prew;
-//    this.internalAmplitude=internalAmplitude;
     this.Bn=Bn;
     this.IBI=IBI;
     this.plasticity=plasticity;
@@ -240,18 +233,6 @@ public class Node {
   }
   
   public void nodeInit(){
-    //Boolean savedExperiment=false;
-    ////nodeDbFile = new File (Experiment.getExperimentName()+"node_"+id+".reg");
-    //if (nodeDbFile.exists())
-    //  savedExperiment=true;
-    //if (savedExperiment){
-    //  println("experiment "+Experiment.getExperimentName()+" found!");
-    //}
-    //else{
-    //  println("init...");
-    //  ring closure
-    //  wireInit();
-    //}
     println("init...");
     // ring closure
     wireInit();
@@ -332,7 +313,6 @@ public class Node {
         this, 
         externalInputType,
         externalInputsTimeOffset,
-        fireRate,
         fireDuration,
         externalAmplitude,
         timeStep);
@@ -421,7 +401,6 @@ public class Node {
         this, 
         externalInputType,
         externalInputsTimeOffset, 
-        fireRate,
         fireDuration,
         externalAmplitude,
         timeStep);
@@ -442,24 +421,6 @@ public class Node {
     if (hasExternalInputs)
       return ext.getAmplitudeValue((int)(long)(extNeuronGlobalId-n));
     return null;
-  }
-
-  public Double getAmplitudeValue(Long extNeuronGlobalId, Long bin){
-    if ((extNeuronGlobalId-n)>Integer.MAX_VALUE)
-      throw new IndexOutOfBoundsException("[NODE ERROR] The external input id is too big");
-    if (bin>Integer.MAX_VALUE)
-      throw new IndexOutOfBoundsException("[NODE ERROR] The bin is too big");
-    if (hasExternalInputs)
-      return ext.getAmplitudeValue((int)(long)(extNeuronGlobalId-n), (int)(long)(bin));
-    return null;
-  }
-  
-  public NiceNode extractExternalMinSpikeTime(Long extNeuronGlobalId){
-    if (!hasExternalInputs)
-      return null;
-    if ((extNeuronGlobalId-n)>Integer.MAX_VALUE)
-      throw new IndexOutOfBoundsException("[NODE ERROR] The external input id is too big");
-    return ext.extractMinSpikeTime((int) (long)(extNeuronGlobalId-n));
   }
 
   public Boolean isExternalInput(Long neuronId){
@@ -512,7 +473,7 @@ public class Node {
     if (ext_init==null)
       external_init.put(extNeuronId, true);
     else
-      externalInputsTimeOffset=(double)timeStep;
+      externalInputsTimeOffset=timeStep;
     return retval;
   }
   
@@ -522,12 +483,6 @@ public class Node {
     return false;
   }
 
-  public void printExternalInputSpikeTimeMatrix(){
-    println("printing external input for node:"+id);
-    if (ext!=null)
-      ext.printSpikeTimeMatrix();
-  }
-  
   public void printNodesConnections(){
     println("printing connections:");
     for (long i=0; i<n; ++i){
