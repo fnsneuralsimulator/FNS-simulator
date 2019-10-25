@@ -124,12 +124,10 @@ public class SpikingNeuralSimulator extends Thread{
     println("avg neuronal signal speed:"+avgNeuronalSignalSpeed);
     cycle_time=(nMan.getMinTractLength()+epsilon)/
         (avgNeuronalSignalSpeed*bop_to_cycle_factor);
-    //println("cycle time:"+cycle_time);
   }
 
   private void setTotalTime(double total_time){
     this.total_time=total_time;
-    //StatisticsCollector.setSimulatedTime(total_time);
   }
 
   /**
@@ -282,7 +280,6 @@ public class SpikingNeuralSimulator extends Thread{
     SpikingSimulatorCfg ssc = 
         SpikingConfigManager.readConfigFile(configPath);
     setTotalTime(new Double(ssc.getStop()));
-    //ArrayList<NodeCfg> nodeCs =  ssc.getNodes();
     HashMap <Integer, NodeCfg> nodeCs =  ssc.getNodesMap();
     avgNeuronalSignalSpeed=ssc.getAvg_neuronal_signal_speed();
     times[1]=System.currentTimeMillis()-lastTime;
@@ -408,7 +405,6 @@ public class SpikingNeuralSimulator extends Thread{
         Integer tmpExternalType; 
         Double tmpExternalTimestep;
         Integer tmpExternalFireDuration;
-        //Double tmpExternalFirerate;
         Double tmpExternalFireAmplitude;
         Double tmpExternalInputsTimeOffset;
         tmpExternalType=
@@ -423,10 +419,6 @@ public class SpikingNeuralSimulator extends Thread{
             ((tmp!=null)&&(tmp.getExternal_inputs_timestep()!=null))?
                 tmp.getExternal_inputs_timestep():
                 ssc.getGlob_external_inputs_timestep();
-        //tmpExternalFirerate=
-        //    ((tmp!=null)&&(tmp.getExternal_inputs_firerate()!=null))?
-        //        tmp.getExternal_inputs_firerate():
-        //        ssc.getGlob_external_inputs_firerate();
         tmpExternalFireDuration=
             ((tmp!=null)&&(tmp.getExternal_inputs_fireduration()!=null))?
                 tmp.getExternal_inputs_fireduration():
@@ -444,7 +436,6 @@ public class SpikingNeuralSimulator extends Thread{
                     tmpExternalType,
                     tmpExternalInputsTimeOffset,
                     tmpExternalTimestep,
-                    //tmpExternalFirerate,
                     tmpExternalFireDuration,
                     tmpExternalFireAmplitude,
                     tmpExcitRatio,
@@ -686,7 +677,6 @@ public class SpikingNeuralSimulator extends Thread{
     sns.sc.PrintResults();
     sns.sc.makeCsv(filename);
     try{
-      //filename = sns.getExperimentName()+"mask"+checkNodessMask+"_";
       sns.sc.makeCsv(filename);
       System.out.println("done.");
       if (do_plot){
