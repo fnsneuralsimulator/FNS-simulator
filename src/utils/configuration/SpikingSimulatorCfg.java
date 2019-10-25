@@ -70,8 +70,8 @@ public class SpikingSimulatorCfg {
   private Integer glob_external_inputs_type=1;
   private Double glob_external_inputs_time_offset=0.0;
   private Integer glob_external_inputs_fireduration=1000;
-  private Integer glob_external_inputs_timestep=1;
-  private Double glob_external_inputs_firerate=0.3; 
+  private Double glob_external_inputs_timestep=1.0;
+  //private Double glob_external_inputs_firerate=0.3; 
   private Double glob_external_inputs_amplitude=0.07; 
   private Boolean glob_plasticity=false;
   private Double glob_etap = Constants.ETAP;
@@ -292,21 +292,21 @@ public class SpikingSimulatorCfg {
     this.glob_external_inputs_fireduration = glob_external_inputs_fireduration;
   }
 
-  public Integer getGlob_external_inputs_timestep() {
+  public Double getGlob_external_inputs_timestep() {
     return glob_external_inputs_timestep;
   }
 
-  public void setGlob_external_inputs_timestep(Integer glob_external_inputs_timestep) {
+  public void setGlob_external_inputs_timestep(Double glob_external_inputs_timestep) {
     this.glob_external_inputs_timestep = glob_external_inputs_timestep;
   }
 
-  public Double getGlob_external_inputs_firerate() {
-    return glob_external_inputs_firerate;
-  }
+  //public Double getGlob_external_inputs_firerate() {
+  //  return glob_external_inputs_firerate;
+  //}
 
-  public void setGlob_external_inputs_firerate(Double glob_external_inputs_firerate) {
-    this.glob_external_inputs_firerate = glob_external_inputs_firerate;
-  }
+  //public void setGlob_external_inputs_firerate(Double glob_external_inputs_firerate) {
+  //  this.glob_external_inputs_firerate = glob_external_inputs_firerate;
+  //}
   
   public Double getGlob_external_inputs_amplitude() {
     return glob_external_inputs_amplitude;

@@ -103,7 +103,6 @@ public class NodeNeuronsManager {
     presynapticWeights = new HashMap<Long, Double>();
     poissonD = new PoissonDistribution(
         n.getExternalInput().getTimeStep()*
-        n.getExternalInput().getFiringRate()*
         POISSON_PRECISION,
         POISSON_ITERATIONS); 
   }

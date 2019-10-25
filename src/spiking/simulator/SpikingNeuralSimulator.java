@@ -124,12 +124,10 @@ public class SpikingNeuralSimulator extends Thread{
     println("avg neuronal signal speed:"+avgNeuronalSignalSpeed);
     cycle_time=(nMan.getMinTractLength()+epsilon)/
         (avgNeuronalSignalSpeed*bop_to_cycle_factor);
-    //println("cycle time:"+cycle_time);
   }
 
   private void setTotalTime(double total_time){
     this.total_time=total_time;
-    //StatisticsCollector.setSimulatedTime(total_time);
   }
 
   /**
@@ -142,6 +140,8 @@ public class SpikingNeuralSimulator extends Thread{
   
   /**
    * Awakes all node threads
+   * @param newStopTime the stop time for the next "split"
+   *
    */
   public void runNewSplit(double newStopTime){
     double stopTime=(newStopTime>total_time)?total_time:newStopTime;
@@ -256,7 +256,8 @@ public class SpikingNeuralSimulator extends Thread{
   *   @param connPkgPath  the path of che connectivity package (the  
   *                       folder in which all the topology parameters
   *                       are stored
-  *   @param do_fast      if true, 
+  *   @param do_fast      if true, fastest algorithms are used 
+  *                       (with some aproximations)
   */
   public void initFromConfigFileAndConnectivityPackage(
       String configPath, 
@@ -279,7 +280,6 @@ public class SpikingNeuralSimulator extends Thread{
     SpikingSimulatorCfg ssc = 
         SpikingConfigManager.readConfigFile(configPath);
     setTotalTime(new Double(ssc.getStop()));
-    //ArrayList<NodeCfg> nodeCs =  ssc.getNodes();
     HashMap <Integer, NodeCfg> nodeCs =  ssc.getNodesMap();
     avgNeuronalSignalSpeed=ssc.getAvg_neuronal_signal_speed();
     times[1]=System.currentTimeMillis()-lastTime;
@@ -403,23 +403,30 @@ public class SpikingNeuralSimulator extends Thread{
       }
       else{
         Integer tmpExternalType; 
-        Integer tmpExternalTimestep;
+        Double tmpExternalTimestep;
         Integer tmpExternalFireDuration;
-        Double tmpExternalFirerate;
         Double tmpExternalFireAmplitude;
         Double tmpExternalInputsTimeOffset;
-        tmpExternalType=((tmp!=null)&&(tmp.getExternal_inputs_type()!=null))?
-            tmp.getExternal_inputs_type():ssc.getGlob_external_inputs_type();
-        tmpExternalInputsTimeOffset=((tmp!=null)&&(tmp.getExternal_inputs_time_offset()!=null))?
-            tmp.getExternal_inputs_time_offset():ssc.getGlob_external_inputs_time_offset();
-        tmpExternalTimestep=((tmp!=null)&&(tmp.getExternal_inputs_timestep()!=null))?
-            tmp.getExternal_inputs_timestep():ssc.getGlob_external_inputs_timestep();
-        tmpExternalFirerate=((tmp!=null)&&(tmp.getExternal_inputs_firerate()!=null))?
-            tmp.getExternal_inputs_firerate():ssc.getGlob_external_inputs_firerate();
-        tmpExternalFireDuration=((tmp!=null)&&(tmp.getExternal_inputs_fireduration()!=null))?
-            tmp.getExternal_inputs_fireduration():ssc.getGlob_external_inputs_fireduration();
-        tmpExternalFireAmplitude=((tmp!=null)&&(tmp.getExternal_inputs_amplitude()!=null))?
-            tmp.getExternal_inputs_amplitude():ssc.getGlob_external_inputs_amplitude();
+        tmpExternalType=
+            ((tmp!=null)&&(tmp.getExternal_inputs_type()!=null))?
+                tmp.getExternal_inputs_type():
+                ssc.getGlob_external_inputs_type();
+        tmpExternalInputsTimeOffset=
+            ((tmp!=null)&&(tmp.getExternal_inputs_time_offset()!=null))?
+                tmp.getExternal_inputs_time_offset():
+                ssc.getGlob_external_inputs_time_offset();
+        tmpExternalTimestep=
+            ((tmp!=null)&&(tmp.getExternal_inputs_timestep()!=null))?
+                tmp.getExternal_inputs_timestep():
+                ssc.getGlob_external_inputs_timestep();
+        tmpExternalFireDuration=
+            ((tmp!=null)&&(tmp.getExternal_inputs_fireduration()!=null))?
+                tmp.getExternal_inputs_fireduration():
+                ssc.getGlob_external_inputs_fireduration();
+        tmpExternalFireAmplitude=
+            ((tmp!=null)&&(tmp.getExternal_inputs_amplitude()!=null))?
+                tmp.getExternal_inputs_amplitude():
+                ssc.getGlob_external_inputs_amplitude();
         addNodeThread(
             new NodeThread(
                     nMan,
@@ -429,7 +436,6 @@ public class SpikingNeuralSimulator extends Thread{
                     tmpExternalType,
                     tmpExternalInputsTimeOffset,
                     tmpExternalTimestep,
-                    tmpExternalFirerate,
                     tmpExternalFireDuration,
                     tmpExternalFireAmplitude,
                     tmpExcitRatio,
@@ -492,10 +498,14 @@ public class SpikingNeuralSimulator extends Thread{
   *   @param nd1                  one node of the connection
   *   @param nd2                  the other node of the connection
   *   @param Ne_xn_ratio          the ratio of excitatory connections
-  *   @param mu_omega             the mean of postsynaptic weght distribution
-  *   @param sigma_omega          the std dev of postsynaptic weights distribution
-  *   @param mu_lambda            the mean of synapsis length distribution
-  *   @param alpha_lambda         the shape factor of the synapsys length distribution
+  *   @param mu_omega             the mean of postsynaptic weight 
+  *                               distribution
+  *   @param sigma_omega          the std dev of postsynaptic weights 
+  *                               distribution
+  *   @param mu_lambda            the mean of synapsis length 
+  *                               distribution
+  *   @param alpha_lambda         the shape factor of the synapsys 
+  *                               length distribution
   *   @param inter_node_conn_type the type of inter node connection
   *
   */
@@ -519,12 +529,18 @@ public class SpikingNeuralSimulator extends Thread{
         inter_node_conn_type);
   }
   
-  
+  /**
+  *  Allows debug print to the stdout
+  */
   public void setDebug(Boolean debug){
     this.debug=debug;
     nMan.setDebug(debug);
   }
 
+  /**
+  * Set the name for the simulation
+  * The name is the same of the configuration path
+  */
   public void setExperimentName(String expName) {
     Experiment.setExperimentName(expName);
     File expDir = new File (Experiment.getExperimentDir());
@@ -661,7 +677,6 @@ public class SpikingNeuralSimulator extends Thread{
     sns.sc.PrintResults();
     sns.sc.makeCsv(filename);
     try{
-      //filename = sns.getExperimentName()+"mask"+checkNodessMask+"_";
       sns.sc.makeCsv(filename);
       System.out.println("done.");
       if (do_plot){
