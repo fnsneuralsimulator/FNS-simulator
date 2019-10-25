@@ -83,8 +83,8 @@ public class Node {
   private Boolean hasExternalInputs = false;
   private int externalInputType=-1;
   private Double externalInputsTimeOffset;
-  private int timeStep = -1;
-  private double fireRate = -1;
+  private double timeStep = -1;
+  //private double fireRate = -1;
   private int fireDuration = 1;
   private Double externalAmplitude=
       ExternalInput.EXTERNAL_AMPLITUDE_DEF_VALUE;
@@ -181,8 +181,8 @@ public class Node {
       Integer externalInputs, 
       int externalInputType,
       Double externalInputsTimeOffset,
-      int timeStep, 
-      double fireRate, 
+      double timeStep, 
+      //double fireRate, 
       int fireDuration, 
       Double externalAmplitude,
       Double R, 
@@ -218,7 +218,7 @@ public class Node {
       hasExternalInputs=true;
       this.externalInputs=externalInputs;
       this.timeStep=timeStep;
-      this.fireRate=fireRate;
+      //this.fireRate=fireRate;
       this.fireDuration=fireDuration;
       this.externalAmplitude=externalAmplitude;
     }
@@ -332,7 +332,7 @@ public class Node {
         this, 
         externalInputType,
         externalInputsTimeOffset,
-        fireRate,
+        //fireRate,
         fireDuration,
         externalAmplitude,
         timeStep);
@@ -421,7 +421,7 @@ public class Node {
         this, 
         externalInputType,
         externalInputsTimeOffset, 
-        fireRate,
+        //fireRate,
         fireDuration,
         externalAmplitude,
         timeStep);
@@ -444,23 +444,23 @@ public class Node {
     return null;
   }
 
-  public Double getAmplitudeValue(Long extNeuronGlobalId, Long bin){
-    if ((extNeuronGlobalId-n)>Integer.MAX_VALUE)
-      throw new IndexOutOfBoundsException("[NODE ERROR] The external input id is too big");
-    if (bin>Integer.MAX_VALUE)
-      throw new IndexOutOfBoundsException("[NODE ERROR] The bin is too big");
-    if (hasExternalInputs)
-      return ext.getAmplitudeValue((int)(long)(extNeuronGlobalId-n), (int)(long)(bin));
-    return null;
-  }
+  //public Double getAmplitudeValue(Long extNeuronGlobalId, Long bin){
+  //  if ((extNeuronGlobalId-n)>Integer.MAX_VALUE)
+  //    throw new IndexOutOfBoundsException("[NODE ERROR] The external input id is too big");
+  //  if (bin>Integer.MAX_VALUE)
+  //    throw new IndexOutOfBoundsException("[NODE ERROR] The bin is too big");
+  //  if (hasExternalInputs)
+  //    return ext.getAmplitudeValue((int)(long)(extNeuronGlobalId-n), (int)(long)(bin));
+  //  return null;
+  //}
   
-  public NiceNode extractExternalMinSpikeTime(Long extNeuronGlobalId){
-    if (!hasExternalInputs)
-      return null;
-    if ((extNeuronGlobalId-n)>Integer.MAX_VALUE)
-      throw new IndexOutOfBoundsException("[NODE ERROR] The external input id is too big");
-    return ext.extractMinSpikeTime((int) (long)(extNeuronGlobalId-n));
-  }
+  //public NiceNode extractExternalMinSpikeTime(Long extNeuronGlobalId){
+  //  if (!hasExternalInputs)
+  //    return null;
+  //  if ((extNeuronGlobalId-n)>Integer.MAX_VALUE)
+  //    throw new IndexOutOfBoundsException("[NODE ERROR] The external input id is too big");
+  //  return ext.extractMinSpikeTime((int) (long)(extNeuronGlobalId-n));
+  //}
 
   public Boolean isExternalInput(Long neuronId){
     return neuronId>=n;
@@ -512,7 +512,7 @@ public class Node {
     if (ext_init==null)
       external_init.put(extNeuronId, true);
     else
-      externalInputsTimeOffset=(double)timeStep;
+      externalInputsTimeOffset=timeStep;
     return retval;
   }
   
@@ -522,11 +522,11 @@ public class Node {
     return false;
   }
 
-  public void printExternalInputSpikeTimeMatrix(){
-    println("printing external input for node:"+id);
-    if (ext!=null)
-      ext.printSpikeTimeMatrix();
-  }
+  //public void printExternalInputSpikeTimeMatrix(){
+  //  println("printing external input for node:"+id);
+  //  if (ext!=null)
+  //    ext.printSpikeTimeMatrix();
+  //}
   
   public void printNodesConnections(){
     println("printing connections:");

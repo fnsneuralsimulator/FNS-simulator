@@ -406,9 +406,9 @@ public class SpikingNeuralSimulator extends Thread{
       }
       else{
         Integer tmpExternalType; 
-        Integer tmpExternalTimestep;
+        Double tmpExternalTimestep;
         Integer tmpExternalFireDuration;
-        Double tmpExternalFirerate;
+        //Double tmpExternalFirerate;
         Double tmpExternalFireAmplitude;
         Double tmpExternalInputsTimeOffset;
         tmpExternalType=
@@ -423,10 +423,10 @@ public class SpikingNeuralSimulator extends Thread{
             ((tmp!=null)&&(tmp.getExternal_inputs_timestep()!=null))?
                 tmp.getExternal_inputs_timestep():
                 ssc.getGlob_external_inputs_timestep();
-        tmpExternalFirerate=
-            ((tmp!=null)&&(tmp.getExternal_inputs_firerate()!=null))?
-                tmp.getExternal_inputs_firerate():
-                ssc.getGlob_external_inputs_firerate();
+        //tmpExternalFirerate=
+        //    ((tmp!=null)&&(tmp.getExternal_inputs_firerate()!=null))?
+        //        tmp.getExternal_inputs_firerate():
+        //        ssc.getGlob_external_inputs_firerate();
         tmpExternalFireDuration=
             ((tmp!=null)&&(tmp.getExternal_inputs_fireduration()!=null))?
                 tmp.getExternal_inputs_fireduration():
@@ -444,7 +444,7 @@ public class SpikingNeuralSimulator extends Thread{
                     tmpExternalType,
                     tmpExternalInputsTimeOffset,
                     tmpExternalTimestep,
-                    tmpExternalFirerate,
+                    //tmpExternalFirerate,
                     tmpExternalFireDuration,
                     tmpExternalFireAmplitude,
                     tmpExcitRatio,

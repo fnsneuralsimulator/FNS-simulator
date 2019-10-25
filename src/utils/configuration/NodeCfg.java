@@ -56,8 +56,8 @@ public class NodeCfg {
   private Integer external_inputs_type;
   private Double external_inputs_time_offset;
   private Integer external_inputs_fireduration;
-  private Integer external_inputs_timestep;
-  private Double external_inputs_firerate;
+  private Double external_inputs_timestep;
+  //private Double external_inputs_firerate;
   private Double external_inputs_amplitude;
   private Boolean small_world_topology;
   private Integer Bn;
@@ -192,21 +192,21 @@ public class NodeCfg {
     this.external_inputs_time_offset = external_inputs_time_offset;
   }
 
-  public Integer getExternal_inputs_timestep() {
+  public Double getExternal_inputs_timestep() {
     return external_inputs_timestep;
   }
 
-  public void setExternal_inputs_timestep(Integer external_inputs_timestep) {
+  public void setExternal_inputs_timestep(Double external_inputs_timestep) {
     this.external_inputs_timestep = external_inputs_timestep;
   }
 
-  public Double getExternal_inputs_firerate() {
-    return external_inputs_firerate;
-  }
+  //public Double getExternal_inputs_firerate() {
+  //  return external_inputs_firerate;
+  //}
 
-  public void setExternal_inputs_firerate(Double external_inputs_firerate) {
-    this.external_inputs_firerate = external_inputs_firerate;
-  }
+  //public void setExternal_inputs_firerate(Double external_inputs_firerate) {
+  //  this.external_inputs_firerate = external_inputs_firerate;
+  //}
   
   public Double getExternal_inputs_amplitude() {
     return external_inputs_amplitude;
