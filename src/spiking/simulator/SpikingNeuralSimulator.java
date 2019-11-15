@@ -689,6 +689,7 @@ public class SpikingNeuralSimulator extends Thread{
     } catch (Exception e){
       e.printStackTrace();
     }
+
     System.out.println("bye!");
     System.exit(0);
   }
