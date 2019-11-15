@@ -196,8 +196,57 @@ public class NodeThread extends Thread{
         do_fast);
   }
   
+  /**
+  *   The NodeThread object
+  *
+  *   @param nMan             the simulation NodesManager object
+  *   @param id               the node id
+  *   @param n                the number of neurons of the node
+  *   @param externalInputs   the number of neurons with external inputs
+  *   @param externalInputType the type of external input 
+  *                            0. poisson
+  *                            1. constant
+  *                            2.noise
+  *   @param externalInputsTimeOffset the time offset before external input  
+  *                           firings to begin
+  *   @param timeStep         the avg for the external input fire distribution
+  *   @param fireDuration     the duration of external input activity
+  *   @param externalAmplitude the amplitude of an external input signal
+  *   @param excitRatio  the ratio of excitatory neurons over the total
+  *                           number of neurons 'n'
+  *   @param k                the conn-degree of each neuron
+  *   @param prew             the prob of small-world topology rewinig
+  *   @param Bn               the number of bursts spike for each 
+  *                           firing neuron
+  *   @param IBI              the burst inter-spike time 
+  *   @param D_exc
+  *   @param D_inh
+  *   @param mu_w_exc         the mean of the postsynaptic weight 
+  *                           distribution for excitatory neurons
+  *   @param mu_w_inh         the mean of the postsynaptic weight 
+  *                           distribution for inhibitory neurons
+  *   @param sigma_w_exc      the std deviation of the postsynaptic weight
+  *                           distribution for excitatory neurons
+  *   @param sigma_w_inh      the std deviation of the postsynaptic weight
+  *                           distribution for inhibitory neurons
+  *   @param w_pre_exc        the presynaptic weight for excitatory neurons
+  *   @param w_pre_inh        the presynaptic weight for inhibitory neurons
+  *   @param externalPresynapticDefVal
+  *   @param plasticity       simulate neuron plasticity
+  *   @param etap             the Etap for plasticity
+  *   @param etam             the Etam for plasticity
+  *   @param taup             the Taup for plasticity
+  *   @param taum             the Taum for plasticity
+  *   @param pwMax            the pwMax for plasticity
+  *   @param to               the to for plasticity
+  *   @param avgNeuronalSignalSpeed the signal speed through synapsis
+  *   @param lif              do lif simulation
+  *   @param exp_decay        use exponential sub-threashold decay
+  *   @param do_fast          use fastest algorithms (some aproximations)
+  *
+  */
   public NodeThread(
-      NodesManager rMan, 
+      NodesManager nMan, 
       Integer id, 
       Long n, 
       Integer externalInputs, 
@@ -261,7 +310,7 @@ public class NodeThread extends Thread{
         taum,
         pwMax,
         to);
-    init(rMan, 
+    init(nMan, 
         c, 
         D_exc, 
         D_inh, 
@@ -275,7 +324,32 @@ public class NodeThread extends Thread{
         do_fast);
     
   }
+
   
+  /**
+   *   The initialization function for NodeThread
+   *   @param nMan                          the NodesManager
+   *   @param c                               
+   *   @param D_exc                          
+   *   @param D_inh 
+   *   @param t_arp 
+   *   @param excitatoryPresynapticDefVal   the presynaptic weight for 
+   *                                        excitatory neurons
+   *   @param inhibithoryPresynapticDefVal  the presynaptic weight for 
+   *                                        inhibitory neurons
+   *   @param externalPresynapticDefVal     the presynaptic weight for 
+   *                                        external inputs 
+   *   @param avgNeuronalSignalSpeed        the avg signal through axons
+   *   @param lif                           if true, a least integrate 
+   *                                        and fire simulation is performed
+   *   @param exp_decay                     if true, the underthreashold 
+   *                                        neuronal decay would be 
+   *                                        exponential
+   *   @param do_fast                       if true, fastest algorithm 
+   *                                        are used for expensive 
+   *                                        calculations. This  introduces 
+   *                                        some kind of aproximations
+   */
   public void init(
       NodesManager nMan, 
       Double c, 
@@ -315,7 +389,9 @@ public class NodeThread extends Thread{
     this.do_fast=do_fast;
   }
   
-  
+  /**
+   *  starts the main thread routine
+   */
   public void run(){
     NiceNode minFiringNeuron;
     Long firingNeuronId=null;
@@ -535,12 +611,21 @@ public class NodeThread extends Thread{
     }
   }
   
-  
+  /**
+   *  Adds a new internode fire spike
+   *  @param syn      the inter-node synapse object through wich the 
+   *                  spike signal is sent
+   *  @param fireTime the fire-spike generation time
+   */
   private void addInterNodeFire(Synapse syn, Double fireTime){
     Double axonalDelay=synMan.getAxDelay(syn);
     internodeFires.add(new InterNodeSpike(syn, fireTime+axonalDelay,fireTime,axonalDelay));
   }
   
+  /**
+   *  @return true if this node has still any inter-node spike to be 
+   *          processed
+   */
   public Boolean hasInterNodeSpikes(){
     if (internodeFires.size()>0)
       return true;
@@ -549,7 +634,6 @@ public class NodeThread extends Thread{
   
   
   /**
-   * 
    * @return the list of internode spikes and clean it
    */
   public ArrayList<InterNodeSpike> pullInternodeFires() {
@@ -558,26 +642,54 @@ public class NodeThread extends Thread{
     return retval;
   }
   
+  /*
+   * @return the current simulation time (which is the time of the 
+   *        current fire event being processed)
+   */
   public double getCurrentTime() {
     return currentTime;
   }
 
+  /**
+   * Updates the current time
+   * @param currentTime the updated current time
+   */
   public void setCurrentTime(double currentTime) {
     this.currentTime = currentTime;
   }
-
+  
+  /**
+   * @return the current split stop time
+   */
   public double getStopTime() {
     return stopTime;
   }
 
+  /**
+   * set the next split stop time
+   * @param stopTime the new stop time defined for the next split
+   */
   public void setStopTime(double stopTime) {
     this.stopTime = stopTime;
   }
 
+  /**
+   * @return the (unique) node id for the current node
+   */
   public Integer getNodeId(){
     return n.getId();
   }
   
+  /**
+   * create and adds a new inter-node synapse
+   * @param firingNodeId     the id of the firing node
+   * @param firingNeuronId   the id of the firing neuron (within a node)
+   * @param burningNodeId    the id of the burning node
+   * @param burningNeuronId  the id of the burning neuron (within a node) 
+   * @param presynaptic_w    the presynaptic weight of the synapse
+   * @param mu               the postsynaptic weight for the synapse
+   * @param lambda           the avg length of the inter-node axon
+   */
   public void addInterNodeSynapse(
       Integer firingNodeId, 
       Long firingNeuronId, 
