@@ -155,15 +155,46 @@
   </dependencies>
   <version>V3.3.11</version>
   <reporting>
-    <plugins>
+   <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>3.1.1</version>
-        <configuration>
-          <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
-          <show>public</show>
-        </configuration>
+        <reportSets>
+          <reportSet>
+            <id>html</id>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>doccheck</id>
+            <configuration>
+              <doclet>com.sun.tools.doclets.doccheck.DocCheck</doclet>
+ 
+              <!-- <docletPath>/path/to/doccheck.jar</docletPath> -->
+              <docletArtifact>
+                <groupId>com.sun.tools.doclets</groupId>
+                <artifactId>doccheck</artifactId>
+                <version>1.2b2</version>
+              </docletArtifact>
+              <additionalOptions>
+                <additionalOption>-d</additionalOption>
+                <additionalOption>${project.build.directory}/site/doccheck</additionalOption>
+              </additionalOptions>
+ 
+              <!-- Other dir than apidocs -->
+              <destDir>doccheck</destDir>
+ 
+              <!-- For the project-reports page-->
+              <name>DocCheck</name>
+              <description>DocCheck documentation.</description>
+            </configuration>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>
