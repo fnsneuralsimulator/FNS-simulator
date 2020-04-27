@@ -118,12 +118,14 @@ public class Node {
   *                       firing neuron
   *   @param IBI          the burst inter-spike time 
   *   @param plasticity   simulate neuron plasticity
-  *   @param etap         the Etap for plasticity
-  *   @param etam         the Etam for plasticity
-  *   @param taup         the Taup for plasticity
-  *   @param taum         the Taum for plasticity
-  *   @param pwMax        the pwMax for plasticity
-  *   @param to           the to for plasticity
+  *   @param etap         the Eta plus learning constant for plasticity
+  *   @param etam         the Eta minus learning constant for plasticity
+  *   @param taup         the Tau plus positive time constants for long term 
+  *                       potentiation for plasticity
+  *   @param taum         the Tau minus positive time constants for long term 
+  *                       depression for plasticity
+  *   @param pwMax        the max post-ynaptic weight (used for plasticity rules)
+  *   @param to           the timeout for plasticity rules
   *
   */
   public Node(
@@ -459,7 +461,7 @@ public class Node {
     return pwMax;
   }
 
-  public Double getTo() {
+  public Double getPlasticityTo() {
     return to;
   }
   
