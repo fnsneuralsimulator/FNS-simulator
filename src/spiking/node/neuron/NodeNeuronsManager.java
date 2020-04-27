@@ -38,7 +38,7 @@ import utils.constants.Constants;
 import utils.experiment.Experiment;
 import utils.tools.NiceNode;
 import utils.tools.NiceQueue;
-import org.apache.commons.math3.distribution.PoissonDistribution;
+import org.apache.commons.math3.distribution.ExponentialDistribution;
 
 
 public class NodeNeuronsManager {
@@ -69,9 +69,7 @@ public class NodeNeuronsManager {
   private HashMap<Long, Double> lastFiringTimes;
   private HashMap<Long, Double> lastBurningTimes;
   private HashMap<Long, Double> presynapticWeights;
-  private PoissonDistribution poissonD;
-  private final static int POISSON_ITERATIONS=15;
-  private final static double POISSON_PRECISION=1000.0;
+  private ExponentialDistribution exponentialD;
   
   public NodeNeuronsManager(
       Node r, 
@@ -101,10 +99,8 @@ public class NodeNeuronsManager {
     lastFiringTimes = new HashMap<Long, Double>();
     lastBurningTimes = new HashMap<Long, Double>();
     presynapticWeights = new HashMap<Long, Double>();
-    poissonD = new PoissonDistribution(
-        n.getExternalInput().getTimeStep()*
-        POISSON_PRECISION,
-        POISSON_ITERATIONS); 
+    exponentialD = new ExponentialDistribution(
+        n.getExternalInput().getTimeStep()); 
   }
   
   public Double getT_arp(){
@@ -280,7 +276,7 @@ public class NodeNeuronsManager {
       return;
     }
     /* Case of poissonian external inputs */
-    fireTime = currentTime+(((double)(poissonD.sample()))/POISSON_PRECISION);
+    fireTime = currentTime+((double)(exponentialD.sample()));
     setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId ));
     setTimeToFire(extNeuronId, fireTime);
     addActiveNeuron(extNeuronId, fireTime, currentTime, 1);
