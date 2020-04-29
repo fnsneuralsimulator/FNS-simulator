@@ -48,6 +48,6 @@ public class Constants {
   public static final Double ETAM = 0.05;
   public static final Double TAUP = 15.0;
   public static final Double TAUM = 30.0;
-  public static final Double PWMAX = 100.0;
+  public static final Double PWMAX = 1.0;
   public static final Double TO = 3.0;
 }
