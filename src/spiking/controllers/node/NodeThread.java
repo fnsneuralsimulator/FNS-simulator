@@ -784,6 +784,7 @@ public class NodeThread extends Thread{
       delta=fireTime-synapses.get(i).getLastBurningTime();
       if (delta < n.getPlasticityTo()){
         Double wp=synapses.get(i).getPostSynapticWeight();
+        double wpold=wp;
         wp+=do_fast?
             (n.getPwMax()-wp)*n.getEtap()*fm.fastexp(-delta/n.getTaup()):
               (n.getPwMax()-wp)*n.getEtap()*Math.exp(-delta/n.getTaup());
@@ -797,6 +798,7 @@ public class NodeThread extends Thread{
       delta=fireTime-interNodeSynapses.get(i).getLastBurningTime();
       if (delta < n.getPlasticityTo()){
         Double wp=interNodeSynapses.get(i).getPostSynapticWeight();
+        double wpold=wp;
         wp+=do_fast?
             (n.getPwMax()-wp)*n.getEtap()*fm.fastexp(-delta/n.getTaup()):
               (n.getPwMax()-wp)*n.getEtap()*Math.exp(-delta/n.getTaup());
@@ -822,8 +824,8 @@ public class NodeThread extends Thread{
     Double delta;
     delta=burningTime-lastFiringTime;
     if (delta < n.getPlasticityTo()){
-//      Double wp=synMan.getPostSynapticWeight(syn);
       Double wp=syn.getPostSynapticWeight();
+      double wpold=wp;
       wp -= do_fast?
           wp*n.getEtam()*fm.fastexp(-delta/n.getTaum()):
            wp*n.getEtam()*Math.exp(-delta/n.getTaum());

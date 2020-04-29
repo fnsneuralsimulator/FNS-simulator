@@ -119,7 +119,7 @@
         <scope>provided</scope>
     </dependency>
   </dependencies>
-  <version>V3.3.18</version>
+  <version>V3.3.19</version>
   <reporting>
     <plugins>
       <plugin>

@@ -125,6 +125,8 @@ public class SynapsesManager {
       tmp_presynaptic_w=n.getConnectionPresynapticWeight(
           tmpCouple.getFiring(),
           tmpCouple.getBurning());
+      if (tmp_presynaptic_w==null)
+         continue;
       double postSynW=
           Math.abs(
               randGen.nextGaussian()*
