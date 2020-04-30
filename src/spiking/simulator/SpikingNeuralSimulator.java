@@ -207,7 +207,7 @@ public class SpikingNeuralSimulator extends Thread{
     println("effective simulation time:\t"+
         (System.currentTimeMillis()-startTime-
             times[0]-times[1]-times[2]-times[3]-times[4])+
-        "ms.");
+        " ms.");
     println(
         "init phases:\n\t conn pckg read:\t\t"+
         times[0]+" ms\n\t config file read:\t\t"+
