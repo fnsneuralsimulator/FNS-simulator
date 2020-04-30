@@ -214,7 +214,12 @@ public class SpikingNeuralSimulator extends Thread{
         times[3]+
         " ms\n\t simulator init:\t\t"+
         times[4]+
-        " ms");
+        " ms\n\t total init time:\t\t"+
+        (times[0]+times[1]+times[2]+times[3]+times[4])+
+        "ms\n\t effective simulation time:\t"+
+        (System.currentTimeMillis()-startTime-
+            times[0]-times[1]-times[2]-times[3]-times[4])+
+        "ms.");
     println("min tract length:"+nMan.getMinTractLength());
     println("avg neuronal signal speed:"+avgNeuronalSignalSpeed);
     println("cycle time:"+cycle_time);
