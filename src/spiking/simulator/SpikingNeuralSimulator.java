@@ -581,8 +581,8 @@ public class SpikingNeuralSimulator extends Thread{
   //  sc.setNodes2checkMask(mask);
   //}
   
-  public void setROI(HashMap <Integer, Boolean> ROI){
-    sc.setROI(ROI);
+  public void setNOI(HashMap <Integer, Boolean> NOI){
+    sc.setNOI(NOI);
   }
 
   //================   printing functions ============================
@@ -626,10 +626,10 @@ public class SpikingNeuralSimulator extends Thread{
         +"=================================\n\n");
     // options parsing and management
     Options options= new Options();
-        options.addOption("n", "nodes-list", true, "followed by the "
-            +"list of the node of interest"
+        options.addOption("n", "nodes-list", true, " followed by the "
+            +"list of the node of interest (NOI) "
             + "for which to store the output data. "
-            + "The format for such list is like this exmaple: [3,25,13,12]"
+            + "The format for such list is like this exmaple: [3,25,13,12]. "
             + "If this switch is not present, the entire set of nodes"
             + "will be considered for the generation of output data.");
         options.addOption("f", "fast", false, "enables faster "
@@ -671,7 +671,7 @@ public class SpikingNeuralSimulator extends Thread{
     sns.setExperimentName(args[0]);
     String filename=null;
     //BigInteger checkNodesMask = null;
-    HashMap<Integer, Boolean> ROI=new HashMap<Integer,Boolean>();
+    HashMap<Integer, Boolean> NOI=new HashMap<Integer,Boolean>();
     Boolean do_plot=cmd.hasOption("plot");
     Boolean do_fast=cmd.hasOption("fast");
     //checkNodesMask=new BigInteger(cmd.getOptionValue("mask","0"));
@@ -683,12 +683,12 @@ public class SpikingNeuralSimulator extends Thread{
     if(nodeListString.length()>0){
       String [] nodesStr=nodeListString.split(",");
       for (int i=0; i<nodesStr.length; ++i)
-        ROI.put(Integer.parseInt(nodesStr[i]),true);
+        NOI.put(Integer.parseInt(nodesStr[i]),true);
       filename = Experiment.getExperimentDir()
           +"nodes_"
           + nodeListString.replaceAll(",","-")
           +"_";
-      sns.setROI(ROI);
+      sns.setNOI(NOI);
     }
     else {
       filename = Experiment.getExperimentDir()+"all_nodes_";
@@ -697,7 +697,7 @@ public class SpikingNeuralSimulator extends Thread{
     //else{
     //  filename = Experiment.getExperimentDir()+"mask_"+checkNodesMask;
     //  //sns.setMask(checkNodesMask);
-    //  sns.setROI(ROI);
+    //  sns.setNOI(NOI);
     //}
     sns.sc.set_filename(filename);
     if (cmd.hasOption("matlab"))

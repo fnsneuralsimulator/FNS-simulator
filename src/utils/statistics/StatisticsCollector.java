@@ -79,7 +79,7 @@ public class StatisticsCollector extends Thread {
   private volatile long burningSpikesCounter=0l;
   //private volatile BigInteger region2checkMask = BigInteger.ZERO;
   // the regions of interest
-  private HashMap <Integer,Boolean> ROI;
+  private HashMap <Integer,Boolean> NOI;
   private volatile Boolean checkall=false;
   private long serialize_after = 10000l;
   private volatile int wrotes_split=0;
@@ -213,7 +213,7 @@ public class StatisticsCollector extends Thread {
     firingNeurons.add(new Double(compF.getCompressedNeuronId()));
     firingTimes.add(cf.getFiringTime());
     //if (checkall ||( region2checkMask.testBit(((int)cf.getFiringRegionId())))){
-    if (checkall ||( ROI.get(cf.getFiringRegionId())!=null )){
+    if (checkall ||( NOI.get(cf.getFiringRegionId())!=null )){
       FiringNeuron fn= new FiringNeuron(
           cf.getFiringRegionId(),
           cf.getFiringNeuronId(),
@@ -258,7 +258,7 @@ public class StatisticsCollector extends Thread {
   
   private void processBurnSpike(CollectedBurn cb) {
     //if (checkall ||( region2checkMask.testBit(((int)cb.getS().getDendriteNodeId())))){
-    if (checkall ||( ROI.get(cb.getS().getDendriteNodeId())!=null )){
+    if (checkall ||( NOI.get(cb.getS().getDendriteNodeId())!=null )){
       SpikingSynapse ss = new SpikingSynapse(
           cb.getS(), 
           cb.getBurnTime(),
@@ -551,8 +551,8 @@ public class StatisticsCollector extends Thread {
   //  region2checkMask=mask;
   //}
 
-  public void setROI(HashMap <Integer, Boolean> ROI){
-    this.ROI=ROI;
+  public void setNOI(HashMap <Integer, Boolean> NOI){
+    this.NOI=NOI;
   }
   
   public void checkAll(){
