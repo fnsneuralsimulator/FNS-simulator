@@ -33,7 +33,7 @@
 package spiking.simulator;
 
 import java.io.File;
-import java.math.BigInteger;
+//import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
@@ -204,6 +204,10 @@ public class SpikingNeuralSimulator extends Thread{
         "end of simulator run, "+
         (System.currentTimeMillis()-startTime)+
         " ms elapsed.");
+    println("effective simulation time: "+
+        (System.currentTimeMillis()-startTime-
+            times[0]-times[1]-times[2]-times[3]-times[4])+
+        " ms.");
     println(
         "init phases:\n\t conn pckg read:\t\t"+
         times[0]+" ms\n\t config file read:\t\t"+
@@ -214,7 +218,9 @@ public class SpikingNeuralSimulator extends Thread{
         times[3]+
         " ms\n\t simulator init:\t\t"+
         times[4]+
-        " ms");
+        " ms\n\t total init time:\t\t"+
+        (times[0]+times[1]+times[2]+times[3]+times[4])+
+        "ms");
     println("min tract length:"+nMan.getMinTractLength());
     println("avg neuronal signal speed:"+avgNeuronalSignalSpeed);
     println("cycle time:"+cycle_time);
@@ -282,6 +288,9 @@ public class SpikingNeuralSimulator extends Thread{
     setTotalTime(new Double(ssc.getStop()));
     HashMap <Integer, NodeCfg> nodeCs =  ssc.getNodesMap();
     avgNeuronalSignalSpeed=ssc.getAvg_neuronal_signal_speed();
+    Long serializeAfter=ssc.getSerialize_after();
+    if (serializeAfter!=null)
+      sc.setSerializeAfter(serializeAfter);
     times[1]=System.currentTimeMillis()-lastTime;
     lastTime+=times[1];
     System.out.println("creating and adding nodes...\n");
@@ -550,7 +559,8 @@ public class SpikingNeuralSimulator extends Thread{
   
   private void calculateCompressionFactor(){
     if (nMan.getTotalN()>1000000)
-      compressionFactor = new Double(Integer.MAX_VALUE) / nMan.getTotalN();
+      compressionFactor = 
+          new Double(Integer.MAX_VALUE) / nMan.getTotalN();
     else
       compressionFactor = 1.0;
     nMan.setCompressionFactor(compressionFactor);
@@ -561,16 +571,21 @@ public class SpikingNeuralSimulator extends Thread{
   }
   
   
-  public String getNodesNumMaxMask(){
-    println("nodes num:"+nMan.getNodeThreadsNum());
-    return (new BigInteger("2")).pow(nMan.getNodeThreadsNum()).subtract(BigInteger.ONE).toString();
-  }
+  //public String getNodesNumMaxMask(){
+  //  println("nodes num:"+nMan.getNodeThreadsNum());
+  //  return (new BigInteger("2")).pow(nMan.getNodeThreadsNum())
+  //      .subtract(BigInteger.ONE).toString();
+  //}
   
-  public void setMask(BigInteger mask){
-    sc.setNodes2checkMask(mask);
+  //public void setMask(BigInteger mask){
+  //  sc.setNodes2checkMask(mask);
+  //}
+  
+  public void setROI(HashMap <Integer, Boolean> ROI){
+    sc.setROI(ROI);
   }
 
-  //=======================================   printing functions =======================================
+  //================   printing functions ============================
   
   private void println(String s){
     if (verbose)
@@ -595,25 +610,34 @@ public class SpikingNeuralSimulator extends Thread{
   
   public void printBreakLine(){
     if (verbose)
-      System.out.println("\n\n------------------------------------------"+splitCount+"-----------------------------------------------------\n");
+      System.out.println("\n\n----------------------------------------"
+          +splitCount
+          +"-----------------------------------------------------\n");
   }
   
-  //=======================================   main function =======================================
+  //==========================   main function ========================
 
   public static void main(String[] args) {    
-    System.out.println("\n\n\n\t\t\t\t\t=================================");
+    System.out.println("\n\n\n\t\t\t\t\t"
+        +"=================================");
     System.out.println("\t\t\t\t\t=\t    F N S\t\t=");
     System.out.println("\t\t\t\t\t=\tNeural Simulator\t=");
-    System.out.println("\t\t\t\t\t=================================\n\n");
+    System.out.println("\t\t\t\t\t"
+        +"=================================\n\n");
     // options parsing and management
     Options options= new Options();
-        options.addOption("m", "mask", true, "followed by the mask number. The mask indicates "
-            + "the set of NOIs (node of interests) for which to store the output data. "
-            + "If this switch is not present, the entire set of nodes will be "
-            + "considered for the generation of output data.");
-        options.addOption("f", "fast", false, "enables faster algorithms at different levels, "
-            + "in return for some approximations (i.e., plasticity exponentials, etc.)");
-        options.addOption("M", "matlab", false, "provides with a set of matlab-compliant "
+        options.addOption("n", "nodes-list", true, "followed by the "
+            +"list of the node of interest"
+            + "for which to store the output data. "
+            + "The format for such list is like this exmaple: [3,25,13,12]"
+            + "If this switch is not present, the entire set of nodes"
+            + "will be considered for the generation of output data.");
+        options.addOption("f", "fast", false, "enables faster "
+            +"algorithms at different levels, "
+            + "in return for some approximations "
+            +"(i.e., plasticity exponentials, etc.)");
+        options.addOption("M", "matlab", false, "provides with a set "
+            +"of matlab-compliant "
             + "CSV files, in addition to the output CSVs.");
         options.addOption("h", "help", false, "shows this help");
         CommandLineParser parser = new DefaultParser();
@@ -624,16 +648,19 @@ public class SpikingNeuralSimulator extends Thread{
             if (cmd.hasOption("help")){
               formatter.printHelp("FNS", options);
               System.out.println("\nExamples:");
-              System.out.println("[Windows] \t> .\\start.bat exp01 -f -m 7 -M");
-              System.out.println("[Linux] \t$ ./start exp01 -f -m 7 -M\n");
-                System.exit(0);
-                return;
+              System.out.println("[Windows] \t> .\\start.bat"
+                  +" exp01 -f -m 7 -M");
+              System.out.println("[Linux] \t$ ./start"
+                  +" exp01 -f -m 7 -M\n");
+              System.exit(0);
+              return;
             }
         } catch (ParseException e) {
             System.out.println(e.getMessage());
             formatter.printHelp("FNS", options);
             System.out.println("\nExamples:");
-          System.out.println("[Windows] > .\\start.bat exp01 -f -m 7 -p -M" );
+          System.out.println("[Windows] > .\\start.bat "
+              +"exp01 -f -m 7 -p -M" );
           System.out.println("[Linux] > ./start exp01 -f -m 7 -p -M\n");
             System.exit(1);
             return;
@@ -643,18 +670,35 @@ public class SpikingNeuralSimulator extends Thread{
     SpikingNeuralSimulator sns = new SpikingNeuralSimulator();
     sns.setExperimentName(args[0]);
     String filename=null;
-    BigInteger checkNodessMask = null;
+    //BigInteger checkNodesMask = null;
+    HashMap<Integer, Boolean> ROI=new HashMap<Integer,Boolean>();
     Boolean do_plot=cmd.hasOption("plot");
     Boolean do_fast=cmd.hasOption("fast");
-    checkNodessMask=new BigInteger(cmd.getOptionValue("mask","0"));
-    if (checkNodessMask==null || checkNodessMask.toString()=="0") {
-      filename = Experiment.getExperimentDir()+"mask_all_";
+    //checkNodesMask=new BigInteger(cmd.getOptionValue("mask","0"));
+    String nodeListString=cmd.getOptionValue("nodes-list","[]")
+        .replaceAll("\\s+","")
+        .substring(1,cmd.getOptionValue("nodes-list","[]").length()-1);
+    //if ((checkNodesMask==null || 
+    //        checkNodesMask.compareTo(BigInteger.ZERO))&&
+    if(nodeListString.length()>0){
+      String [] nodesStr=nodeListString.split(",");
+      for (int i=0; i<nodesStr.length; ++i)
+        ROI.put(Integer.parseInt(nodesStr[i]),true);
+      filename = Experiment.getExperimentDir()
+          +"nodes_"
+          + nodeListString.replaceAll(",","-")
+          +"_";
+      sns.setROI(ROI);
+    }
+    else {
+      filename = Experiment.getExperimentDir()+"all_nodes_";
       sns.sc.checkAll();
     }
-    else{
-      filename = Experiment.getExperimentDir()+"mask_"+checkNodessMask;
-      sns.setMask(checkNodessMask);
-    }
+    //else{
+    //  filename = Experiment.getExperimentDir()+"mask_"+checkNodesMask;
+    //  //sns.setMask(checkNodesMask);
+    //  sns.setROI(ROI);
+    //}
     sns.sc.set_filename(filename);
     if (cmd.hasOption("matlab"))
       sns.sc.setMatlab();
@@ -666,7 +710,7 @@ public class SpikingNeuralSimulator extends Thread{
     } catch (BadParametersException e) {
       e.printStackTrace();
     }
-    System.out.println("nodes to check mask:"+checkNodessMask);    
+    System.out.println("nodes to check mask:"+nodeListString);    
     System.out.println("running simulator...\n");
     sns.start();
     try {
