@@ -204,7 +204,7 @@ public class SpikingNeuralSimulator extends Thread{
         "end of simulator run, "+
         (System.currentTimeMillis()-startTime)+
         " ms elapsed.");
-    println("effective simulation time:\t"+
+    println("effective simulation time: "+
         (System.currentTimeMillis()-startTime-
             times[0]-times[1]-times[2]-times[3]-times[4])+
         " ms.");
