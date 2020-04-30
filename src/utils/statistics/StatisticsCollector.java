@@ -79,7 +79,7 @@ public class StatisticsCollector extends Thread {
   private volatile long burningSpikesCounter=0l;
   private volatile BigInteger region2checkMask = BigInteger.ZERO;
   private volatile Boolean checkall=false;
-  private final long serialize_after = 10000l;
+  private long serialize_after = 10000l;
   private volatile int wrotes_split=0;
   private volatile String filename = "";
   private volatile Boolean matlab=false;
@@ -130,6 +130,9 @@ public class StatisticsCollector extends Thread {
     lock.unlock();
   }
   
+  public void setSerializeAfter(long sa){
+    serialize_after = sa;
+  }
   
   public void set_filename(String filename){
     this.filename=filename;

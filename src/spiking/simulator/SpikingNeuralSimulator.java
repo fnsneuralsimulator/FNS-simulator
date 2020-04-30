@@ -282,6 +282,9 @@ public class SpikingNeuralSimulator extends Thread{
     setTotalTime(new Double(ssc.getStop()));
     HashMap <Integer, NodeCfg> nodeCs =  ssc.getNodesMap();
     avgNeuronalSignalSpeed=ssc.getAvg_neuronal_signal_speed();
+    Long serializeAfter=ssc.getSerialize_after();
+    if (serializeAfter!=null)
+      sc.setSerializeAfter(serializeAfter);
     times[1]=System.currentTimeMillis()-lastTime;
     lastTime+=times[1];
     System.out.println("creating and adding nodes...\n");
