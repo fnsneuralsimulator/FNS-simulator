@@ -79,7 +79,7 @@ public class SpikingSimulatorCfg {
   private Double glob_etam = Constants.ETAM;
   private Double glob_taup = Constants.TAUP;
   private Double glob_taum = Constants.TAUM;
-  private Double glob_pw_max = Constants.PWMAX;
+  private Double glob_w_max = Constants.PWMAX;
   private Double glob_to = Constants.TO;  
 
   public int getStop() {
@@ -365,12 +365,12 @@ public class SpikingSimulatorCfg {
     this.glob_taum = glob_taum;
   }
 
-  public Double getGlob_pw_max() {
-    return glob_pw_max;
+  public Double getGlob_w_max() {
+    return glob_w_max;
   }
 
-  public void setGlob_pw_max(Double glob_pw_max) {
-    this.glob_pw_max = glob_pw_max;
+  public void setGlob_w_max(Double glob_w_max) {
+    this.glob_w_max = glob_w_max;
   }
 
   public Double getGlob_to() {

@@ -68,7 +68,7 @@ public class NodeCfg {
   private Double etam;
   private Double taup;
   private Double taum;
-  private Double pw_max;
+  private Double w_max;
   private Double to;
   
 
@@ -281,12 +281,12 @@ public class NodeCfg {
     this.taum = taum;
   }
 
-  public Double getPw_max() {
-    return pw_max;
+  public Double getW_max() {
+    return w_max;
   }
 
-  public void setPw_max(Double pw_max) {
-    this.pw_max = pw_max;
+  public void setW_max(Double w_max) {
+    this.w_max = w_max;
   }
 
   public Double getTo() {

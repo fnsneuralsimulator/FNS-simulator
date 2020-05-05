@@ -311,7 +311,7 @@ public class SpikingNeuralSimulator extends Thread{
     Double tmpEtam;
     Double tmpTaup;
     Double tmpTaum;
-    Double tmpPwMax;
+    Double tmpWMax;
     Double tmpTo;
     NeuManCfg nmcfg;
     Boolean lif=new Boolean(ssc.getLif());
@@ -365,8 +365,8 @@ public class SpikingNeuralSimulator extends Thread{
           tmp.getTaup() : ssc.getGlob_taup();
       tmpTaum=((tmp!=null)&&(tmp.getTaum()!=null))?
           tmp.getTaum() : ssc.getGlob_taum();  
-      tmpPwMax=((tmp!=null)&&(tmp.getPw_max()!=null))?
-          tmp.getPw_max() : ssc.getGlob_pw_max();  
+      tmpWMax=((tmp!=null)&&(tmp.getW_max()!=null))?
+          tmp.getW_max() : ssc.getGlob_w_max();  
       tmpTo=((tmp!=null)&&(tmp.getTo()!=null))?
           tmp.getTo() : ssc.getGlob_to();  
       if (tmpK>=tmpN){
@@ -403,7 +403,7 @@ public class SpikingNeuralSimulator extends Thread{
                 tmpEtam,
                 tmpTaup,
                 tmpTaum,
-                tmpPwMax,
+                tmpWMax,
                 tmpTo,
                 avgNeuronalSignalSpeed,
                 lif,
@@ -468,7 +468,7 @@ public class SpikingNeuralSimulator extends Thread{
                     tmpEtam,
                     tmpTaup,
                     tmpTaum,
-                    tmpPwMax,
+                    tmpWMax,
                     tmpTo,
                     avgNeuronalSignalSpeed,
                     lif,
