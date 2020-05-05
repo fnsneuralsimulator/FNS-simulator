@@ -571,16 +571,6 @@ public class SpikingNeuralSimulator extends Thread{
   }
   
   
-  //public String getNodesNumMaxMask(){
-  //  println("nodes num:"+nMan.getNodeThreadsNum());
-  //  return (new BigInteger("2")).pow(nMan.getNodeThreadsNum())
-  //      .subtract(BigInteger.ONE).toString();
-  //}
-  
-  //public void setMask(BigInteger mask){
-  //  sc.setNodes2checkMask(mask);
-  //}
-  
   public void setNOI(HashMap <Integer, Boolean> NOI){
     sc.setNOI(NOI);
   }
@@ -659,9 +649,11 @@ public class SpikingNeuralSimulator extends Thread{
             System.out.println(e.getMessage());
             formatter.printHelp("FNS", options);
             System.out.println("\nExamples:");
-          System.out.println("[Windows] > .\\start.bat "
-              +"exp01 -f -m 7 -p -M" );
-          System.out.println("[Linux] > ./start exp01 -f -m 7 -p -M\n");
+          System.out.println(
+              "[Windows] > .\\start.bat "
+              +"exp01 -f -n [3,25,13,12] -p -M" );
+          System.out.println(
+              "[Linux] > ./start exp01 -f -n [3,25,13,12] -p -M\n");
             System.exit(1);
             return;
         }
@@ -670,16 +662,12 @@ public class SpikingNeuralSimulator extends Thread{
     SpikingNeuralSimulator sns = new SpikingNeuralSimulator();
     sns.setExperimentName(args[0]);
     String filename=null;
-    //BigInteger checkNodesMask = null;
     HashMap<Integer, Boolean> NOI=new HashMap<Integer,Boolean>();
     Boolean do_plot=cmd.hasOption("plot");
     Boolean do_fast=cmd.hasOption("fast");
-    //checkNodesMask=new BigInteger(cmd.getOptionValue("mask","0"));
     String nodeListString=cmd.getOptionValue("nodes-list","[]")
         .replaceAll("\\s+","")
         .substring(1,cmd.getOptionValue("nodes-list","[]").length()-1);
-    //if ((checkNodesMask==null || 
-    //        checkNodesMask.compareTo(BigInteger.ZERO))&&
     if(nodeListString.length()>0){
       String [] nodesStr=nodeListString.split(",");
       for (int i=0; i<nodesStr.length; ++i)
@@ -694,11 +682,6 @@ public class SpikingNeuralSimulator extends Thread{
       filename = Experiment.getExperimentDir()+"all_nodes_";
       sns.sc.checkAll();
     }
-    //else{
-    //  filename = Experiment.getExperimentDir()+"mask_"+checkNodesMask;
-    //  //sns.setMask(checkNodesMask);
-    //  sns.setNOI(NOI);
-    //}
     sns.sc.set_filename(filename);
     if (cmd.hasOption("matlab"))
       sns.sc.setMatlab();
