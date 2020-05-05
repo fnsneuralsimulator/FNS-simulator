@@ -626,9 +626,12 @@ public class SpikingNeuralSimulator extends Thread{
             +"algorithms at different levels, "
             + "in return for some approximations "
             +"(i.e., plasticity exponentials, etc.)");
-        options.addOption("M", "matlab", false, "provides with a set "
+        options.addOption("m", "matlab", false, "provides with a set "
             +"of matlab-compliant "
             + "CSV files, in addition to the output CSVs.");
+        options.addOption("r", "reduced-matlab", false, 
+            "enables reduced CSV files, i.e., outputs that indicates "
+            +"only spiking events and inner states of the neurons");
         options.addOption("h", "help", false, "shows this help");
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -639,9 +642,9 @@ public class SpikingNeuralSimulator extends Thread{
               formatter.printHelp("FNS", options);
               System.out.println("\nExamples:");
               System.out.println("[Windows] \t> .\\start.bat"
-                  +" exp01 -f -m 7 -M");
+                  +" exp01 -f -n [3,25,13,12] -m -r");
               System.out.println("[Linux] \t$ ./start"
-                  +" exp01 -f -m 7 -M\n");
+                  +" exp01 -f -n [3,25,13,12] -m -r\n");
               System.exit(0);
               return;
             }
@@ -651,9 +654,9 @@ public class SpikingNeuralSimulator extends Thread{
             System.out.println("\nExamples:");
           System.out.println(
               "[Windows] > .\\start.bat "
-              +"exp01 -f -n [3,25,13,12] -p -M" );
+              +"exp01 -f -n [3,25,13,12] -p -m -r" );
           System.out.println(
-              "[Linux] > ./start exp01 -f -n [3,25,13,12] -p -M\n");
+              "[Linux] > ./start exp01 -f -n [3,25,13,12] -p -m -r\n");
             System.exit(1);
             return;
         }
@@ -685,6 +688,8 @@ public class SpikingNeuralSimulator extends Thread{
     sns.sc.set_filename(filename);
     if (cmd.hasOption("matlab"))
       sns.sc.setMatlab();
+    if (cmd.hasOption("reduced-matlab"))
+      sns.sc.setReducedMatlab();
     try {
       sns.initFromConfigFileAndConnectivityPackage(
           (new File(args[0]+"/config.xml")).getAbsolutePath(), 
