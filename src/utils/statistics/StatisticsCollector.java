@@ -452,13 +452,21 @@ public class StatisticsCollector extends Thread {
       }
            BufferedWriter fire_bw = new BufferedWriter(fire_fw);
       fireWriter=new PrintWriter(fire_bw);
-      if (new_fire_file)
-        fireWriter.println(
-            "Firing Time,"
-            +" Firing Node,"
-            +" Firing Neuron, "
-            +" Neuron Type,"
-            +" External Source");
+      if (new_fire_file){
+        if (reducedOutput)
+          fireWriter.println(
+              "Firing Time,"
+              +" Firing Node,"
+              +" Firing Neuron, "
+              +" External Source");
+        else
+          fireWriter.println(
+              "Firing Time,"
+              +" Firing Node,"
+              +" Firing Neuron, "
+              +" Neuron Type,"
+              +" External Source");
+      }
       while (it.hasNext()){
         Long key = it.next();
         String excitStr;
@@ -466,13 +474,21 @@ public class StatisticsCollector extends Thread {
           excitStr="excitatory";
         else
           excitStr="inhibitory";
-        fireWriter.println(
-            df.format(firingSpikesHashMap.get(key).getFiringTime())+", "
-            +firingSpikesHashMap.get(key).getFiringRegionId()+", "
-            + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
-            + excitStr+", "
-            + firingSpikesHashMap.get(key).isExternal()
-            );
+        if (reducedOutput)
+          fireWriter.println(
+              df.format(firingSpikesHashMap.get(key).getFiringTime())+", "
+              +firingSpikesHashMap.get(key).getFiringRegionId()+", "
+              + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
+              + firingSpikesHashMap.get(key).isExternal()
+              );
+        else
+          fireWriter.println(
+              df.format(firingSpikesHashMap.get(key).getFiringTime())+", "
+              +firingSpikesHashMap.get(key).getFiringRegionId()+", "
+              + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
+              + excitStr+", "
+              + firingSpikesHashMap.get(key).isExternal()
+              );
       }
       fireWriter.flush();
       fireWriter.close();
