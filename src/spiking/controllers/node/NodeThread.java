@@ -215,6 +215,7 @@ public class NodeThread extends Thread{
   *   @param timeStep         the avg for the external input fire distribution
   *   @param fireDuration     the duration of external input activity
   *   @param externalAmplitude the amplitude of an external input signal
+  *   @param externalOutdegree the external out-degree of each external input
   *   @param excitRatio  the ratio of excitatory neurons over the total
   *                           number of neurons 'n'
   *   @param k                the conn-degree of each neuron
@@ -259,6 +260,7 @@ public class NodeThread extends Thread{
       //Double fireRate,  
       int fireDuration,
       Double externalAmplitude,
+      int externalOutdegree,
       Double excitRatio,
       Integer k, 
       Double prew, 
@@ -295,6 +297,7 @@ public class NodeThread extends Thread{
         //fireRate, 
         fireDuration,
         externalAmplitude, 
+        externalOutdegree,
         excitRatio,
         mu_w_exc,
         mu_w_inh,

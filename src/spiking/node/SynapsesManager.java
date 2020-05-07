@@ -158,7 +158,8 @@ public class SynapsesManager {
         (syn.getDendriteNodeId().equals(n.getId())))
       synapses.put(syn, syn);
     else
-      System.out.println("[SYNAPSES MANAGER SETPOSTSYNAPTICWEIGHT WARNING] adding an internode synapse as intranode");
+      System.out.println("[SYNAPSES MANAGER SETPOSTSYNAPTICWEIGHT "
+          +"WARNING] adding an internode synapse as intranode");
   }
   
   public void setIntraNodePostSynapticWeight(
@@ -218,7 +219,8 @@ public class SynapsesManager {
       burningNeuronSynapses.put(
           burningNeuronSynapse.getBurning(), 
           new ArrayList<Synapse>());
-      list = burningNeuronSynapses.get(burningNeuronSynapse.getBurning());
+      list = 
+          burningNeuronSynapses.get(burningNeuronSynapse.getBurning());
     }
     list.add(burningNeuronSynapse);
   }
@@ -228,7 +230,8 @@ public class SynapsesManager {
    * if no such list exists, it creates a new htree map 
    * and returns its pointer
    */
-  public ArrayList<Synapse> getFiringNeuronConnections(Long firingNeuronId){
+  public ArrayList<Synapse> getFiringNeuronConnections(
+      Long firingNeuronId){
     ArrayList<Synapse> retval = firingNeuronSynapses.get(firingNeuronId);
     if (retval==null){
       firingNeuronSynapses.put(firingNeuronId, new ArrayList<Synapse>());
@@ -242,7 +245,8 @@ public class SynapsesManager {
    * if no such list exists, it creates a new htree map 
    * and returns its pointer
    */
-  public ArrayList<Synapse> getBurningNeuronConnections(Long burningNeuronId){
+  public ArrayList<Synapse> getBurningNeuronConnections(
+      Long burningNeuronId){
     ArrayList<Synapse> retval = burningNeuronSynapses.get(burningNeuronId);
     if (retval==null){
       burningNeuronSynapses.put(burningNeuronId, new ArrayList<Synapse>());

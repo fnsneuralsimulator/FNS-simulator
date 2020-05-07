@@ -57,6 +57,7 @@ public class NodeCfg {
   private Double external_inputs_time_offset;
   private Integer external_inputs_fireduration;
   private Double external_inputs_timestep;
+  private Integer external_inputs_outdegree;
   //private Double external_inputs_firerate;
   private Double external_inputs_amplitude;
   private Boolean small_world_topology;
@@ -224,6 +225,13 @@ public class NodeCfg {
     this.external_inputs_fireduration = external_inputs_fireduration;
   }
   
+  public Integer getExternal_inputs_outdegree() {
+    return external_inputs_outdegree;
+  }
+
+  public void setExternal_inputs_outdegree(Integer external_inputs_outdegree) {
+    this.external_inputs_outdegree = external_inputs_outdegree;
+  }
   
   public Integer getBn() {
     return Bn;

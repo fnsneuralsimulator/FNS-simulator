@@ -414,6 +414,7 @@ public class SpikingNeuralSimulator extends Thread{
         Integer tmpExternalType; 
         Double tmpExternalTimestep;
         Integer tmpExternalFireDuration;
+        Integer tmpExternalFireOutdegree;
         Double tmpExternalFireAmplitude;
         Double tmpExternalInputsTimeOffset;
         tmpExternalType=
@@ -432,6 +433,10 @@ public class SpikingNeuralSimulator extends Thread{
             ((tmp!=null)&&(tmp.getExternal_inputs_fireduration()!=null))?
                 tmp.getExternal_inputs_fireduration():
                 ssc.getGlob_external_inputs_fireduration();
+        tmpExternalFireOutdegree=
+            ((tmp!=null)&&(tmp.getExternal_inputs_outdegree()!=null))?
+                tmp.getExternal_inputs_outdegree():
+                ssc.getGlob_external_inputs_outdegree();
         tmpExternalFireAmplitude=
             ((tmp!=null)&&(tmp.getExternal_inputs_amplitude()!=null))?
                 tmp.getExternal_inputs_amplitude():
@@ -447,6 +452,7 @@ public class SpikingNeuralSimulator extends Thread{
                     tmpExternalTimestep,
                     tmpExternalFireDuration,
                     tmpExternalFireAmplitude,
+                    tmpExternalFireOutdegree,
                     tmpExcitRatio,
                     tmpK,
                     tmpRewiringP,
@@ -629,7 +635,7 @@ public class SpikingNeuralSimulator extends Thread{
         options.addOption("m", "matlab", false, "provides with a set "
             +"of matlab-compliant "
             + "CSV files, in addition to the output CSVs.");
-        options.addOption("r", "reduced-matlab", false, 
+        options.addOption("r", "reduced-output", false, 
             "enables reduced CSV files, i.e., outputs that indicates "
             +"only spiking events and inner states of the neurons");
         options.addOption("h", "help", false, "shows this help");
@@ -688,8 +694,8 @@ public class SpikingNeuralSimulator extends Thread{
     sns.sc.set_filename(filename);
     if (cmd.hasOption("matlab"))
       sns.sc.setMatlab();
-    if (cmd.hasOption("reduced-matlab"))
-      sns.sc.setReducedMatlab();
+    if (cmd.hasOption("reduced-output"))
+      sns.sc.setReducedOutput();
     try {
       sns.initFromConfigFileAndConnectivityPackage(
           (new File(args[0]+"/config.xml")).getAbsolutePath(), 

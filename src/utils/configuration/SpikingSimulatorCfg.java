@@ -72,6 +72,7 @@ public class SpikingSimulatorCfg {
   private Double glob_external_inputs_time_offset=0.0;
   private Integer glob_external_inputs_fireduration=1000;
   private Double glob_external_inputs_timestep=1.0;
+  private Integer glob_external_inputs_outdegree=1;
   //private Double glob_external_inputs_firerate=0.3; 
   private Double glob_external_inputs_amplitude=0.07; 
   private Boolean glob_plasticity=false;
@@ -299,6 +300,14 @@ public class SpikingSimulatorCfg {
 
   public void setGlob_external_inputs_fireduration(Integer glob_external_inputs_fireduration) {
     this.glob_external_inputs_fireduration = glob_external_inputs_fireduration;
+  }
+
+  public Integer getGlob_external_inputs_outdegree() {
+    return glob_external_inputs_fireduration;
+  }
+
+  public void setGlob_external_inputs_outdegree(Integer glob_external_inputs_outdegree) {
+    this.glob_external_inputs_outdegree = glob_external_inputs_outdegree;
   }
 
   public Double getGlob_external_inputs_timestep() {

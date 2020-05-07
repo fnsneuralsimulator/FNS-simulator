@@ -85,6 +85,7 @@ public class Node {
   private int fireDuration = 1;
   private Double externalAmplitude=
       ExternalInput.EXTERNAL_AMPLITUDE_DEF_VALUE;
+  private int externalOutdegree = 1;
   private Boolean plasticity;
   private Double etap;
   private Double etam;
@@ -182,6 +183,7 @@ public class Node {
       double timeStep, 
       int fireDuration, 
       Double externalAmplitude,
+      Integer externalOutdegree,
       Double R, 
       Double mu_w_exc,
       Double mu_w_inh,
@@ -217,6 +219,7 @@ public class Node {
       this.timeStep=timeStep;
       this.fireDuration=fireDuration;
       this.externalAmplitude=externalAmplitude;
+      this.externalOutdegree=externalOutdegree;
     }
     this.k=k;
     this.prew=prew;
@@ -317,6 +320,7 @@ public class Node {
         externalInputsTimeOffset,
         fireDuration,
         externalAmplitude,
+        externalOutdegree,
         timeStep);
     println("external input created, external spikes in queue:"+ext.getExternalSpikesInQueue());
   }
@@ -405,6 +409,7 @@ public class Node {
         externalInputsTimeOffset, 
         fireDuration,
         externalAmplitude,
+        externalOutdegree,
         timeStep);
   }
   

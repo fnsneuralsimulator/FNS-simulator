@@ -89,7 +89,7 @@ public class StatisticsCollector extends Thread {
   private volatile int wrotes_split=0;
   private volatile String filename = "";
   private volatile Boolean matlab=false;
-  private volatile Boolean reducedMatlab=false;
+  private volatile Boolean reducedOutput=false;
   private volatile int count=1;
   private volatile ArrayList<CollectedFire> newFires=
       new ArrayList<CollectedFire>();
@@ -162,8 +162,8 @@ public class StatisticsCollector extends Thread {
     matlab=true;
   }
 
-  public void setReducedMatlab() {
-    reducedMatlab=true;
+  public void setReducedOutput() {
+    reducedOutput=true;
   }
   
   public synchronized void collectActive(){
@@ -365,21 +365,29 @@ public class StatisticsCollector extends Thread {
       FileWriter fw = new FileWriter(towritefile,true);
            BufferedWriter bw = new BufferedWriter(fw);
       burnWriter = new PrintWriter(bw);
-      if (new_burn_file)
-        burnWriter.println(
-            "Burning Time, "
-            + "Firing Node, "
-            + "Firing Neuron, "
-            + "Burning Node, "
-            + "Burning Neuron, "
-            + "External Source, "
-            + "From Internal State, "
-            + "To Internal State, "
-            + "Step in State, "
-            +" Post Synaptic Weight, "
-            + "Pre Synaptic Weight, "
-            + "Instant to Fire, "
-            + "(Afferent) Firing Time");
+      if (new_burn_file){
+        if (reducedOutput)
+          burnWriter.println(
+              "Burning Time, "
+              + "Burning Node, "
+              + "Burning Neuron, "
+              + "To Internal State");
+        else
+          burnWriter.println(
+              "Burning Time, "
+              + "Firing Node, "
+              + "Firing Neuron, "
+              + "Burning Node, "
+              + "Burning Neuron, "
+              + "External Source, "
+              + "From Internal State, "
+              + "To Internal State, "
+              + "Step in State, "
+              +" Post Synaptic Weight, "
+              + "Pre Synaptic Weight, "
+              + "Instant to Fire, "
+              + "(Afferent) Firing Time");
+            }
       while (it.hasNext()){
         Long key = it.next();
         Double fromState = burningSpikesHashMap.get(key).getFromState();
@@ -399,22 +407,30 @@ public class StatisticsCollector extends Thread {
           stepInStateToPrint="refr";
         else
           stepInStateToPrint=""+df.format(stepInState);
-        burnWriter.println(
-            df.format(burningSpikesHashMap.get(key).getBurnTime())+", "
-            + burningSpikesHashMap.get(key).getS().getAxonNodeId()+", "
-            + burningSpikesHashMap.get(key).getS().getAxonNeuronId()+", "
-            + burningSpikesHashMap.get(key).getS().getDendriteNodeId()+", "
-            + burningSpikesHashMap.get(key).getS().getDendriteNeuronId()+", "
-            + burningSpikesHashMap.get(key).getS().fromExternalInput()+", "
-            + fromStateToPrint +", "
-            + toStateToPrint +", "
-            + stepInStateToPrint+", "
-            + df.format(burningSpikesHashMap.get(key).getPostSynapticWeight())+", "
-            + df.format(burningSpikesHashMap.get(key).getPresynapticWeight())+","
-            + df.format(burningSpikesHashMap.get(key).getInstantToFire())+","
-            + df.format((burningSpikesHashMap.get(key).getFireTime()!=null)?
-                burningSpikesHashMap.get(key).getFireTime():0)
-            );
+        if (reducedOutput)
+          burnWriter.println(
+              df.format(burningSpikesHashMap.get(key).getBurnTime())+", "
+              + burningSpikesHashMap.get(key).getS().getDendriteNodeId()+", "
+              + burningSpikesHashMap.get(key).getS().getDendriteNeuronId()+", "
+              + toStateToPrint
+              );
+        else
+          burnWriter.println(
+              df.format(burningSpikesHashMap.get(key).getBurnTime())+", "
+              + burningSpikesHashMap.get(key).getS().getAxonNodeId()+", "
+              + burningSpikesHashMap.get(key).getS().getAxonNeuronId()+", "
+              + burningSpikesHashMap.get(key).getS().getDendriteNodeId()+", "
+              + burningSpikesHashMap.get(key).getS().getDendriteNeuronId()+", "
+              + burningSpikesHashMap.get(key).getS().fromExternalInput()+", "
+              + fromStateToPrint +", "
+              + toStateToPrint +", "
+              + stepInStateToPrint+", "
+              + df.format(burningSpikesHashMap.get(key).getPostSynapticWeight())+", "
+              + df.format(burningSpikesHashMap.get(key).getPresynapticWeight())+","
+              + df.format(burningSpikesHashMap.get(key).getInstantToFire())+","
+              + df.format((burningSpikesHashMap.get(key).getFireTime()!=null)?
+                  burningSpikesHashMap.get(key).getFireTime():0)
+              );
 //        System.out.println("[statistics]" + df.format(burningSpikesHashMap.get(key).getPostSynapticWeight()));
       }
       burnWriter.flush();
@@ -508,29 +524,29 @@ public class StatisticsCollector extends Thread {
           stepInStateToPrint="10101";
         else
           stepInStateToPrint=stepInState.toString();
-        if (reducedMatlab)
-          burnWriter.println(
-              burningSpikesHashMap.get(key).getBurnTime().toString()+", "
-              + burningSpikesHashMap.get(key).getS().getDendriteNodeId()+", "
-              + burningSpikesHashMap.get(key).getS().getDendriteNeuronId()+", "
-              + toStateToPrint
-              );
-        else
-          burnWriter.println(
-              burningSpikesHashMap.get(key).getBurnTime().toString()+", "
-              + burningSpikesHashMap.get(key).getS().getAxonNodeId()+", "
-              + burningSpikesHashMap.get(key).getS().getAxonNeuronId()+", "
-              + burningSpikesHashMap.get(key).getS().getDendriteNodeId()+", "
-              + burningSpikesHashMap.get(key).getS().getDendriteNeuronId()+", "
-              + burningSpikesHashMap.get(key).getS().fromExternalInputInteger()+", "
-              + fromStateToPrint +", "
-              + toStateToPrint +", "
-              + stepInStateToPrint+", "
-              + burningSpikesHashMap.get(key).getPostSynapticWeight()+", "
-              + burningSpikesHashMap.get(key).getPresynapticWeight()+","
-              + burningSpikesHashMap.get(key).getInstantToFire()+","
-              + burningSpikesHashMap.get(key).getFireTime()
-              );
+        //if (reducedOutput)
+        //  burnWriter.println(
+        //      burningSpikesHashMap.get(key).getBurnTime().toString()+", "
+        //      + burningSpikesHashMap.get(key).getS().getDendriteNodeId()+", "
+        //      + burningSpikesHashMap.get(key).getS().getDendriteNeuronId()+", "
+        //      + toStateToPrint
+        //      );
+        //else
+        burnWriter.println(
+            burningSpikesHashMap.get(key).getBurnTime().toString()+", "
+            + burningSpikesHashMap.get(key).getS().getAxonNodeId()+", "
+            + burningSpikesHashMap.get(key).getS().getAxonNeuronId()+", "
+            + burningSpikesHashMap.get(key).getS().getDendriteNodeId()+", "
+            + burningSpikesHashMap.get(key).getS().getDendriteNeuronId()+", "
+            + burningSpikesHashMap.get(key).getS().fromExternalInputInteger()+", "
+            + fromStateToPrint +", "
+            + toStateToPrint +", "
+            + stepInStateToPrint+", "
+            + burningSpikesHashMap.get(key).getPostSynapticWeight()+", "
+            + burningSpikesHashMap.get(key).getPresynapticWeight()+","
+            + burningSpikesHashMap.get(key).getInstantToFire()+","
+            + burningSpikesHashMap.get(key).getFireTime()
+            );
       }
       burnWriter.flush();
       burnWriter.close();
@@ -552,21 +568,21 @@ public class StatisticsCollector extends Thread {
       fireWriter=new PrintWriter(fire_bw);
       while (it.hasNext()){
         Long key = it.next();
-        if (reducedMatlab)
-          fireWriter.println(
-              firingSpikesHashMap.get(key).getFiringTime().toString()+", "
-              +firingSpikesHashMap.get(key).getFiringRegionId()+", "
-              + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
-              + (firingSpikesHashMap.get(key).isExternal()?'1':'0')
-              );
-        else
-          fireWriter.println(
-              firingSpikesHashMap.get(key).getFiringTime().toString()+", "
-              +firingSpikesHashMap.get(key).getFiringRegionId()+", "
-              + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
-              + (firingSpikesHashMap.get(key).isExcitatory()?'1':'0')+", "
-              + (firingSpikesHashMap.get(key).isExternal()?'1':'0')
-              );
+        //if (reducedOutput)
+        //  fireWriter.println(
+        //      firingSpikesHashMap.get(key).getFiringTime().toString()+", "
+        //      +firingSpikesHashMap.get(key).getFiringRegionId()+", "
+        //      + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
+        //      + (firingSpikesHashMap.get(key).isExternal()?'1':'0')
+        //      );
+        //else
+        fireWriter.println(
+            firingSpikesHashMap.get(key).getFiringTime().toString()+", "
+            +firingSpikesHashMap.get(key).getFiringRegionId()+", "
+            + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
+            + (firingSpikesHashMap.get(key).isExcitatory()?'1':'0')+", "
+            + (firingSpikesHashMap.get(key).isExternal()?'1':'0')
+            );
       }
       fireWriter.flush();
       fireWriter.close();
