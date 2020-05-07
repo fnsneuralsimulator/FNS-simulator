@@ -114,7 +114,7 @@ public class SpikingNeuralSimulator extends Thread{
 
   public void init(){
     if (nMan.getnSms()<=0){
-      debprintln(" no node added to the simulator");
+      //debprintln(" no node added to the simulator");
       return;
     }
     initialized=true;

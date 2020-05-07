@@ -85,7 +85,7 @@ public class Node {
   private int fireDuration = 1;
   private Double externalAmplitude=
       ExternalInput.EXTERNAL_AMPLITUDE_DEF_VALUE;
-  private int externalOutdegree = 1;
+  private int externalOutdegree = 0;
   private Boolean plasticity;
   private Double etap;
   private Double etam;
@@ -413,7 +413,10 @@ public class Node {
         timeStep);
   }
   
-  
+  public int getExternalOutDegree(){
+    return externalOutdegree;
+  }
+
   public Boolean hasExternalInput(){
     return hasExternalInputs;
   }

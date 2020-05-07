@@ -49,7 +49,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import connectivity.conn_package.PackageReader;
 import spiking.node.FiringNeuron;
-import spiking.node.SpikingSynapse;
+//import spiking.node.SpikingSynapse;
 import spiking.node.Synapse;
 import utils.plotter.FastScatterPlotter;
 import utils.plotter.ScatterPlotter;
@@ -63,8 +63,10 @@ public class StatisticsCollector extends Thread {
   private volatile Long passive2active=0l;
   private volatile Long active2passive=0l;
   public  volatile Long missedFires=0l;
-  private volatile HashMap<Long, SpikingSynapse>burningSpikesHashMap = 
-      new HashMap<Long, SpikingSynapse>();
+  //private volatile HashMap<Long, SpikingSynapse>burningSpikesHashMap = 
+  //    new HashMap<Long, SpikingSynapse>();
+  private volatile HashMap<Long, CollectedBurn>burningSpikesHashMap = 
+      new HashMap<Long, CollectedBurn>();
   private volatile HashMap<Long, FiringNeuron>firingSpikesHashMap = 
       new HashMap<Long, FiringNeuron>();
   private volatile ArrayList<Double> firingNeurons= 
@@ -148,7 +150,7 @@ public class StatisticsCollector extends Thread {
   }
   
   private void reset(){
-    burningSpikesHashMap = new HashMap<Long, SpikingSynapse>();
+    burningSpikesHashMap = new HashMap<Long, CollectedBurn >();
     firingSpikesHashMap = new HashMap<Long, FiringNeuron>();
     if (firstFiringNeurons==null){
       firstFiringNeurons=firingNeurons;
@@ -240,7 +242,11 @@ public class StatisticsCollector extends Thread {
   }
   
   public synchronized void collectBurnSpike(
-      Synapse s, 
+      //Synapse s, 
+      Long firingNeuronId,
+      Integer firingNodeId,
+      Long burningNeuronId,
+      Integer burningNodeId,
       Double burnTime, 
       Boolean fromExternalSource, 
       Double fromState, 
@@ -251,7 +257,11 @@ public class StatisticsCollector extends Thread {
       Double fireTime) {
     processBurnSpike(
         new CollectedBurn(
-            s, 
+            //s, 
+            firingNeuronId,
+            firingNodeId,
+            burningNeuronId,
+            burningNodeId,
             burnTime, 
             fromExternalSource, 
             fromState, 
@@ -264,18 +274,22 @@ public class StatisticsCollector extends Thread {
   }
   
   private void processBurnSpike(CollectedBurn cb) {
-    if (checkall ||( NOI.get(cb.getS().getDendriteNodeId())!=null )){
-      SpikingSynapse ss = new SpikingSynapse(
-          cb.getS(), 
-          cb.getBurnTime(),
-          cb.getFromExternalSource(), 
-          cb.getFromState(), 
-          cb.getStepInState(), 
-          cb.getPostsynapticWeight(), 
-          cb.getPresynapticWeight(), 
-          cb.getTimeToFire(), 
-          cb.getFireTime());
-      burningSpikesHashMap.put(new Long(burningSpikesCounter), ss);
+    if (checkall ||( NOI.get(cb.getBurningNodeId())!=null )){
+      //SpikingSynapse ss = new SpikingSynapse(
+      //    //cb.getS(), 
+      //    cb.getBurningNeuronId(),
+      //    cb.getBurningNodeId(),
+      //    cb.getFiringNeuronId(),
+      //    cb.getFiringNodeId(),
+      //    cb.getBurnTime(),
+      //    cb.getFromExternalSource(), 
+      //    cb.getFromState(), 
+      //    cb.getStepInState(), 
+      //    cb.getPostsynapticWeight(), 
+      //    cb.getPresynapticWeight(), 
+      //    cb.getTimeToFire(), 
+      //    cb.getFireTime());
+      burningSpikesHashMap.put(new Long(burningSpikesCounter), cb);
     }
     ++burningSpikesCounter;
   }
@@ -410,24 +424,24 @@ public class StatisticsCollector extends Thread {
         if (reducedOutput)
           burnWriter.println(
               df.format(burningSpikesHashMap.get(key).getBurnTime())+", "
-              + burningSpikesHashMap.get(key).getS().getDendriteNodeId()+", "
-              + burningSpikesHashMap.get(key).getS().getDendriteNeuronId()+", "
+              + burningSpikesHashMap.get(key).getBurningNodeId()+", "
+              + burningSpikesHashMap.get(key).getBurningNeuronId()+", "
               + toStateToPrint
               );
         else
           burnWriter.println(
               df.format(burningSpikesHashMap.get(key).getBurnTime())+", "
-              + burningSpikesHashMap.get(key).getS().getAxonNodeId()+", "
-              + burningSpikesHashMap.get(key).getS().getAxonNeuronId()+", "
-              + burningSpikesHashMap.get(key).getS().getDendriteNodeId()+", "
-              + burningSpikesHashMap.get(key).getS().getDendriteNeuronId()+", "
-              + burningSpikesHashMap.get(key).getS().fromExternalInput()+", "
+              + burningSpikesHashMap.get(key).getFiringNodeId()+", "
+              + burningSpikesHashMap.get(key).getFiringNeuronId()+", "
+              + burningSpikesHashMap.get(key).getBurningNodeId()+", "
+              + burningSpikesHashMap.get(key).getBurningNeuronId()+", "
+              + burningSpikesHashMap.get(key).fromExternalInput()+", "
               + fromStateToPrint +", "
               + toStateToPrint +", "
               + stepInStateToPrint+", "
               + df.format(burningSpikesHashMap.get(key).getPostSynapticWeight())+", "
-              + df.format(burningSpikesHashMap.get(key).getPresynapticWeight())+","
-              + df.format(burningSpikesHashMap.get(key).getInstantToFire())+","
+              + df.format(burningSpikesHashMap.get(key).getPreSynapticWeight())+","
+              + df.format(burningSpikesHashMap.get(key).getTimeToFire())+","
               + df.format((burningSpikesHashMap.get(key).getFireTime()!=null)?
                   burningSpikesHashMap.get(key).getFireTime():0)
               );
@@ -550,17 +564,18 @@ public class StatisticsCollector extends Thread {
         //else
         burnWriter.println(
             burningSpikesHashMap.get(key).getBurnTime().toString()+", "
-            + burningSpikesHashMap.get(key).getS().getAxonNodeId()+", "
-            + burningSpikesHashMap.get(key).getS().getAxonNeuronId()+", "
-            + burningSpikesHashMap.get(key).getS().getDendriteNodeId()+", "
-            + burningSpikesHashMap.get(key).getS().getDendriteNeuronId()+", "
-            + burningSpikesHashMap.get(key).getS().fromExternalInputInteger()+", "
+            + burningSpikesHashMap.get(key).getFiringNodeId()+", "
+            + burningSpikesHashMap.get(key).getFiringNeuronId()+", "
+            + burningSpikesHashMap.get(key).getBurningNodeId()+", "
+            + burningSpikesHashMap.get(key).getBurningNeuronId()+", "
+            + burningSpikesHashMap.get(key).fromExternalInput()+", "
+            + burningSpikesHashMap.get(key).fromExternalInputInteger()+", "
             + fromStateToPrint +", "
             + toStateToPrint +", "
             + stepInStateToPrint+", "
             + burningSpikesHashMap.get(key).getPostSynapticWeight()+", "
-            + burningSpikesHashMap.get(key).getPresynapticWeight()+","
-            + burningSpikesHashMap.get(key).getInstantToFire()+","
+            + burningSpikesHashMap.get(key).getPreSynapticWeight()+","
+            + burningSpikesHashMap.get(key).getTimeToFire()+","
             + burningSpikesHashMap.get(key).getFireTime()
             );
       }
