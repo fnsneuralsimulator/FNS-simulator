@@ -75,7 +75,6 @@ public class Node {
   private Double IBI;
   //the small world connection matrix
   private HashMap<LongCouple, Double> connectionMatrix = new HashMap<>();
-  //private File nodeDbFile;
   //proportion between excitatory and inhibithory
   private Double R=0.8;
   // postsynaptic weight
@@ -270,13 +269,23 @@ public class Node {
     inhibithory=n-excitatory;
   }
   
-  private void putConnection (Long firingNeuronId, Long burningNeuronId, Double presynaptic_weight){
-    connectionMatrix.put(new LongCouple(firingNeuronId, burningNeuronId), presynaptic_weight);
+  private void putConnection (
+      Long firingNeuronId, 
+      Long burningNeuronId, 
+      Double presynaptic_weight){
+    connectionMatrix.put(
+        new LongCouple(firingNeuronId, burningNeuronId), 
+        presynaptic_weight);
   }
   
-  public Double getConnectionPresynapticWeight(Long firingNeuronId, Long burningNeuronId){
-    return (connectionMatrix.get(new LongCouple(firingNeuronId, burningNeuronId))!=null)?
-        connectionMatrix.get(new LongCouple(firingNeuronId, burningNeuronId)):0;
+  public Double getConnectionPresynapticWeight(
+      Long firingNeuronId, 
+      Long burningNeuronId){
+    return (
+        connectionMatrix.get(
+            new LongCouple(firingNeuronId, burningNeuronId))!=null)?
+        connectionMatrix.get(
+            new LongCouple(firingNeuronId, burningNeuronId)):0;
   }
   
   public Iterator<Entry<LongCouple, Double>> getIterator(){
@@ -297,7 +306,9 @@ public class Node {
     println("ring wiring...");
     //randomize adjacency
     DB tmpDb = DBMaker.memoryDirectDB().make();
-    HTreeMap<Long, Long> shuffled = tmpDb.hashMap("shuffle", Serializer.LONG,Serializer.LONG).create();
+    HTreeMap<Long, Long> shuffled = tmpDb.hashMap(
+        "shuffle", 
+        Serializer.LONG,Serializer.LONG).create();
     Shuffler.shuffleArray(shuffled,n);
     int k2=k/2;
     Double tmpAmpl;
@@ -310,18 +321,35 @@ public class Node {
         //rewiring condition
         if (Math.random()<prew){
           Long tmp;
-          while ( ((tmp = (long) Math.round(Math.random()*(n-1))).equals(shuffled.get(i))) || (tmp.equals(shuffled.get((i+j)%n)))){}
+          while ( 
+              ((tmp = (long) Math.round(Math.random()*(n-1)))
+                  .equals(shuffled.get(i))) || 
+                  (tmp.equals(shuffled.get((i+j)%n)))||
+                  (connectionMatrix.get(
+                      new LongCouple(
+                          shuffled.get(i), 
+                          tmp))!=null)
+                  ){}
           putConnection(shuffled.get(i), tmp, tmpAmpl);
         }
         else
-          putConnection(shuffled.get(i), shuffled.get((i+j)%n), tmpAmpl);
+          putConnection(
+              shuffled.get(i), 
+              shuffled.get((i+j)%n), 
+              tmpAmpl);
         if (Math.random()<prew){
           Long tmp;
-          while ( ((tmp = (long) Math.round(Math.random()*(n-1))).equals(shuffled.get(i))) || (tmp.equals(shuffled.get((n+i-j)%n)))){}
+          while ( 
+              ((tmp = (long) Math.round(Math.random()*(n-1)))
+              .equals(shuffled.get(i))) || 
+              (tmp.equals(shuffled.get((n+i-j)%n)))){}
           putConnection(shuffled.get(i), tmp, tmpAmpl);
         }
         else
-          putConnection(shuffled.get(i), shuffled.get((n+i-j)%n), tmpAmpl);
+          putConnection(
+              shuffled.get(i), 
+              shuffled.get((n+i-j)%n), 
+              tmpAmpl);
       }
     }
     shuffled.close();
@@ -342,7 +370,9 @@ public class Node {
         externalAmplitude,
         externalOutdegree,
         timeStep);
-    println("external input created, external spikes in queue:"+ext.getExternalSpikesInQueue());
+    println(
+        "external input created, external spikes in queue:"
+        +ext.getExternalSpikesInQueue());
   }
 
   public Long getN() {
@@ -451,7 +481,8 @@ public class Node {
   
   public Double getAmplitudeValue(Long extNeuronGlobalId){
     if ((extNeuronGlobalId-n)>Integer.MAX_VALUE)
-      throw new IndexOutOfBoundsException("[NODE ERROR] The external input id is too big");
+      throw new IndexOutOfBoundsException(
+          "[NODE ERROR] The external input id is too big");
     if (hasExternalInputs)
       return ext.getAmplitudeValue((int)(long)(extNeuronGlobalId-n));
     return null;
