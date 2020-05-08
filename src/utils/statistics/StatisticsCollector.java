@@ -290,20 +290,6 @@ public class StatisticsCollector extends Thread {
   
   private void processBurnSpike(CollectedBurn cb) {
     if (checkall ||( NOI.get(cb.getBurningNodeId())!=null )){
-      //SpikingSynapse ss = new SpikingSynapse(
-      //    //cb.getS(), 
-      //    cb.getBurningNeuronId(),
-      //    cb.getBurningNodeId(),
-      //    cb.getFiringNeuronId(),
-      //    cb.getFiringNodeId(),
-      //    cb.getBurnTime(),
-      //    cb.getFromExternalSource(), 
-      //    cb.getFromState(), 
-      //    cb.getStepInState(), 
-      //    cb.getPostsynapticWeight(), 
-      //    cb.getPresynapticWeight(), 
-      //    cb.getTimeToFire(), 
-      //    cb.getFireTime());
       burningSpikesHashMap.put(new Long(burningSpikesCounter), cb);
     }
     ++burningSpikesCounter;
@@ -379,7 +365,10 @@ public class StatisticsCollector extends Thread {
       if (firstFiringNeurons==null) {
 //        int count = 1;
         for(;;++count) {
-          towritefile= new File(filename+String.format("%03d", count)+"_burning.csv");
+          towritefile= new File(
+              filename
+              +String.format("%03d", count)
+              +"_burning.csv");
             if(!towritefile.exists()){
               defFileName=filename+String.format("%03d", count);
                 break;
@@ -425,15 +414,15 @@ public class StatisticsCollector extends Thread {
         String fromStateToPrint;
         String toStateToPrint;
         if (fromState==null){
-          fromStateToPrint="refr";
-          toStateToPrint="refr";
+          fromStateToPrint=reducedOutput?"10101":"refr";
+          toStateToPrint=reducedOutput?"10101":"refr";
         }
         else{
           fromStateToPrint=""+df.format(fromState);
           toStateToPrint=""+df.format(fromState+stepInState);
         }
         if (stepInState==null)
-          stepInStateToPrint="refr";
+          stepInStateToPrint=reducedOutput?"10101":"refr";
         else
           stepInStateToPrint=""+df.format(stepInState);
         if (reducedOutput)
@@ -524,7 +513,12 @@ public class StatisticsCollector extends Thread {
       if (matlab)
         makeMatlabCsv();
       reset();
-      System.out.println("[Statistics Collector] "+towritefile.getAbsolutePath()+" update "+wrotes_split+" complete.");
+      System.out.println(
+          "[Statistics Collector] "
+          +towritefile.getAbsolutePath()
+          +" update "
+          +wrotes_split
+          +" complete.");
     } catch (FileNotFoundException | UnsupportedEncodingException e) {
       e.printStackTrace();
     } catch (IOException e) {
@@ -569,14 +563,6 @@ public class StatisticsCollector extends Thread {
           stepInStateToPrint="10101";
         else
           stepInStateToPrint=stepInState.toString();
-        //if (reducedOutput)
-        //  burnWriter.println(
-        //      burningSpikesHashMap.get(key).getBurnTime().toString()+", "
-        //      + burningSpikesHashMap.get(key).getS().getDendriteNodeId()+", "
-        //      + burningSpikesHashMap.get(key).getS().getDendriteNeuronId()+", "
-        //      + toStateToPrint
-        //      );
-        //else
         burnWriter.println(
             burningSpikesHashMap.get(key).getBurnTime().toString()+", "
             + burningSpikesHashMap.get(key).getFiringNodeId()+", "
