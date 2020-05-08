@@ -72,6 +72,7 @@ public class SpikingSimulatorCfg {
   private Double glob_external_inputs_time_offset=0.0;
   private Integer glob_external_inputs_fireduration=1000;
   private Double glob_external_inputs_timestep=1.0;
+  private Integer glob_external_inputs_outdegree=1;
   //private Double glob_external_inputs_firerate=0.3; 
   private Double glob_external_inputs_amplitude=0.07; 
   private Boolean glob_plasticity=false;
@@ -79,7 +80,7 @@ public class SpikingSimulatorCfg {
   private Double glob_etam = Constants.ETAM;
   private Double glob_taup = Constants.TAUP;
   private Double glob_taum = Constants.TAUM;
-  private Double glob_pw_max = Constants.PWMAX;
+  private Double glob_w_max = Constants.PWMAX;
   private Double glob_to = Constants.TO;  
 
   public int getStop() {
@@ -301,6 +302,14 @@ public class SpikingSimulatorCfg {
     this.glob_external_inputs_fireduration = glob_external_inputs_fireduration;
   }
 
+  public Integer getGlob_external_inputs_outdegree() {
+    return glob_external_inputs_fireduration;
+  }
+
+  public void setGlob_external_inputs_outdegree(Integer glob_external_inputs_outdegree) {
+    this.glob_external_inputs_outdegree = glob_external_inputs_outdegree;
+  }
+
   public Double getGlob_external_inputs_timestep() {
     return glob_external_inputs_timestep;
   }
@@ -365,12 +374,12 @@ public class SpikingSimulatorCfg {
     this.glob_taum = glob_taum;
   }
 
-  public Double getGlob_pw_max() {
-    return glob_pw_max;
+  public Double getGlob_w_max() {
+    return glob_w_max;
   }
 
-  public void setGlob_pw_max(Double glob_pw_max) {
-    this.glob_pw_max = glob_pw_max;
+  public void setGlob_w_max(Double glob_w_max) {
+    this.glob_w_max = glob_w_max;
   }
 
   public Double getGlob_to() {

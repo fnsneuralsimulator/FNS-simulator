@@ -57,6 +57,7 @@ public class NodeCfg {
   private Double external_inputs_time_offset;
   private Integer external_inputs_fireduration;
   private Double external_inputs_timestep;
+  private Integer external_inputs_outdegree;
   //private Double external_inputs_firerate;
   private Double external_inputs_amplitude;
   private Boolean small_world_topology;
@@ -68,7 +69,7 @@ public class NodeCfg {
   private Double etam;
   private Double taup;
   private Double taum;
-  private Double pw_max;
+  private Double w_max;
   private Double to;
   
 
@@ -224,6 +225,13 @@ public class NodeCfg {
     this.external_inputs_fireduration = external_inputs_fireduration;
   }
   
+  public Integer getExternal_inputs_outdegree() {
+    return external_inputs_outdegree;
+  }
+
+  public void setExternal_inputs_outdegree(Integer external_inputs_outdegree) {
+    this.external_inputs_outdegree = external_inputs_outdegree;
+  }
   
   public Integer getBn() {
     return Bn;
@@ -281,12 +289,12 @@ public class NodeCfg {
     this.taum = taum;
   }
 
-  public Double getPw_max() {
-    return pw_max;
+  public Double getW_max() {
+    return w_max;
   }
 
-  public void setPw_max(Double pw_max) {
-    this.pw_max = pw_max;
+  public void setW_max(Double w_max) {
+    this.w_max = w_max;
   }
 
   public Double getTo() {

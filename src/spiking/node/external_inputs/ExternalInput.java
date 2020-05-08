@@ -55,7 +55,7 @@ public class ExternalInput {
    private int type;  
    private int externalSpikes = 0;
    private Double externalAmplitude = EXTERNAL_AMPLITUDE_DEF_VALUE;
-   
+   private Integer externalOutdegree; 
      
    public ExternalInput(
      Node n, 
@@ -63,6 +63,7 @@ public class ExternalInput {
      Double externalInputsTimeOffset, 
      int fireDuration, 
      Double externalAmplitude, 
+     int externalOutdegree, 
      double timeStep){
      this.n=n;
      this.type=type;
@@ -74,6 +75,7 @@ public class ExternalInput {
      this.fireDuration=fireDuration;
      this.timeStep=timeStep;
      this.externalAmplitude=externalAmplitude;
+     this.externalOutdegree=externalOutdegree;
      init();
    }
    
@@ -105,6 +107,10 @@ public class ExternalInput {
      return fireDuration;
    }
    
+   public Integer getExternalOutdegree(){
+     return externalOutdegree;
+   }
+
    private void println(String s){
      if (verbose)
        System.out.println(TAG+s);

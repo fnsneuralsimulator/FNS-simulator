@@ -154,11 +154,19 @@ public class Synapse implements Comparable<Synapse>, Serializable{
     return axonRegionId;
   }
 
+  public Integer getFiringNodeId() {
+    return axonRegionId;
+  }
+
   public void setAxonRegionId(Integer axonRegionId) {
     this.axonRegionId = axonRegionId;
   }
 
   public Integer getDendriteNodeId() {
+    return dendriteRegionId;
+  }
+
+  public Integer getBurningNodeId() {
     return dendriteRegionId;
   }
 

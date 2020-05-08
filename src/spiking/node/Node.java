@@ -35,6 +35,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Random;
 import utils.experiment.Experiment;
 import utils.tools.LongCouple;
 import utils.tools.NiceNode;
@@ -85,6 +86,8 @@ public class Node {
   private int fireDuration = 1;
   private Double externalAmplitude=
       ExternalInput.EXTERNAL_AMPLITUDE_DEF_VALUE;
+  private int externalOutdegree = 0;
+  private int externalOutJump = 1;
   private Boolean plasticity;
   private Double etap;
   private Double etam;
@@ -94,6 +97,7 @@ public class Node {
   private Double to;
   private HashMap <Long,Boolean> external_init= 
       new HashMap <Long, Boolean>();
+  private Random random = new Random();
 
   /**
   *   The Node object
@@ -182,6 +186,7 @@ public class Node {
       double timeStep, 
       int fireDuration, 
       Double externalAmplitude,
+      Integer externalOutdegree,
       Double R, 
       Double mu_w_exc,
       Double mu_w_inh,
@@ -217,6 +222,9 @@ public class Node {
       this.timeStep=timeStep;
       this.fireDuration=fireDuration;
       this.externalAmplitude=externalAmplitude;
+      this.externalOutdegree=externalOutdegree;
+      do { this.externalOutJump=random.nextInt(1987);}
+        while (this.externalOutJump==0);
     }
     this.k=k;
     this.prew=prew;
@@ -317,6 +325,7 @@ public class Node {
         externalInputsTimeOffset,
         fireDuration,
         externalAmplitude,
+        externalOutdegree,
         timeStep);
     println("external input created, external spikes in queue:"+ext.getExternalSpikesInQueue());
   }
@@ -405,10 +414,18 @@ public class Node {
         externalInputsTimeOffset, 
         fireDuration,
         externalAmplitude,
+        externalOutdegree,
         timeStep);
   }
   
-  
+  public int getExternalOutDegree(){
+    return externalOutdegree;
+  }
+
+  public int getExternalOutJump(){
+    return externalOutJump;
+  }
+
   public Boolean hasExternalInput(){
     return hasExternalInputs;
   }

@@ -37,7 +37,11 @@ public class SpikingSynapse implements Serializable{
 
   
   private static final long serialVersionUID = -7182857769712861723L;
-  private Synapse s;
+  //private Synapse s;
+  private Long firingNeuronId;
+  private Long firingNodeId;
+  private Long burningNeuronId;
+  private Long burningNodeId;
   private Double fireTime;
   private Double burnTime;
   private Boolean fromExternalSource;
@@ -48,7 +52,11 @@ public class SpikingSynapse implements Serializable{
   private Double instantToFire;
   
   public SpikingSynapse(
-      Synapse s, 
+      //Synapse s, 
+      Long firingNeuronId,
+      Long firingNodeId,
+      Long burningNeuronId,
+      Long burningNodeId,
       Double burnTime, 
       Boolean externalSource, 
       Double fromState, 
@@ -57,7 +65,11 @@ public class SpikingSynapse implements Serializable{
       Double presynapticWeight, 
       Double timeToFire, 
       Double fireTime){
-    this.s=s;
+    //this.s=s;
+    this.firingNeuronId=firingNeuronId;
+    this.firingNodeId=firingNodeId;
+    this.burningNeuronId=burningNeuronId;
+    this.burningNodeId=burningNodeId;
     this.burnTime=burnTime;
     this.fromExternalSource=externalSource;
     this.fromState=fromState;
@@ -68,9 +80,9 @@ public class SpikingSynapse implements Serializable{
     this.fireTime=fireTime;
   }
 
-  public Synapse getS() {
-    return s;
-  }
+  //public Synapse getS() {
+  //  return s;
+  //}
 
   public Double getFireTime() {
     return fireTime;

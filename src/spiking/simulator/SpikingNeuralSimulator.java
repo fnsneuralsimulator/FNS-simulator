@@ -114,7 +114,7 @@ public class SpikingNeuralSimulator extends Thread{
 
   public void init(){
     if (nMan.getnSms()<=0){
-      debprintln(" no node added to the simulator");
+      //debprintln(" no node added to the simulator");
       return;
     }
     initialized=true;
@@ -311,7 +311,7 @@ public class SpikingNeuralSimulator extends Thread{
     Double tmpEtam;
     Double tmpTaup;
     Double tmpTaum;
-    Double tmpPwMax;
+    Double tmpWMax;
     Double tmpTo;
     NeuManCfg nmcfg;
     Boolean lif=new Boolean(ssc.getLif());
@@ -365,8 +365,8 @@ public class SpikingNeuralSimulator extends Thread{
           tmp.getTaup() : ssc.getGlob_taup();
       tmpTaum=((tmp!=null)&&(tmp.getTaum()!=null))?
           tmp.getTaum() : ssc.getGlob_taum();  
-      tmpPwMax=((tmp!=null)&&(tmp.getPw_max()!=null))?
-          tmp.getPw_max() : ssc.getGlob_pw_max();  
+      tmpWMax=((tmp!=null)&&(tmp.getW_max()!=null))?
+          tmp.getW_max() : ssc.getGlob_w_max();  
       tmpTo=((tmp!=null)&&(tmp.getTo()!=null))?
           tmp.getTo() : ssc.getGlob_to();  
       if (tmpK>=tmpN){
@@ -403,7 +403,7 @@ public class SpikingNeuralSimulator extends Thread{
                 tmpEtam,
                 tmpTaup,
                 tmpTaum,
-                tmpPwMax,
+                tmpWMax,
                 tmpTo,
                 avgNeuronalSignalSpeed,
                 lif,
@@ -414,6 +414,7 @@ public class SpikingNeuralSimulator extends Thread{
         Integer tmpExternalType; 
         Double tmpExternalTimestep;
         Integer tmpExternalFireDuration;
+        Integer tmpExternalFireOutdegree;
         Double tmpExternalFireAmplitude;
         Double tmpExternalInputsTimeOffset;
         tmpExternalType=
@@ -432,6 +433,10 @@ public class SpikingNeuralSimulator extends Thread{
             ((tmp!=null)&&(tmp.getExternal_inputs_fireduration()!=null))?
                 tmp.getExternal_inputs_fireduration():
                 ssc.getGlob_external_inputs_fireduration();
+        tmpExternalFireOutdegree=
+            ((tmp!=null)&&(tmp.getExternal_inputs_outdegree()!=null))?
+                tmp.getExternal_inputs_outdegree():
+                ssc.getGlob_external_inputs_outdegree();
         tmpExternalFireAmplitude=
             ((tmp!=null)&&(tmp.getExternal_inputs_amplitude()!=null))?
                 tmp.getExternal_inputs_amplitude():
@@ -447,6 +452,7 @@ public class SpikingNeuralSimulator extends Thread{
                     tmpExternalTimestep,
                     tmpExternalFireDuration,
                     tmpExternalFireAmplitude,
+                    tmpExternalFireOutdegree,
                     tmpExcitRatio,
                     tmpK,
                     tmpRewiringP,
@@ -468,7 +474,7 @@ public class SpikingNeuralSimulator extends Thread{
                     tmpEtam,
                     tmpTaup,
                     tmpTaum,
-                    tmpPwMax,
+                    tmpWMax,
                     tmpTo,
                     avgNeuronalSignalSpeed,
                     lif,
@@ -629,7 +635,7 @@ public class SpikingNeuralSimulator extends Thread{
         options.addOption("m", "matlab", false, "provides with a set "
             +"of matlab-compliant "
             + "CSV files, in addition to the output CSVs.");
-        options.addOption("r", "reduced-matlab", false, 
+        options.addOption("r", "reduced-output", false, 
             "enables reduced CSV files, i.e., outputs that indicates "
             +"only spiking events and inner states of the neurons");
         options.addOption("h", "help", false, "shows this help");
@@ -688,8 +694,8 @@ public class SpikingNeuralSimulator extends Thread{
     sns.sc.set_filename(filename);
     if (cmd.hasOption("matlab"))
       sns.sc.setMatlab();
-    if (cmd.hasOption("reduced-matlab"))
-      sns.sc.setReducedMatlab();
+    if (cmd.hasOption("reduced-output"))
+      sns.sc.setReducedOutput();
     try {
       sns.initFromConfigFileAndConnectivityPackage(
           (new File(args[0]+"/config.xml")).getAbsolutePath(), 
