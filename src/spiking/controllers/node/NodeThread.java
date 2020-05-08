@@ -806,20 +806,26 @@ public class NodeThread extends Thread{
         wp+=do_fast?
             (n.getPwMax()-wp)*n.getEtap()*fm.fastexp(-delta/n.getTaup()):
               (n.getPwMax()-wp)*n.getEtap()*Math.exp(-delta/n.getTaup());
-        synMan.setIntraNodePostSynapticWeight(interNodeSynapses.get(i),wp);
+        synMan.setIntraNodePostSynapticWeight(
+            interNodeSynapses.get(i),
+            wp);
       }
     }
   }
 
   /**
    * Plasticity rule for burning events.
-   * Update postsynaptic weight, decreasing it according to the delta between the burning time 
+   * Update postsynaptic weight, decreasing it according to 
+   * the delta between the burning time 
    * and the last firing time of the burning neuron.
    * @param syn
    * @param lastBurningTime
    * @param fireTime
    */
-  private void burning_ltd(Synapse syn, Double burningTime, Double lastFiringTime){
+  private void burning_ltd(
+      Synapse syn, 
+      Double burningTime, 
+      Double lastFiringTime){
     if (!plasticity)
       return; 
     if (syn.getBurning()==null)
@@ -833,6 +839,8 @@ public class NodeThread extends Thread{
       wp -= do_fast?
           wp*n.getEtam()*fm.fastexp(-delta/n.getTaum()):
            wp*n.getEtam()*Math.exp(-delta/n.getTaum());
+      if (wp<0)
+        wp=0.0;
       synMan.setIntraNodePostSynapticWeight(syn,wp);
     }
   }
@@ -852,12 +860,26 @@ public class NodeThread extends Thread{
     if (n.isExternalInput(firingNeuronId)){
       int eod=n.getExternalOutDegree();
       int eoj=n.getExternalOutJump();
-      if (eod==1)
+      //if (eod==1)
+      //  burnNeuron(
+      //      null,
+      //      firingNeuronId, 
+      //      n.getId(), 
+      //      firingNeuronId%n.getN(), 
+      //      n.getId(), 
+      //      0.1,
+      //      1.0,
+      //      n.getExternalAmplitude(),
+      //      currentTime, 
+      //      currentTime, 
+      //      true);
+      //else
+      for (int i=0; i<eod; ++i){
         burnNeuron(
             null,
             firingNeuronId, 
             n.getId(), 
-            firingNeuronId%n.getN(), 
+            (firingNeuronId+(eoj << i))%n.getN(), 
             n.getId(), 
             0.1,
             1.0,
@@ -865,29 +887,15 @@ public class NodeThread extends Thread{
             currentTime, 
             currentTime, 
             true);
-      else
-        for (int i=0; i<eod; ++i){
-          burnNeuron(
-              null,
-              firingNeuronId, 
-              n.getId(), 
-              (firingNeuronId+i*eoj)%n.getN(), 
-              n.getId(), 
-              0.1,
-              1.0,
-              n.getExternalAmplitude(),
-              currentTime, 
-              currentTime, 
-              true);
-        }
-          
+      }
       return;
     }
     for (int i=0; i<synapses.size();++i){
       fire_ltp(
           synapses.get(i), 
           currentTime);
-      //this is an inter-node synapse, the burning node must deal with this spike
+      // this is an inter-node synapse, the burning node 
+      // must deal with this spike
       if (!(synapses.get(i).getDendriteNodeId().equals(n.getId()))){
         continue;
       }
@@ -940,7 +948,6 @@ public class NodeThread extends Thread{
     int arp;
     //distinguish cases of no initial network activity : already activated
     arp=(nnMan.getLastFiringTime(burningNeuronId).equals(Constants.TIME_TO_FIRE_DEF_VAL))?0:1;
-    //debActiveprintln("burning:"+s.getBurning()+" last firing:"+nnMan.getLastFiringTime(s.getBurning())+", arp:"+arp);    
     //absolutely refractory period check
     if (burnTime>=(( 
         nnMan.getLastFiringTime(burningNeuronId)+
@@ -1002,7 +1009,6 @@ public class NodeThread extends Thread{
       Double sx = nnMan.getState(burningNeuronId);
       oldSx=sx;
       //step in state
-//      Double sy = synMan.getPostSynapticWeight(s)*nnMan.getPreSynapticWeight(s.getFiring());
       Double sy = postsynapticWeight*presynapticWeight;
       // UPDATING List of Active Neurons
       // case of passive neuron
@@ -1101,7 +1107,6 @@ public class NodeThread extends Thread{
       times[4]+=System.currentTimeMillis()-startTime;
       // collecting the spike
       sc.collectBurnSpike(
-          //s,
           firingNeuronId,
           firingNodeId,
           burningNeuronId,
@@ -1119,7 +1124,6 @@ public class NodeThread extends Thread{
     else{
       // collecting the spike
       sc.collectBurnSpike(
-          //s,
           firingNeuronId,
           firingNodeId,
           burningNeuronId,
@@ -1196,10 +1200,8 @@ public class NodeThread extends Thread{
       lock.unlock();
     }
     else{
-      //int pollings=0;
       while (keepRunning && (stopTime<=oldStopTime) ){
         try {
-      //    ++pollings;
           Thread.sleep(100);
         } catch (InterruptedException e) {
           e.printStackTrace();
