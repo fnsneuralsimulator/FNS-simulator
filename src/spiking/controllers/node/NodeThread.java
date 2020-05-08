@@ -744,16 +744,17 @@ public class NodeThread extends Thread{
   }
   
   /**
-   * Plasticity Rule:
-   * Multiplicative Learning Rule using STDP (soft-bound) Spike time depending plasticity
+   * Plasticity Rule.
+   * Multiplicative Learning Rule using STDP (soft-bound) Spike time 
+   * depending plasticity
    * 
    *  LTP: Pw = Pwold + (pwmax - Pwold)*Etap*(-delta/taup)
-    *  LTD: Pw = Pwold - Pwold*Etam*(delta/taum)
+   *  LTD: Pw = Pwold - Pwold*Etam*(delta/taum)
    *  with delta = tpost - tpre
    *
-    *  NB: in the case of LTD, tpost represents the burning neuron last burning 
+   *  NB: in the case of LTD, tpost represents the burning neuron last burning 
    *  time, whereas tpre is the current "tempo".
-    *  This rule is applied for only exc-exc intermolule connections   
+   *  This rule is applied for only exc-exc intermolule connections   
    *
    * @param spikingNeuronId
    * @param presentNeuronId
@@ -849,21 +850,37 @@ public class NodeThread extends Thread{
     ArrayList <Synapse> interNodeSynapses = 
         synMan.getFiringNeuronInterNodesSynapses(firingNeuronId);
     if (n.isExternalInput(firingNeuronId)){
-      burnNeuron(
-          null,
-          //new Synapse(
+      int eod=n.getExternalOutDegree();
+      int eoj=n.getExternalOutJump();
+      if (eod==1)
+        burnNeuron(
+            null,
+            firingNeuronId, 
+            n.getId(), 
+            firingNeuronId%n.getN(), 
+            n.getId(), 
+            0.1,
+            1.0,
+            n.getExternalAmplitude(),
+            currentTime, 
+            currentTime, 
+            true);
+      else
+        for (int i=0; i<eod; ++i){
+          burnNeuron(
+              null,
               firingNeuronId, 
               n.getId(), 
-              firingNeuronId%n.getN(), 
+              (firingNeuronId+i*eoj)%n.getN(), 
               n.getId(), 
               0.1,
               1.0,
               n.getExternalAmplitude(),
-              //true,
-              //false), 
-          currentTime, 
-          currentTime, 
-          true);
+              currentTime, 
+              currentTime, 
+              true);
+        }
+          
       return;
     }
     for (int i=0; i<synapses.size();++i){

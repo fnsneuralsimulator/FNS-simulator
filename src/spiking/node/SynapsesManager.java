@@ -260,7 +260,6 @@ public class SynapsesManager {
       Long firingNeuronId){
     ArrayList<Synapse> retval = firingNeuronSynapses.get(firingNeuronId);
     if (retval==null){
-      System.out.println("[DEBUG] Se non mi leggi toglimi");
       firingNeuronSynapses.put(firingNeuronId, new ArrayList<Synapse>());
       retval = firingNeuronSynapses.get(firingNeuronId);
     }
