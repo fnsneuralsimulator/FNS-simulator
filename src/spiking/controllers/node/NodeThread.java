@@ -893,7 +893,7 @@ public class NodeThread extends Thread{
             null,
             firingNeuronId, 
             n.getId(), 
-            (firingNeuronId+(eoj << i))%n.getN(), 
+            (firingNeuronId+(eoj*i))%n.getN(), 
             n.getId(), 
             0.1,
             1.0,
