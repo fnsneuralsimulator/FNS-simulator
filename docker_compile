@@ -1,2 +1,5 @@
 #!/bin/bash
-docker run  --rm -v $(pwd):/usr/local/fns -v $HOME/.m2/:/root/.m2 -it --name fns-compile fns mvn clean compile assembly:single
+
+MVN_FNS_PATH=/usr/local/fns
+M2_PATH=$(pwd)
+docker run --rm -w $MVN_FNS_PATH -v $(pwd):$MVN_FNS_PATH -v $M2_PATH:/root/.m2 -it --name fns maven:3-openjdk-15 mvn clean compile assembly:single
