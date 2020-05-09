@@ -1,0 +1,2 @@
+#!/bin/bash
+docker run  --rm -v $(pwd):/usr/local/fns -v $HOME/.m2/:/root/.m2 -it --name fns-compile fns mvn clean compile assembly:single

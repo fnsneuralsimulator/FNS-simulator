@@ -1,0 +1,2 @@
+#!/bin/bash
+docker run --rm -v $(pwd):/usr/local/fns -v $(pwd)/.m2/:/root/.m2 -it --name fns fns ./start $@

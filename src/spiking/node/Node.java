@@ -305,13 +305,19 @@ public class Node {
       return;
     println("ring wiring...");
     //randomize adjacency
-    DB tmpDb = DBMaker.memoryDirectDB().make();
-    HTreeMap<Long, Long> shuffled = tmpDb.hashMap(
+    DB tmpDb1 = DBMaker.memoryDirectDB().make();
+    DB tmpDb2 = DBMaker.memoryDirectDB().make();
+    HTreeMap<Long, Long> shuffled = tmpDb1.hashMap(
+        "shuffle", 
+        Serializer.LONG,Serializer.LONG).create();
+    HTreeMap<Long, Long> shuffled_rand = tmpDb2.hashMap(
         "shuffle", 
         Serializer.LONG,Serializer.LONG).create();
     Shuffler.shuffleArray(shuffled,n);
+    Shuffler.shuffleArray(shuffled_rand,n);
     int k2=k/2;
     Double tmpAmpl;
+    long l=0;
     for (long i=0; i<n;++i){
       if (isExcitatory(shuffled.get(i)))
         tmpAmpl=w_pre_exc;
@@ -321,15 +327,26 @@ public class Node {
         //rewiring condition
         if (Math.random()<prew){
           Long tmp;
-          while ( 
-              ((tmp = (long) Math.round(Math.random()*(n-1)))
-                  .equals(shuffled.get(i))) || 
+          Long tmpSrc=shuffled.get(i);
+          //long l=0;
+          for (;
+              ((tmp = shuffled_rand.get(l) )
+                  .equals(tmpSrc)) || 
                   (tmp.equals(shuffled.get((i+j)%n)))||
                   (connectionMatrix.get(
                       new LongCouple(
-                          shuffled.get(i), 
-                          tmp))!=null)
-                  ){}
+                          tmpSrc,
+                          tmp))!=null);
+                l=(l+1)%n){}
+          //while ( 
+          //    ((tmp = (long) Math.round(Math.random()*(n-1)))
+          //        .equals(shuffled.get(i))) || 
+          //        (tmp.equals(shuffled.get((i+j)%n)))||
+          //        (connectionMatrix.get(
+          //            new LongCouple(
+          //                shuffled.get(i), 
+          //                tmp))!=null)
+          //        ){}
           putConnection(shuffled.get(i), tmp, tmpAmpl);
         }
         else
