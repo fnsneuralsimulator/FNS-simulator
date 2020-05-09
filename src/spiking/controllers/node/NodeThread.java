@@ -874,7 +874,7 @@ public class NodeThread extends Thread{
     if (n.isExternalInput(firingNeuronId)){
       int eod=n.getExternalOutDegree();
       int eoj=n.getExternalOutJump();
-      if (eod==1)
+      if (eod==1){
         burnNeuron(
             null,
             firingNeuronId, 
@@ -887,6 +887,7 @@ public class NodeThread extends Thread{
             currentTime, 
             currentTime, 
             true);
+      }
       else
         for (int i=0; i<eod; ++i){
           burnNeuron(

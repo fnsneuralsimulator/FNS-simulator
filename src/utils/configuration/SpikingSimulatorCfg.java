@@ -319,7 +319,7 @@ public class SpikingSimulatorCfg {
   }
 
   public Integer getGlob_external_inputs_outdegree() {
-    return glob_external_inputs_fireduration;
+    return glob_external_inputs_outdegree;
   }
 
   public void setGlob_external_inputs_outdegree(Integer glob_external_inputs_outdegree) {
