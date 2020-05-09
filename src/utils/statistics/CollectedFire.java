@@ -4,7 +4,7 @@ import spiking.node.Synapse;
 
 public class CollectedFire {
 
-  private Integer firingRegionId; 
+  private Integer firingNodeId; 
   private Long firingNeuronId; 
   private Double firingTime; 
   private Long maxN; 
@@ -13,14 +13,14 @@ public class CollectedFire {
   private Boolean isExternal;
   
   public CollectedFire(
-      Integer firingRegionId, 
+      Integer firingNodeId, 
       Long firingNeuronId, 
       Double firingTime, 
       Long maxN, 
       Double compressionFactor, 
       Boolean isExcitatory, 
       Boolean isExternal) {
-    this.firingRegionId=firingRegionId;
+    this.firingNodeId=firingNodeId;
     this.firingNeuronId=firingNeuronId;
     this.firingTime=firingTime;
     this.maxN= maxN;
@@ -29,8 +29,8 @@ public class CollectedFire {
     this.isExternal=isExternal;
   }
 
-  public Integer getFiringRegionId() {
-    return firingRegionId;
+  public Integer getFiringNodeId() {
+    return firingNodeId;
   }
 
   public Long getFiringNeuronId() {

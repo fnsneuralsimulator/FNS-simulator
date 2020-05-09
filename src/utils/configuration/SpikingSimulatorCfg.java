@@ -67,8 +67,8 @@ public class SpikingSimulatorCfg {
   private Double avg_neuronal_signal_speed=5.1;
   private NeuManCfg global_neuron_manager;
   private ArrayList<NodeCfg> node = new ArrayList<NodeCfg>();
-  private ArrayList<RegionInterconnectionCfg> connection = 
-      new ArrayList<RegionInterconnectionCfg>();
+  private ArrayList<NodeInterconnectionCfg> connection = 
+      new ArrayList<NodeInterconnectionCfg>();
   private Boolean lif=false;
   private Boolean exp_decay=false;
   private Double glob_rewiring_P=0.0;
@@ -156,11 +156,11 @@ public class SpikingSimulatorCfg {
     this.node = nodes;
   }
   
-  public ArrayList<RegionInterconnectionCfg> getConnections() {
+  public ArrayList<NodeInterconnectionCfg> getConnections() {
     return connection;
   }
 
-  public void setConnections(ArrayList<RegionInterconnectionCfg> connections) {
+  public void setConnections(ArrayList<NodeInterconnectionCfg> connections) {
     this.connection = connections;
   }
   
@@ -173,19 +173,19 @@ public class SpikingSimulatorCfg {
     this.global_neuron_manager = global_neuron_manager;
   }
 
-  public ArrayList<NodeCfg> getRegion() {
+  public ArrayList<NodeCfg> getNode() {
     return node;
   }
 
-  public void setRegion(ArrayList<NodeCfg> region) {
+  public void setNode(ArrayList<NodeCfg> region) {
     this.node = region;
   }
 
-  public ArrayList<RegionInterconnectionCfg> getConnection() {
+  public ArrayList<NodeInterconnectionCfg> getConnection() {
     return connection;
   }
 
-  public void setConnection(ArrayList<RegionInterconnectionCfg> connection) {
+  public void setConnection(ArrayList<NodeInterconnectionCfg> connection) {
     this.connection = connection;
   }
 
@@ -416,8 +416,8 @@ public class SpikingSimulatorCfg {
       sb.append("\n"+i+". "+node.get(i).getId());
     sb.append("\nconnections:");
     for (int i=0; i<connection.size();++i)
-      sb.append("\n"+i+". "+connection.get(i).getSrcRegionId()+"->"+
-    connection.get(i).getDstRegionId()+", prob:"+connection.get(i).getConnection_probability());
+      sb.append("\n"+i+". "+connection.get(i).getSrcNodeId()+"->"+
+    connection.get(i).getDstNodeId()+", prob:"+connection.get(i).getConnection_probability());
     sb.append("\n\n");
     return sb.toString();
   }

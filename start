@@ -1,1 +1,1 @@
-java -Xmx1024m -Dfile.encoding=Cp1252 -jar target/fns-V3.3.55-jar-with-dependencies.jar $@
+java -Xmx1024m -Dfile.encoding=Cp1252 -jar target/fns-V3.3.56-jar-with-dependencies.jar $@

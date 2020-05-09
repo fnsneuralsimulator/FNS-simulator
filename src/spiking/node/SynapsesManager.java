@@ -166,10 +166,10 @@ public class SynapsesManager {
   public void setIntraNodeSynapse(Synapse syn){
     if (syn.getAxonNodeId().equals(n.getId()))
       putFiringIntraNodeSynapse(syn);
-    if (syn.getDendriteNodeId().equals(n.getId()))
+    if (syn.getBurningNodeId().equals(n.getId()))
       putBurningIntraNodeSynapse(syn);
     if ( (syn.getAxonNodeId().equals(n.getId())) &&
-        (syn.getDendriteNodeId().equals(n.getId())))
+        (syn.getBurningNodeId().equals(n.getId())))
       synapses.put(syn, syn);
     else
       System.out.println("[SYNAPSES MANAGER SETPOSTSYNAPTICWEIGHT "
@@ -215,27 +215,6 @@ public class SynapsesManager {
     list.add(firingNeuronSynapse);
   }
 
-  //private void putExternalInputSynapse(Synapse externalInputSynapse){
-  //  if (externalInputSynapses.size()>=Integer.MAX_VALUE){
-  //    throw new ArrayIndexOutOfBoundsException(
-  //        "You are triyng to add to much internode connection"+
-  //         " to the same external input:"+
-  //        externalInputSynapse.getFiring()+ 
-  //        "of the node:"+
-  //        n.getId());
-  //  }
-  //  ArrayList<Synapse> list = 
-  //      externalInputSynapses.get(externalInputSynapse.getFiring());
-  //  if (list==null){
-  //    externalInputSynapse.put(
-  //        externalInputSynapse.getFiring(), 
-  //        new ArrayList<Synapse>());
-  //    list = externalInputSynapses.get(
-  //        externalInputSynapse.getFiring());
-  //  }
-  //  list.add(externalInputSynapse);
-  //}
-  
   private void putBurningIntraNodeSynapse(Synapse burningNeuronSynapse){
     if (!n.getPlasticity())
       return;
@@ -308,17 +287,17 @@ public class SynapsesManager {
   }
   
   public void addInterNodeSynapse(
-      Integer firingRegionId,
+      Integer firingNodeId,
       Long firingNeuronId, 
-      Integer burningRegionId, 
+      Integer burningNodeId, 
       Long burningNeuronId, 
       Double mu_w,
       Double presynaptic_w,
       Double length){
     Synapse newSyn = new Synapse(
-        firingRegionId,
+        firingNodeId,
         firingNeuronId,
-        burningRegionId,
+        burningNodeId,
         burningNeuronId,
         length, 
         mu_w,
@@ -326,9 +305,9 @@ public class SynapsesManager {
         false,
         true);
     setInterNodeSynapse(newSyn);
-    if (firingRegionId.equals(n.getId()))
+    if (firingNodeId.equals(n.getId()))
       putFiringNeuronInterNodeConnection(firingNeuronId,newSyn);
-    else if(burningRegionId.equals(n.getId()))
+    else if(burningNodeId.equals(n.getId()))
       putBurningNeuronInterNodeConnection(burningNeuronId,newSyn);
     else
       System.out.println("[SYNAPSES MANAGER WARNING]adding an internode synapse which does "
@@ -338,11 +317,11 @@ public class SynapsesManager {
           n.getId());
   }
   
-  public int interRegionConnectionsNum(){
+  public int interNodeConnectionsNum(){
     return axmap.size();
   }
   
-  private void putFiringNeuronInterNodeConnection(Long firingNeuronId, Synapse neuronRegionConnection){
+  private void putFiringNeuronInterNodeConnection(Long firingNeuronId, Synapse neuronNodeConnection){
     if (firingNeuronInterNodeSynapses.size()>=Integer.MAX_VALUE){
       throw new ArrayIndexOutOfBoundsException("You are triyng to add too much interregion connections"
           + " to the same neuron:"+firingNeuronId+ "of the region:"+n.getId());
@@ -352,7 +331,7 @@ public class SynapsesManager {
       firingNeuronInterNodeSynapses.put(firingNeuronId, new ArrayList<Synapse>());
       list = firingNeuronInterNodeSynapses.get(firingNeuronId);
     }
-    list.add(neuronRegionConnection);
+    list.add(neuronNodeConnection);
     firingNeuronInterNodeSynapses.put(firingNeuronId, list);
   }
 
@@ -370,7 +349,7 @@ public class SynapsesManager {
     return retval;
   }
   
-  private void putBurningNeuronInterNodeConnection(Long burningNeuronId, Synapse neuronRegionConnection){
+  private void putBurningNeuronInterNodeConnection(Long burningNeuronId, Synapse neuronNodeConnection){
     if (burningNeuronInterNodeConnections.size()>=Integer.MAX_VALUE){
       throw new ArrayIndexOutOfBoundsException("You are triyng to add to much interregion connection"
           + " to the same neuron:"+burningNeuronId+ "of the region:"+n.getId());
@@ -380,7 +359,7 @@ public class SynapsesManager {
       burningNeuronInterNodeConnections.put(burningNeuronId, new ArrayList<Synapse>());
       list = burningNeuronInterNodeConnections.get(burningNeuronId);
     }
-    list.add(neuronRegionConnection);
+    list.add(neuronNodeConnection);
   }
 
   /**

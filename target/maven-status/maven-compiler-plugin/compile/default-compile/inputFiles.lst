@@ -2,7 +2,6 @@
 /home/knizontes/projects/FNS-simulator/src/utils/statistics/CollectedFire.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/Plot2DPanel.java
 /home/knizontes/projects/FNS-simulator/src/spiking/node/NodesInterconnection.java
-/home/knizontes/projects/FNS-simulator/src/utils/configuration/RegionInterconnectionCfg.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/plots/CloudPlot2D.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/utils/NumbersUtils.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/MatrixTablePanel.java
@@ -29,6 +28,7 @@
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/plotObjects/Noteable.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/plotObjects/BaseLine.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/plotObjects/BasePlot.java
+/home/knizontes/projects/FNS-simulator/src/utils/configuration/NodeInterconnectionCfg.java
 /home/knizontes/projects/FNS-simulator/src/utils/experiment/Experiment.java
 /home/knizontes/projects/FNS-simulator/src/utils/constants/Constants.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/FrameView.java

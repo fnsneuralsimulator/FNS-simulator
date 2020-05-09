@@ -73,7 +73,6 @@ org/math/plot/components/DataFrame.class
 utils/configuration/NeuManCfg.class
 org/math/plot/utils/FastMath$DoubleWrapper.class
 org/math/plot/components/PlotToolBar$7.class
-utils/configuration/RegionInterconnectionCfg.class
 org/math/plot/plots/HistogramPlot2D.class
 org/math/plot/plots/CloudPlot3D.class
 org/math/io/StringPrintable.class
@@ -116,6 +115,7 @@ org/math/plot/components/ScalesFrame.class
 spiking/node/NodesManager.class
 org/math/plot/plotObjects/BaseDependant.class
 org/math/plot/plotObjects/Label.class
+utils/configuration/NodeInterconnectionCfg.class
 org/math/plot/ParametersPanel.class
 spiking/node/FiringNeuron.class
 org/math/plot/render/AWTDrawer.class

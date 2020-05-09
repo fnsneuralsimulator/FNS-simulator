@@ -201,7 +201,7 @@ public class StatisticsCollector extends Thread {
   
   
   public synchronized void collectFireSpike(
-      Integer firingRegionId, 
+      Integer firingNodeId, 
       Long firingNeuronId, 
       Double firingTime, 
       Long maxN, 
@@ -210,7 +210,7 @@ public class StatisticsCollector extends Thread {
       Boolean isExternal){
     processFireSpike(
         new CollectedFire(
-            firingRegionId, 
+            firingNodeId, 
             firingNeuronId, 
             firingTime, 
             maxN, 
@@ -223,14 +223,14 @@ public class StatisticsCollector extends Thread {
 
   private void processFireSpike(CollectedFire cf) {
     CompressedFire compF = new CompressedFire(
-        cf.getFiringRegionId(), 
+        cf.getFiringNodeId(), 
         cf.getFiringNeuronId(), 
         cf.getFiringTime(), 
         cf.getMaxN(), 
         cf.getCompressionFactor());
     Integer tmp = compressor.get(
         new CompressedFire(
-            cf.getFiringRegionId(), 
+            cf.getFiringNodeId(), 
             cf.getFiringNeuronId(), 
             cf.getFiringTime(), 
             cf.getMaxN(), 
@@ -239,9 +239,9 @@ public class StatisticsCollector extends Thread {
       return;
     firingNeurons.add(new Double(compF.getCompressedNeuronId()));
     firingTimes.add(cf.getFiringTime());
-    if (checkall ||( NOI.get(cf.getFiringRegionId())!=null )){
+    if (checkall ||( NOI.get(cf.getFiringNodeId())!=null )){
       FiringNeuron fn= new FiringNeuron(
-          cf.getFiringRegionId(),
+          cf.getFiringNodeId(),
           cf.getFiringNeuronId(),
           cf.getFiringTime(),
           cf.getIsExcitatory(),
@@ -494,14 +494,14 @@ public class StatisticsCollector extends Thread {
         if (reducedOutput)
           fireWriter.println(
               df.format(firingSpikesHashMap.get(key).getFiringTime())+", "
-              +firingSpikesHashMap.get(key).getFiringRegionId()+", "
+              +firingSpikesHashMap.get(key).getFiringNodeId()+", "
               + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
               + isExternalStr
               );
         else
           fireWriter.println(
               df.format(firingSpikesHashMap.get(key).getFiringTime())+", "
-              +firingSpikesHashMap.get(key).getFiringRegionId()+", "
+              +firingSpikesHashMap.get(key).getFiringNodeId()+", "
               + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
               + excitStr+", "
               + firingSpikesHashMap.get(key).isExternal()
@@ -602,14 +602,14 @@ public class StatisticsCollector extends Thread {
         //if (reducedOutput)
         //  fireWriter.println(
         //      firingSpikesHashMap.get(key).getFiringTime().toString()+", "
-        //      +firingSpikesHashMap.get(key).getFiringRegionId()+", "
+        //      +firingSpikesHashMap.get(key).getFiringNodeId()+", "
         //      + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
         //      + (firingSpikesHashMap.get(key).isExternal()?'1':'0')
         //      );
         //else
         fireWriter.println(
             firingSpikesHashMap.get(key).getFiringTime().toString()+", "
-            +firingSpikesHashMap.get(key).getFiringRegionId()+", "
+            +firingSpikesHashMap.get(key).getFiringNodeId()+", "
             + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
             + (firingSpikesHashMap.get(key).isExcitatory()?'1':'0')+", "
             + (firingSpikesHashMap.get(key).isExternal()?'1':'0')

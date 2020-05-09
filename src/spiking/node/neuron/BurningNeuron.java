@@ -48,16 +48,16 @@ package spiking.node.neuron;
 
 public class BurningNeuron {
   
-  private Integer burningRegionId;
+  private Integer burningNodeId;
   private Long burningNeuronId;
   
-  public BurningNeuron(Integer burningRegionId, Long burningNeuronId){
-    this.burningRegionId = burningRegionId;
+  public BurningNeuron(Integer burningNodeId, Long burningNeuronId){
+    this.burningNodeId = burningNodeId;
     this.burningNeuronId = burningNeuronId;
   }
 
-  public Integer getBurningRegionId() {
-    return burningRegionId;
+  public Integer getBurningNodeId() {
+    return burningNodeId;
   }
 
   public Long getBurningNeuronId() {

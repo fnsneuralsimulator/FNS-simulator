@@ -64,8 +64,8 @@ public class InterNodeSpike implements Serializable{
 //    this.syn=new Synapse(
 //        syn.getAxonNodeId(), 
 //        syn.getAxonNeuronId(), 
-//        syn.getDendriteNodeId(), 
-//        syn.getDendriteNeuronId(), 
+//        syn.getBurningNodeId(), 
+//        syn.getBurningNeuronId(), 
 //        syn.getLength(), 
 //        syn.getPostSynapticWeight(),
 //        syn.getPreSynapticWeight(),

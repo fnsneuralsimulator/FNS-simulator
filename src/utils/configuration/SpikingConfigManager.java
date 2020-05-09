@@ -78,7 +78,7 @@ public class SpikingConfigManager {
   //  
   //  String in;
   //  ArrayList<NodeCfg> regList = new ArrayList<NodeCfg>();
-  //  ArrayList<RegionInterconnectionCfg> connList = new ArrayList<RegionInterconnectionCfg>();
+  //  ArrayList<NodeInterconnectionCfg> connList = new ArrayList<NodeInterconnectionCfg>();
   //  SpikingSimulatorCfg ssc = new SpikingSimulatorCfg();
   //  Scanner reader = new Scanner(System.in);  // Reading from System.in
   //  System.out.print("Configuration manager for firnet\n\n1. simulation parameters");
@@ -158,12 +158,12 @@ public class SpikingConfigManager {
   //    in = reader.nextLine();
   //    if ( !(in.charAt(0)=='y')&&!(in.charAt(0)=='Y'))
   //      break;
-  //    RegionInterconnectionCfg conn = new RegionInterconnectionCfg();
+  //    NodeInterconnectionCfg conn = new NodeInterconnectionCfg();
   //    System.out.print("\to from node:");
-  //    conn.setSrcRegionId(reader.nextInt());
+  //    conn.setSrcNodeId(reader.nextInt());
   //    reader.nextLine();
   //    System.out.print("\to to node:");
-  //    conn.setDstRegionId(reader.nextInt());
+  //    conn.setDstNodeId(reader.nextInt());
   //    reader.nextLine();
   //    System.out.print("\tconnection "+i+" probability:");
   //    conn.setConnection_probability(reader.nextDouble());

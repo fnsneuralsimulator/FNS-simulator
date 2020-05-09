@@ -911,7 +911,7 @@ public class NodeThread extends Thread{
           currentTime);
       // this is an inter-node synapse, the burning node 
       // must deal with this spike
-      if (!(synapses.get(i).getDendriteNodeId().equals(n.getId()))){
+      if (!(synapses.get(i).getBurningNodeId().equals(n.getId()))){
         continue;
       }
       burnNeuron(synapses.get(i), currentTime, currentTime, false);
@@ -934,10 +934,10 @@ public class NodeThread extends Thread{
         Boolean fromExternalInput){
     burnNeuron(
         s,
-        s.getBurning(),
-        s.getBurningNodeId(),
         s.getFiring(),
         s.getFiringNodeId(),
+        s.getBurning(),
+        s.getBurningNodeId(),
         s.getLength(),
         s.getPostSynapticWeight(),
         s.getPreSynapticWeight(),

@@ -152,7 +152,7 @@ public class NodesManager implements Serializable {
         new IntegerCouple(node1.getNodeId(), 
         node2.getNodeId()), 
         n_conn);
-    _addInterRegionConnection(
+    _addInterNodeConnection(
         node1.getNodeId(),
         node2.getNodeId(),
         Ne_xn_ratio,
@@ -179,7 +179,7 @@ public class NodesManager implements Serializable {
 //    Integer src =  (reg1Id<reg2Id)? reg1Id: reg2Id;
 //    Integer dst =  (reg1Id<reg2Id)? reg2Id: reg1Id;
     nodesConnections.put(new IntegerCouple(reg1Id, reg2Id), regi);
-    _addInterRegionConnection(
+    _addInterNodeConnection(
         reg1Id, 
         reg2Id, 
         weight, 
@@ -190,7 +190,7 @@ public class NodesManager implements Serializable {
         inter_node_conn_type);
   }
   
-  private void _addInterRegionConnection(
+  private void _addInterNodeConnection(
       Integer node1id, 
       Integer node2id, 
       Double weight, 
@@ -206,7 +206,7 @@ public class NodesManager implements Serializable {
     if (length<minTractLength)
       minTractLength=length;
     try {
-      __addInterRegionConnection(
+      __addInterNodeConnection(
           node1id, 
           node2id, 
           weight,
@@ -226,7 +226,7 @@ public class NodesManager implements Serializable {
    * between neurons of the two nodes
    * @throws BadCurveException 
    */
-  private void __addInterRegionConnection(
+  private void __addInterNodeConnection(
       Integer reg1Id, 
       Integer reg2Id, 
       Double Ne_xn_ratio, 
@@ -458,7 +458,7 @@ public class NodesManager implements Serializable {
   }
   
   private void deliverInterNodeSpike(InterNodeSpike irs){
-    nodeThreads.get(irs.getSyn().getDendriteNodeId()).burnInterNodeSpike(irs);
+    nodeThreads.get(irs.getSyn().getBurningNodeId()).burnInterNodeSpike(irs);
   }
 
   

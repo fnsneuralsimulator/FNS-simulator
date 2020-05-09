@@ -319,6 +319,7 @@ public class Node {
     Double tmpAmpl;
     long l=0;
     for (long i=0; i<n;++i){
+      Long tmpSrc=shuffled.get(i);
       if (isExcitatory(shuffled.get(i)))
         tmpAmpl=w_pre_exc;
       else
@@ -327,7 +328,7 @@ public class Node {
         //rewiring condition
         if (Math.random()<prew){
           Long tmp;
-          Long tmpSrc=shuffled.get(i);
+          //Long tmpSrc=shuffled.get(i);
           //long l=0;
           for (;
               ((tmp = shuffled_rand.get(l) )
@@ -356,10 +357,19 @@ public class Node {
               tmpAmpl);
         if (Math.random()<prew){
           Long tmp;
-          while ( 
-              ((tmp = (long) Math.round(Math.random()*(n-1)))
-              .equals(shuffled.get(i))) || 
-              (tmp.equals(shuffled.get((n+i-j)%n)))){}
+          for (;
+              ((tmp = shuffled_rand.get(l) )
+                  .equals(tmpSrc)) || 
+                  (tmp.equals(shuffled.get((n+i-j)%n)))||
+                  (connectionMatrix.get(
+                      new LongCouple(
+                          tmpSrc,
+                          tmp))!=null);
+                l=(l+1)%n){}
+          //while ( 
+          //    ((tmp = (long) Math.round(Math.random()*(n-1)))
+          //    .equals(shuffled.get(i))) || 
+          //    (tmp.equals(shuffled.get((n+i-j)%n)))){}
           putConnection(shuffled.get(i), tmp, tmpAmpl);
         }
         else
