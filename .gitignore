@@ -6,3 +6,5 @@ experiments/*
 torem*
 dev_*
 .*.swp
+.m2
+.m2/*
