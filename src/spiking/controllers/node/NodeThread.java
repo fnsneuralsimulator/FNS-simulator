@@ -874,26 +874,12 @@ public class NodeThread extends Thread{
     if (n.isExternalInput(firingNeuronId)){
       int eod=n.getExternalOutDegree();
       int eoj=n.getExternalOutJump();
-      //if (eod==1)
-      //  burnNeuron(
-      //      null,
-      //      firingNeuronId, 
-      //      n.getId(), 
-      //      firingNeuronId%n.getN(), 
-      //      n.getId(), 
-      //      0.1,
-      //      1.0,
-      //      n.getExternalAmplitude(),
-      //      currentTime, 
-      //      currentTime, 
-      //      true);
-      //else
-      for (int i=0; i<eod; ++i){
+      if (eod==1)
         burnNeuron(
             null,
             firingNeuronId, 
             n.getId(), 
-            (firingNeuronId+(eoj*i))%n.getN(), 
+            firingNeuronId%n.getN(), 
             n.getId(), 
             0.1,
             1.0,
@@ -901,7 +887,21 @@ public class NodeThread extends Thread{
             currentTime, 
             currentTime, 
             true);
-      }
+      else
+        for (int i=0; i<eod; ++i){
+          burnNeuron(
+              null,
+              firingNeuronId, 
+              n.getId(), 
+              (firingNeuronId+(eoj*i))%n.getN(), 
+              n.getId(), 
+              0.1,
+              1.0,
+              n.getExternalAmplitude(),
+              currentTime, 
+              currentTime, 
+              true);
+        }
       return;
     }
     for (int i=0; i<synapses.size();++i){
