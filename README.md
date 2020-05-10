@@ -54,16 +54,11 @@ FNS. If not, see <http://www.gnu.org/licenses/>.
 Run using Docker
 ------------
 
-<<<<<<< HEAD
 
 To run FNS with Docker, you can use the public Docker Hub image:  
 `docker run --rm -v $(pwd)/experiments:/usr/local/fns/experiments -it --name fns fnsneuralsimulator/fns-simulator:nightly-latest fns experiments/myexp`  
 You can also compile the FNS simulator through the docker image:  
 `docker run --rm -v $(pwd)/.m2/:/root/.m2 -it --name fns fnsneuralsimulator/fns-simulator:nightly-latest compile_fns`
-=======
-Alternatively, you can run FNS with Docker, using the public Docker Hub image:  
-`docker run --rm -v $(pwd)/experiments:/usr/local/fns/experiments -v $(pwd)/.m2/:/root/.m2 -it --name fns fnsneuralsimulator/fns-simulator:nightly-latest fns experiments/myexp`
->>>>>>> d222a99eb6e58db038ff77656de66ac23e06ad6d
 
 where:
 * **experiments** could be any path in which you collect your run configurations (no matter if you use another name)
