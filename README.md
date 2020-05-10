@@ -57,11 +57,10 @@ Run using Docker
 
 
 To run FNS with Docker, you can use the public Docker Hub image:  
-`docker run --rm -v $(pwd)/experiments:/usr/local/fns/experiments -it --name fns fnsneuralsimulator/fns-simulator:nightly-latest fns experiments/myexp`  
+`docker run --rm -v $(pwd)/[SIMULATION_FOLDER]:/usr/local/fns/[SIMULATION_FOLDER] -it --name fns fnsneuralsimulator/fns-simulator:latest fns [SIMULATION_FOLDER/EXPERIMENT]`
 You can also compile the FNS simulator through the docker image:  
-`docker run --rm -v $(pwd)/.m2/:/root/.m2 -it --name fns fnsneuralsimulator/fns-simulator:nightly-latest compile_fns`
+`docker run --rm -v $(pwd)/.m2/:/root/.m2 -it --name fns fnsneuralsimulator/fns-simulator:latest compile_fns`
 
-where:
-* **experiments** could be any path in which you collect your run configurations (no matter if you use another name)
-* **myexp** is an example of configuration for the present run 
-* **.m2** is the .m2 directory for your maven repositories
+where [SIMULATION_FOLDER] is the folder which contains the simulation packages, and [EXPERIMENT] is the package which contains the set of configuration files for a single simulation 
+
+Please refer to the [user guide](https://docs.google.com/document/d/1-oJK6dzu6KIggYonajqVq8xA6mUZ3ZZdBMq7zVMyTcA/export?format=pdf) for additional information.
