@@ -47,3 +47,17 @@ A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  
 You should have received a copy of the GNU General Public License along with 
 FNS. If not, see <http://www.gnu.org/licenses/>.
+
+
+
+Run with Docker
+------------
+
+
+To run FNS with Docker, you can use the public Docker Hub image:
+`<docker run --rm -v $(pwd)/experiments:/usr/local/fns/experiments -v $(pwd)/.m2/:/root/.m2 -it --name fns fnsneuralsimulator/fns-simulator:nightly-latest fns experiments/myexp>`
+
+where:
+* **experiments** could be any path in which you collect your run configurations (no matter if you use another name)
+* **myexp** is an example of configuration for the present run 
+* **.m2** is the .m2 directory for your maven repositories
