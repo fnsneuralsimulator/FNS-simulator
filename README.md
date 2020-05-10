@@ -51,7 +51,7 @@ FNS. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-Run with Docker
+Run using Docker
 ------------
 
 To run FNS with Docker, you can use the public Docker Hub image:  
