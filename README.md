@@ -9,9 +9,9 @@ and plastic synapses, providing fast simulations at the same time.
 FNS is written in JAVA.
 It comes with the GPLv3 (please see LICENSE).
 
-* Official website [here](http://www.fnsneuralsimulator.org)
-* User guide [here](https://docs.google.com/document/d/1-oJK6dzu6KIggYonajqVq8xA6mUZ3ZZdBMq7zVMyTcA/export?format=pdf) (please wait a moment after the click)
-* For questions and support: fnsneuralsimulator@gmail.com
+* **Official website** [here](http://www.fnsneuralsimulator.org)
+* **User guide** [here](https://docs.google.com/document/d/1-oJK6dzu6KIggYonajqVq8xA6mUZ3ZZdBMq7zVMyTcA/export?format=pdf) (please wait a moment after the click)
+* **For questions and support**: fnsneuralsimulator@gmail.com
 
 
 Please cite FNS
