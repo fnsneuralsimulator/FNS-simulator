@@ -365,10 +365,16 @@ public class StatisticsCollector extends Thread {
       if (firstFiringNeurons==null) {
 //        int count = 1;
         for(;;++count) {
-          towritefile= new File(
-              filename
-              +String.format("%03d", count)
-              +"_burning.csv");
+          if (reducedOutput)
+            towritefile= new File(
+                filename
+                +String.format("%03d", count)
+                +"_burning_r.csv");
+          else
+            towritefile= new File(
+                filename
+                +String.format("%03d", count)
+                +"_burning.csv");
             if(!towritefile.exists()){
               defFileName=filename+String.format("%03d", count);
                 break;
