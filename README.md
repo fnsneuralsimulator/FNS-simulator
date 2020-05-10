@@ -11,6 +11,7 @@ It comes with the GPLv3 (please see LICENSE).
 
 * Official website: http://www.fnsneuralsimulator.org
 * User guide: https://docs.google.com/document/d/1-oJK6dzu6KIggYonajqVq8xA6mUZ3ZZdBMq7zVMyTcA/export?format=pdf
+This site was built using [GitHub Pages](https://pages.github.com/)
 * For questions and support: fnsneuralsimulator@gmail.com
 
 
