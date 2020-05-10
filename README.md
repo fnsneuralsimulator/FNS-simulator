@@ -27,6 +27,19 @@ Biomedical Technology, Technical University of Madrid; University of Rome
 "Tor Vergata".   
 
 
+Run using Docker
+------------
+
+To run FNS with Docker, you can use the public Docker Hub image:  
+`docker run --rm -v $(pwd)/[SIMULATION_FOLDER]:/usr/local/fns/[SIMULATION_FOLDER] -it --name fns fnsneuralsimulator/fns-simulator:latest fns [SIMULATION_FOLDER/EXPERIMENT]`
+
+You can also compile the FNS simulator through the Docker image:  
+
+`docker run --rm -v $(pwd)/.m2/:/root/.m2 -it --name fns fnsneuralsimulator/fns-simulator:latest compile_fns`
+
+where `[SIMULATION_FOLDER]` is the folder which contains the simulation packages, `[EXPERIMENT]` is the package which contains the set of configuration files for a single simulation, and `.m2` is the directory for your maven repositories
+
+Please refer to the [user guide](https://docs.google.com/document/d/1-oJK6dzu6KIggYonajqVq8xA6mUZ3ZZdBMq7zVMyTcA/export?format=pdf) for additional information.
 
 License & Copyright (Version 3.x)
 -------------------
@@ -50,19 +63,3 @@ A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with 
 FNS. If not, see <http://www.gnu.org/licenses/>.
 
-
-
-Run using Docker
-------------
-
-
-To run FNS with Docker, you can use the public Docker Hub image:  
-`docker run --rm -v $(pwd)/[SIMULATION_FOLDER]:/usr/local/fns/[SIMULATION_FOLDER] -it --name fns fnsneuralsimulator/fns-simulator:latest fns [SIMULATION_FOLDER/EXPERIMENT]`
-
-You can also compile the FNS simulator through the Docker image:  
-
-`docker run --rm -v $(pwd)/.m2/:/root/.m2 -it --name fns fnsneuralsimulator/fns-simulator:latest compile_fns`
-
-where `[SIMULATION_FOLDER]` is the folder which contains the simulation packages, `[EXPERIMENT]` is the package which contains the set of configuration files for a single simulation, and `.m2` is the directory for your maven repositories
-
-Please refer to the [user guide](https://docs.google.com/document/d/1-oJK6dzu6KIggYonajqVq8xA6mUZ3ZZdBMq7zVMyTcA/export?format=pdf) for additional information.
