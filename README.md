@@ -19,7 +19,7 @@ Please cite FNS
 When using FNS, please cite us as follows:
 
 Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, Mario 
-Salerno, Fernando Maestú, Ernesto Pereda (2019). "FNS: an event-driven spiking 
+Salerno, Fernando Maestú, Ernesto Pereda (2020). "FNS: an event-driven spiking 
 neural network simulator based on the LIFL neuron model". Paper under review.
 Laboratory of Cognitive and Computational Neuroscience, UPM-UCM Centre for 
 Biomedical Technology, Technical University of Madrid; University of Rome 
@@ -27,10 +27,11 @@ Biomedical Technology, Technical University of Madrid; University of Rome
 
 
 
-License & Copyright 
+License & Copyright (Version 3.x)
 -------------------
 
-(c) 2018, Mario Salerno, Gianluca Susi, Alessandro Cristini, Emanuele Paracone, Fernando Maestú.
+(c) 2020, Gianluca Susi, Emanuele Paracone, Mario Salerno, 
+ Alessandro Cristini, Fernando Maestú.
 
 FNS is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -52,7 +53,6 @@ FNS. If not, see <http://www.gnu.org/licenses/>.
 
 Run with Docker
 ------------
-
 
 To run FNS with Docker, you can use the public Docker Hub image:  
 `docker run --rm -v $(pwd)/experiments:/usr/local/fns/experiments -v $(pwd)/.m2/:/root/.m2 -it --name fns fnsneuralsimulator/fns-simulator:nightly-latest fns experiments/myexp`
