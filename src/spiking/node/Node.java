@@ -1,33 +1,48 @@
 /**
-* This file is part of FNS (Firnet NeuroScience), ver.2.0
+* "FNS" (Firnet NeuroScience), ver.3.x
+*				
+* FNS is an event-driven Spiking Neural Network framework, oriented 
+* to data-driven neural simulations.
 *
-* (c) 2018, Mario Salerno, Gianluca Susi, Alessandro Cristini, Emanuele Paracone,
-* Fernando Maestú.
+* (c) 2020, Gianluca Susi, Emanuele Paracone, Mario Salerno, 
+* Alessandro Cristini, Fernando Maestú.
 *
 * CITATION:
 * When using FNS for scientific publications, cite us as follows:
 *
-* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, Mario 
-* Salerno, Fernando Maestú, Ernesto Pereda (2018). "FNS: an event-driven spiking 
-* neural network simulator based on the LIFL neuron model". 
-* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM Centre for 
-* Biomedical Technology, Technical University of Madrid; University of Rome "Tor 
-* Vergata".   
+* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, 
+* Mario Salerno, Fernando Maestú, Ernesto Pereda (2020). 
+* "FNS: an event-driven spiking neural network simulator based on the 
+* LIFL neuron model". 
+* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM 
+* Centre for Biomedical Technology, Technical University of Madrid; 
+* University of Rome "Tor Vergata".   
 * Paper under review.
 *
-* FNS is free software: you can redistribute it and/or modify it under the terms 
-* of the GNU General Public License version 3 as published by  the Free Software 
-* Foundation.
+* FNS is free software: you can redistribute it and/or modify it 
+* under the terms of the GNU General Public License version 3 as 
+* published by the Free Software Foundation.
 *
-* FNS is distributed in the hope that it will be useful, but WITHOUT ANY 
-* WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-* A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+* FNS is distributed in the hope that it will be useful, but WITHOUT 
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+* or FITNESS FOR A PARTICULAR PURPOSE. 
+* See the GNU General Public License for more details.
 * 
-* You should have received a copy of the GNU General Public License along with 
-* FNS. If not, see <http://www.gnu.org/licenses/>.
+* You should have received a copy of the GNU General Public License 
+* along with FNS. If not, see <http://www.gnu.org/licenses/>.
+* 
 * -----------------------------------------------------------
+*  
 * Website:   http://www.fnsneuralsimulator.org
-*/
+* 
+* Contacts:  fnsneuralsimulator (at) gmail.com
+*	    gianluca.susi82 (at) gmail.com
+*	    emanuele.paracone (at) gmail.com
+*
+*
+* -----------------------------------------------------------
+* -----------------------------------------------------------
+**/
 
 package spiking.node;
 
@@ -35,6 +50,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Random;
 import utils.experiment.Experiment;
 import utils.tools.LongCouple;
 import utils.tools.NiceNode;
@@ -59,7 +75,6 @@ public class Node {
   private Double IBI;
   //the small world connection matrix
   private HashMap<LongCouple, Double> connectionMatrix = new HashMap<>();
-  //private File nodeDbFile;
   //proportion between excitatory and inhibithory
   private Double R=0.8;
   // postsynaptic weight
@@ -85,6 +100,8 @@ public class Node {
   private int fireDuration = 1;
   private Double externalAmplitude=
       ExternalInput.EXTERNAL_AMPLITUDE_DEF_VALUE;
+  private int externalOutdegree = 0;
+  private int externalOutJump = 1;
   private Boolean plasticity;
   private Double etap;
   private Double etam;
@@ -94,6 +111,7 @@ public class Node {
   private Double to;
   private HashMap <Long,Boolean> external_init= 
       new HashMap <Long, Boolean>();
+  private Random random = new Random();
 
   /**
   *   The Node object
@@ -118,12 +136,14 @@ public class Node {
   *                       firing neuron
   *   @param IBI          the burst inter-spike time 
   *   @param plasticity   simulate neuron plasticity
-  *   @param etap         the Etap for plasticity
-  *   @param etam         the Etam for plasticity
-  *   @param taup         the Taup for plasticity
-  *   @param taum         the Taum for plasticity
-  *   @param pwMax        the pwMax for plasticity
-  *   @param to           the to for plasticity
+  *   @param etap         the Eta plus learning constant for plasticity
+  *   @param etam         the Eta minus learning constant for plasticity
+  *   @param taup         the Tau plus positive time constants for long term 
+  *                       potentiation for plasticity
+  *   @param taum         the Tau minus positive time constants for long term 
+  *                       depression for plasticity
+  *   @param pwMax        the max post-ynaptic weight (used for plasticity rules)
+  *   @param to           the timeout for plasticity rules
   *
   */
   public Node(
@@ -180,6 +200,7 @@ public class Node {
       double timeStep, 
       int fireDuration, 
       Double externalAmplitude,
+      Integer externalOutdegree,
       Double R, 
       Double mu_w_exc,
       Double mu_w_inh,
@@ -215,6 +236,9 @@ public class Node {
       this.timeStep=timeStep;
       this.fireDuration=fireDuration;
       this.externalAmplitude=externalAmplitude;
+      this.externalOutdegree=externalOutdegree;
+      do { this.externalOutJump=random.nextInt(1987);}
+        while (this.externalOutJump==0);
     }
     this.k=k;
     this.prew=prew;
@@ -245,13 +269,23 @@ public class Node {
     inhibithory=n-excitatory;
   }
   
-  private void putConnection (Long firingNeuronId, Long burningNeuronId, Double presynaptic_weight){
-    connectionMatrix.put(new LongCouple(firingNeuronId, burningNeuronId), presynaptic_weight);
+  private void putConnection (
+      Long firingNeuronId, 
+      Long burningNeuronId, 
+      Double presynaptic_weight){
+    connectionMatrix.put(
+        new LongCouple(firingNeuronId, burningNeuronId), 
+        presynaptic_weight);
   }
   
-  public Double getConnectionPresynapticWeight(Long firingNeuronId, Long burningNeuronId){
-    return (connectionMatrix.get(new LongCouple(firingNeuronId, burningNeuronId))!=null)?
-        connectionMatrix.get(new LongCouple(firingNeuronId, burningNeuronId)):0;
+  public Double getConnectionPresynapticWeight(
+      Long firingNeuronId, 
+      Long burningNeuronId){
+    return (
+        connectionMatrix.get(
+            new LongCouple(firingNeuronId, burningNeuronId))!=null)?
+        connectionMatrix.get(
+            new LongCouple(firingNeuronId, burningNeuronId)):0;
   }
   
   public Iterator<Entry<LongCouple, Double>> getIterator(){
@@ -271,12 +305,21 @@ public class Node {
       return;
     println("ring wiring...");
     //randomize adjacency
-    DB tmpDb = DBMaker.memoryDirectDB().make();
-    HTreeMap<Long, Long> shuffled = tmpDb.hashMap("shuffle", Serializer.LONG,Serializer.LONG).create();
+    DB tmpDb1 = DBMaker.memoryDirectDB().make();
+    DB tmpDb2 = DBMaker.memoryDirectDB().make();
+    HTreeMap<Long, Long> shuffled = tmpDb1.hashMap(
+        "shuffle", 
+        Serializer.LONG,Serializer.LONG).create();
+    HTreeMap<Long, Long> shuffled_rand = tmpDb2.hashMap(
+        "shuffle", 
+        Serializer.LONG,Serializer.LONG).create();
     Shuffler.shuffleArray(shuffled,n);
+    Shuffler.shuffleArray(shuffled_rand,n);
     int k2=k/2;
     Double tmpAmpl;
+    long l=0;
     for (long i=0; i<n;++i){
+      Long tmpSrc=shuffled.get(i);
       if (isExcitatory(shuffled.get(i)))
         tmpAmpl=w_pre_exc;
       else
@@ -285,18 +328,55 @@ public class Node {
         //rewiring condition
         if (Math.random()<prew){
           Long tmp;
-          while ( ((tmp = (long) Math.round(Math.random()*(n-1))).equals(shuffled.get(i))) || (tmp.equals(shuffled.get((i+j)%n)))){}
+          //Long tmpSrc=shuffled.get(i);
+          //long l=0;
+          for (;
+              ((tmp = shuffled_rand.get(l) )
+                  .equals(tmpSrc)) || 
+                  (tmp.equals(shuffled.get((i+j)%n)))||
+                  (connectionMatrix.get(
+                      new LongCouple(
+                          tmpSrc,
+                          tmp))!=null);
+                l=(l+1)%n){}
+          //while ( 
+          //    ((tmp = (long) Math.round(Math.random()*(n-1)))
+          //        .equals(shuffled.get(i))) || 
+          //        (tmp.equals(shuffled.get((i+j)%n)))||
+          //        (connectionMatrix.get(
+          //            new LongCouple(
+          //                shuffled.get(i), 
+          //                tmp))!=null)
+          //        ){}
           putConnection(shuffled.get(i), tmp, tmpAmpl);
         }
         else
-          putConnection(shuffled.get(i), shuffled.get((i+j)%n), tmpAmpl);
+          putConnection(
+              shuffled.get(i), 
+              shuffled.get((i+j)%n), 
+              tmpAmpl);
         if (Math.random()<prew){
           Long tmp;
-          while ( ((tmp = (long) Math.round(Math.random()*(n-1))).equals(shuffled.get(i))) || (tmp.equals(shuffled.get((n+i-j)%n)))){}
+          for (;
+              ((tmp = shuffled_rand.get(l) )
+                  .equals(tmpSrc)) || 
+                  (tmp.equals(shuffled.get((n+i-j)%n)))||
+                  (connectionMatrix.get(
+                      new LongCouple(
+                          tmpSrc,
+                          tmp))!=null);
+                l=(l+1)%n){}
+          //while ( 
+          //    ((tmp = (long) Math.round(Math.random()*(n-1)))
+          //    .equals(shuffled.get(i))) || 
+          //    (tmp.equals(shuffled.get((n+i-j)%n)))){}
           putConnection(shuffled.get(i), tmp, tmpAmpl);
         }
         else
-          putConnection(shuffled.get(i), shuffled.get((n+i-j)%n), tmpAmpl);
+          putConnection(
+              shuffled.get(i), 
+              shuffled.get((n+i-j)%n), 
+              tmpAmpl);
       }
     }
     shuffled.close();
@@ -315,8 +395,11 @@ public class Node {
         externalInputsTimeOffset,
         fireDuration,
         externalAmplitude,
+        externalOutdegree,
         timeStep);
-    println("external input created, external spikes in queue:"+ext.getExternalSpikesInQueue());
+    println(
+        "external input created, external spikes in queue:"
+        +ext.getExternalSpikesInQueue());
   }
 
   public Long getN() {
@@ -403,10 +486,18 @@ public class Node {
         externalInputsTimeOffset, 
         fireDuration,
         externalAmplitude,
+        externalOutdegree,
         timeStep);
   }
   
-  
+  public int getExternalOutDegree(){
+    return externalOutdegree;
+  }
+
+  public int getExternalOutJump(){
+    return externalOutJump;
+  }
+
   public Boolean hasExternalInput(){
     return hasExternalInputs;
   }
@@ -417,7 +508,8 @@ public class Node {
   
   public Double getAmplitudeValue(Long extNeuronGlobalId){
     if ((extNeuronGlobalId-n)>Integer.MAX_VALUE)
-      throw new IndexOutOfBoundsException("[NODE ERROR] The external input id is too big");
+      throw new IndexOutOfBoundsException(
+          "[NODE ERROR] The external input id is too big");
     if (hasExternalInputs)
       return ext.getAmplitudeValue((int)(long)(extNeuronGlobalId-n));
     return null;
@@ -459,7 +551,7 @@ public class Node {
     return pwMax;
   }
 
-  public Double getTo() {
+  public Double getPlasticityTo() {
     return to;
   }
   

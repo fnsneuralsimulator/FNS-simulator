@@ -35,6 +35,7 @@
         <configuration>
           <show>private</show>
           <nohelp>true</nohelp>
+          <source>8</source>
         </configuration>
       </plugin>
       <plugin>
@@ -68,28 +69,13 @@
         <enabled>true</enabled>
       </releases>
   </repository>
-  <!--<repository>
-     <id>jzy3d-snapshots</id>
-     <name>Jzy3d Snapshots</name>
-     <url>http://maven.jzy3d.org/snapshots</url>
-  </repository>
-  <repository>
-     <id>jzy3d-releases</id>
-     <name>Jzy3d Releases</name>
-     <url>http://maven.jzy3d.org/releases</url>
-  </repository>-->
   </repositories>
   <dependencies>
-  	<dependency>
+     <dependency>
   		<groupId>org.mapdb</groupId>
   		<artifactId>mapdb</artifactId>
   		<version>3.0.2</version>
-  	</dependency>
-  	<!--<dependency>
-	    <groupId>org.jzy3d</groupId>
-	    <artifactId>jzy3d-api</artifactId>
-	    <version>1.0.0</version>
-	</dependency>-->
+    </dependency> 
   	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 	<dependency>
 	    <groupId>org.apache.commons</groupId>
@@ -126,26 +112,6 @@
         <artifactId>jaxb-runtime</artifactId>
         <version>2.3.2</version>
     </dependency>
-    <!-- <dependency>
-        <groupId>com.sun.activation</groupId>
-        <artifactId>javax.activation</artifactId>
-        <version>${javax.activation.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>javax.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        <version>${jaxb.api.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-core</artifactId>
-        <version>${jaxb.api.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-impl</artifactId>
-        <version>${jaxb.api.version}</version>
-    </dependency> -->
     <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
@@ -153,5 +119,18 @@
         <scope>provided</scope>
     </dependency>
   </dependencies>
-  <version>V3.3.11</version>
+  <version>V3.3.59</version>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+          <show>public</show>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

@@ -1,34 +1,48 @@
 /**
-* This file is part of FNS (Firnet NeuroScience), ver.2.0
+* "FNS" (Firnet NeuroScience), ver.3.x
+*				
+* FNS is an event-driven Spiking Neural Network framework, oriented 
+* to data-driven neural simulations.
 *
-* (c) 2018, Mario Salerno, Gianluca Susi, Alessandro Cristini, Emanuele Paracone,
-* Fernando Maestú.
+* (c) 2020, Gianluca Susi, Emanuele Paracone, Mario Salerno, 
+* Alessandro Cristini, Fernando Maestú.
 *
 * CITATION:
 * When using FNS for scientific publications, cite us as follows:
 *
-* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, Mario 
-* Salerno, Fernando Maestú, Ernesto Pereda (2018). "FNS: an event-driven spiking 
-* neural network simulator based on the LIFL neuron model". 
-* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM Centre for 
-* Biomedical Technology, Technical University of Madrid; University of Rome "Tor 
-* Vergata".   
+* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, 
+* Mario Salerno, Fernando Maestú, Ernesto Pereda (2020). 
+* "FNS: an event-driven spiking neural network simulator based on the 
+* LIFL neuron model". 
+* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM 
+* Centre for Biomedical Technology, Technical University of Madrid; 
+* University of Rome "Tor Vergata".   
 * Paper under review.
 *
-* FNS is free software: you can redistribute it and/or modify it under the terms 
-* of the GNU General Public License version 3 as published by  the Free Software 
-* Foundation.
+* FNS is free software: you can redistribute it and/or modify it 
+* under the terms of the GNU General Public License version 3 as 
+* published by the Free Software Foundation.
 *
-* FNS is distributed in the hope that it will be useful, but WITHOUT ANY 
-* WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-* A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+* FNS is distributed in the hope that it will be useful, but WITHOUT 
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+* or FITNESS FOR A PARTICULAR PURPOSE. 
+* See the GNU General Public License for more details.
 * 
-* You should have received a copy of the GNU General Public License along with 
-* FNS. If not, see <http://www.gnu.org/licenses/>.
+* You should have received a copy of the GNU General Public License 
+* along with FNS. If not, see <http://www.gnu.org/licenses/>.
+* 
 * -----------------------------------------------------------
+*  
 * Website:   http://www.fnsneuralsimulator.org
-*/
-
+* 
+* Contacts:  fnsneuralsimulator (at) gmail.com
+*	    gianluca.susi82 (at) gmail.com
+*	    emanuele.paracone (at) gmail.com
+*
+*
+* -----------------------------------------------------------
+* -----------------------------------------------------------
+**/
 
 package spiking.node;
 
@@ -39,20 +53,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
-
 import org.apache.commons.math3.distribution.GammaDistribution;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
 import org.mapdb.Serializer;
-
 import spiking.controllers.node.NodeThread;
 import utils.constants.Constants;
 import utils.statistics.StatisticsCollector;
-
-//import utils.tools.NiceQueue;
-//import utils.tools.NiceNode;
-
 import utils.tools.IntegerCouple;
 import utils.tools.LongCouple;
 
@@ -89,6 +97,8 @@ public class SynapsesManager {
   // the lists of inter region connections, indexed by firing neuron
   //extendible
   private HashMap<Long, ArrayList<Synapse>> burningNeuronInterNodeConnections;
+  //the external input synapses
+  //private HashMap<Long, ArrayList<Synapse>> externalInputSynapses;
   // the lists of axonal delays, only for inter region connections
   //private HTreeMap<Long, HashMap<Synapse, Double>> axmap;
   //gamma distribution
@@ -107,6 +117,9 @@ public class SynapsesManager {
     axmap = new HashMap<Synapse, Double>();
     synapses = new HashMap<Synapse, Synapse>();
     firingNeuronSynapses = new HashMap<Long, ArrayList<Synapse>>();
+    //if (n.getExternalOutDegree()>0)
+    //  externalInputSynapses=
+    //      new HashMap<Long, ArrayList<Synapse>>();
     if (n.getPlasticity())
       burningNeuronSynapses = new HashMap<Long, ArrayList<Synapse>>();
     firingNeuronInterNodeSynapses = 
@@ -120,11 +133,14 @@ public class SynapsesManager {
   private void init(){ 
     Iterator<LongCouple> it = n.getKeyConnectionIterator();
     Double tmp_presynaptic_w=null;
+    //setting the intra-node synapses
     while (it.hasNext()){
       LongCouple tmpCouple = it.next();
       tmp_presynaptic_w=n.getConnectionPresynapticWeight(
           tmpCouple.getFiring(),
           tmpCouple.getBurning());
+      if (tmp_presynaptic_w==null)
+         continue;
       double postSynW=
           Math.abs(
               randGen.nextGaussian()*
@@ -150,13 +166,14 @@ public class SynapsesManager {
   public void setIntraNodeSynapse(Synapse syn){
     if (syn.getAxonNodeId().equals(n.getId()))
       putFiringIntraNodeSynapse(syn);
-    if (syn.getDendriteNodeId().equals(n.getId()))
+    if (syn.getBurningNodeId().equals(n.getId()))
       putBurningIntraNodeSynapse(syn);
     if ( (syn.getAxonNodeId().equals(n.getId())) &&
-        (syn.getDendriteNodeId().equals(n.getId())))
+        (syn.getBurningNodeId().equals(n.getId())))
       synapses.put(syn, syn);
     else
-      System.out.println("[SYNAPSES MANAGER SETPOSTSYNAPTICWEIGHT WARNING] adding an internode synapse as intranode");
+      System.out.println("[SYNAPSES MANAGER SETPOSTSYNAPTICWEIGHT "
+          +"WARNING] adding an internode synapse as intranode");
   }
   
   public void setIntraNodePostSynapticWeight(
@@ -196,9 +213,8 @@ public class SynapsesManager {
           firingNeuronSynapse.getFiring());
     }
     list.add(firingNeuronSynapse);
-    
   }
-  
+
   private void putBurningIntraNodeSynapse(Synapse burningNeuronSynapse){
     if (!n.getPlasticity())
       return;
@@ -216,7 +232,8 @@ public class SynapsesManager {
       burningNeuronSynapses.put(
           burningNeuronSynapse.getBurning(), 
           new ArrayList<Synapse>());
-      list = burningNeuronSynapses.get(burningNeuronSynapse.getBurning());
+      list = 
+          burningNeuronSynapses.get(burningNeuronSynapse.getBurning());
     }
     list.add(burningNeuronSynapse);
   }
@@ -226,7 +243,8 @@ public class SynapsesManager {
    * if no such list exists, it creates a new htree map 
    * and returns its pointer
    */
-  public ArrayList<Synapse> getFiringNeuronConnections(Long firingNeuronId){
+  public ArrayList<Synapse> getFiringNeuronSynapses(
+      Long firingNeuronId){
     ArrayList<Synapse> retval = firingNeuronSynapses.get(firingNeuronId);
     if (retval==null){
       firingNeuronSynapses.put(firingNeuronId, new ArrayList<Synapse>());
@@ -234,13 +252,32 @@ public class SynapsesManager {
     }
     return retval;
   }
+
+  ///**
+  // * @return the list for the specified external input;
+  // * if no such list exists, it creates a new htree map 
+  // * and returns its pointer
+  // */
+  //public ArrayList<Synapse> getExternalInputSynapses(
+  //    Long externalInputId){
+  //  ArrayList<Synapse> retval = 
+  //      externalInputSynapses.get(externalInputId);
+  //  if (retval==null){
+  //    externalInputSynapses.put(
+  //        firingNeuronId, 
+  //        new ArrayList<Synapse>());
+  //    retval = externalInputSynapses.get(ExternalInputId);
+  //  }
+  //  return retval;
+  //}
   
   /**
    * @return the list for the specified neuron;
    * if no such list exists, it creates a new htree map 
    * and returns its pointer
    */
-  public ArrayList<Synapse> getBurningNeuronConnections(Long burningNeuronId){
+  public ArrayList<Synapse> getBurningNeuronSynapses(
+      Long burningNeuronId){
     ArrayList<Synapse> retval = burningNeuronSynapses.get(burningNeuronId);
     if (retval==null){
       burningNeuronSynapses.put(burningNeuronId, new ArrayList<Synapse>());
@@ -250,17 +287,17 @@ public class SynapsesManager {
   }
   
   public void addInterNodeSynapse(
-      Integer firingRegionId,
+      Integer firingNodeId,
       Long firingNeuronId, 
-      Integer burningRegionId, 
+      Integer burningNodeId, 
       Long burningNeuronId, 
       Double mu_w,
       Double presynaptic_w,
       Double length){
     Synapse newSyn = new Synapse(
-        firingRegionId,
+        firingNodeId,
         firingNeuronId,
-        burningRegionId,
+        burningNodeId,
         burningNeuronId,
         length, 
         mu_w,
@@ -268,9 +305,9 @@ public class SynapsesManager {
         false,
         true);
     setInterNodeSynapse(newSyn);
-    if (firingRegionId.equals(n.getId()))
+    if (firingNodeId.equals(n.getId()))
       putFiringNeuronInterNodeConnection(firingNeuronId,newSyn);
-    else if(burningRegionId.equals(n.getId()))
+    else if(burningNodeId.equals(n.getId()))
       putBurningNeuronInterNodeConnection(burningNeuronId,newSyn);
     else
       System.out.println("[SYNAPSES MANAGER WARNING]adding an internode synapse which does "
@@ -280,11 +317,11 @@ public class SynapsesManager {
           n.getId());
   }
   
-  public int interRegionConnectionsNum(){
+  public int interNodeConnectionsNum(){
     return axmap.size();
   }
   
-  private void putFiringNeuronInterNodeConnection(Long firingNeuronId, Synapse neuronRegionConnection){
+  private void putFiringNeuronInterNodeConnection(Long firingNeuronId, Synapse neuronNodeConnection){
     if (firingNeuronInterNodeSynapses.size()>=Integer.MAX_VALUE){
       throw new ArrayIndexOutOfBoundsException("You are triyng to add too much interregion connections"
           + " to the same neuron:"+firingNeuronId+ "of the region:"+n.getId());
@@ -294,7 +331,7 @@ public class SynapsesManager {
       firingNeuronInterNodeSynapses.put(firingNeuronId, new ArrayList<Synapse>());
       list = firingNeuronInterNodeSynapses.get(firingNeuronId);
     }
-    list.add(neuronRegionConnection);
+    list.add(neuronNodeConnection);
     firingNeuronInterNodeSynapses.put(firingNeuronId, list);
   }
 
@@ -303,7 +340,7 @@ public class SynapsesManager {
    * if no such list exists, it creates a new htree map 
    * and returns its pointer
    */
-  public ArrayList<Synapse> getFiringNeuronInterNodeConnections(Long firingNeuronId){
+  public ArrayList<Synapse> getFiringNeuronInterNodesSynapses(Long firingNeuronId){
     ArrayList<Synapse> retval = firingNeuronInterNodeSynapses.get(firingNeuronId);
     if (retval==null){
       firingNeuronInterNodeSynapses.put(firingNeuronId, new ArrayList<Synapse>());
@@ -312,7 +349,7 @@ public class SynapsesManager {
     return retval;
   }
   
-  private void putBurningNeuronInterNodeConnection(Long burningNeuronId, Synapse neuronRegionConnection){
+  private void putBurningNeuronInterNodeConnection(Long burningNeuronId, Synapse neuronNodeConnection){
     if (burningNeuronInterNodeConnections.size()>=Integer.MAX_VALUE){
       throw new ArrayIndexOutOfBoundsException("You are triyng to add to much interregion connection"
           + " to the same neuron:"+burningNeuronId+ "of the region:"+n.getId());
@@ -322,7 +359,7 @@ public class SynapsesManager {
       burningNeuronInterNodeConnections.put(burningNeuronId, new ArrayList<Synapse>());
       list = burningNeuronInterNodeConnections.get(burningNeuronId);
     }
-    list.add(neuronRegionConnection);
+    list.add(neuronNodeConnection);
   }
 
   /**

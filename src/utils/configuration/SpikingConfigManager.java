@@ -1,33 +1,48 @@
 /**
-* This file is part of FNS (Firnet NeuroScience), ver.2.0
+* "FNS" (Firnet NeuroScience), ver.3.x
+*				
+* FNS is an event-driven Spiking Neural Network framework, oriented 
+* to data-driven neural simulations.
 *
-* (c) 2018, Mario Salerno, Gianluca Susi, Alessandro Cristini, Emanuele Paracone,
-* Fernando Maestú.
+* (c) 2020, Gianluca Susi, Emanuele Paracone, Mario Salerno, 
+* Alessandro Cristini, Fernando Maestú.
 *
 * CITATION:
 * When using FNS for scientific publications, cite us as follows:
 *
-* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, Mario 
-* Salerno, Fernando Maestú, Ernesto Pereda (2018). "FNS: an event-driven spiking 
-* neural network simulator based on the LIFL neuron model". 
-* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM Centre for 
-* Biomedical Technology, Technical University of Madrid; University of Rome "Tor 
-* Vergata".   
+* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, 
+* Mario Salerno, Fernando Maestú, Ernesto Pereda (2020). 
+* "FNS: an event-driven spiking neural network simulator based on the 
+* LIFL neuron model". 
+* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM 
+* Centre for Biomedical Technology, Technical University of Madrid; 
+* University of Rome "Tor Vergata".   
 * Paper under review.
 *
-* FNS is free software: you can redistribute it and/or modify it under the terms 
-* of the GNU General Public License version 3 as published by  the Free Software 
-* Foundation.
+* FNS is free software: you can redistribute it and/or modify it 
+* under the terms of the GNU General Public License version 3 as 
+* published by the Free Software Foundation.
 *
-* FNS is distributed in the hope that it will be useful, but WITHOUT ANY 
-* WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-* A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+* FNS is distributed in the hope that it will be useful, but WITHOUT 
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+* or FITNESS FOR A PARTICULAR PURPOSE. 
+* See the GNU General Public License for more details.
 * 
-* You should have received a copy of the GNU General Public License along with 
-* FNS. If not, see <http://www.gnu.org/licenses/>.
+* You should have received a copy of the GNU General Public License 
+* along with FNS. If not, see <http://www.gnu.org/licenses/>.
+* 
 * -----------------------------------------------------------
+*  
 * Website:   http://www.fnsneuralsimulator.org
-*/
+* 
+* Contacts:  fnsneuralsimulator (at) gmail.com
+*	    gianluca.susi82 (at) gmail.com
+*	    emanuele.paracone (at) gmail.com
+*
+*
+* -----------------------------------------------------------
+* -----------------------------------------------------------
+**/
 
 
 package utils.configuration;
@@ -63,7 +78,7 @@ public class SpikingConfigManager {
   //  
   //  String in;
   //  ArrayList<NodeCfg> regList = new ArrayList<NodeCfg>();
-  //  ArrayList<RegionInterconnectionCfg> connList = new ArrayList<RegionInterconnectionCfg>();
+  //  ArrayList<NodeInterconnectionCfg> connList = new ArrayList<NodeInterconnectionCfg>();
   //  SpikingSimulatorCfg ssc = new SpikingSimulatorCfg();
   //  Scanner reader = new Scanner(System.in);  // Reading from System.in
   //  System.out.print("Configuration manager for firnet\n\n1. simulation parameters");
@@ -143,12 +158,12 @@ public class SpikingConfigManager {
   //    in = reader.nextLine();
   //    if ( !(in.charAt(0)=='y')&&!(in.charAt(0)=='Y'))
   //      break;
-  //    RegionInterconnectionCfg conn = new RegionInterconnectionCfg();
+  //    NodeInterconnectionCfg conn = new NodeInterconnectionCfg();
   //    System.out.print("\to from node:");
-  //    conn.setSrcRegionId(reader.nextInt());
+  //    conn.setSrcNodeId(reader.nextInt());
   //    reader.nextLine();
   //    System.out.print("\to to node:");
-  //    conn.setDstRegionId(reader.nextInt());
+  //    conn.setDstNodeId(reader.nextInt());
   //    reader.nextLine();
   //    System.out.print("\tconnection "+i+" probability:");
   //    conn.setConnection_probability(reader.nextDouble());

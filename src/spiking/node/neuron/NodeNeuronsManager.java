@@ -1,33 +1,48 @@
 /**
-* This file is part of FNS (Firnet NeuroScience), ver.2.0
+* "FNS" (Firnet NeuroScience), ver.3.x
+*				
+* FNS is an event-driven Spiking Neural Network framework, oriented 
+* to data-driven neural simulations.
 *
-* (c) 2018, Mario Salerno, Gianluca Susi, Alessandro Cristini, Emanuele Paracone,
-* Fernando Maestú.
+* (c) 2020, Gianluca Susi, Emanuele Paracone, Mario Salerno, 
+* Alessandro Cristini, Fernando Maestú.
 *
 * CITATION:
 * When using FNS for scientific publications, cite us as follows:
 *
-* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, Mario 
-* Salerno, Fernando Maestú, Ernesto Pereda (2018). "FNS: an event-driven spiking 
-* neural network simulator based on the LIFL neuron model". 
-* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM Centre for 
-* Biomedical Technology, Technical University of Madrid; University of Rome "Tor 
-* Vergata".   
+* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, 
+* Mario Salerno, Fernando Maestú, Ernesto Pereda (2020). 
+* "FNS: an event-driven spiking neural network simulator based on the 
+* LIFL neuron model". 
+* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM 
+* Centre for Biomedical Technology, Technical University of Madrid; 
+* University of Rome "Tor Vergata".   
 * Paper under review.
 *
-* FNS is free software: you can redistribute it and/or modify it under the terms 
-* of the GNU General Public License version 3 as published by  the Free Software 
-* Foundation.
+* FNS is free software: you can redistribute it and/or modify it 
+* under the terms of the GNU General Public License version 3 as 
+* published by the Free Software Foundation.
 *
-* FNS is distributed in the hope that it will be useful, but WITHOUT ANY 
-* WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-* A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+* FNS is distributed in the hope that it will be useful, but WITHOUT 
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+* or FITNESS FOR A PARTICULAR PURPOSE. 
+* See the GNU General Public License for more details.
 * 
-* You should have received a copy of the GNU General Public License along with 
-* FNS. If not, see <http://www.gnu.org/licenses/>.
+* You should have received a copy of the GNU General Public License 
+* along with FNS. If not, see <http://www.gnu.org/licenses/>.
+* 
 * -----------------------------------------------------------
+*  
 * Website:   http://www.fnsneuralsimulator.org
-*/
+* 
+* Contacts:  fnsneuralsimulator (at) gmail.com
+*	    gianluca.susi82 (at) gmail.com
+*	    emanuele.paracone (at) gmail.com
+*
+*
+* -----------------------------------------------------------
+* -----------------------------------------------------------
+**/
 
 package spiking.node.neuron;
 
@@ -38,7 +53,7 @@ import utils.constants.Constants;
 import utils.experiment.Experiment;
 import utils.tools.NiceNode;
 import utils.tools.NiceQueue;
-import org.apache.commons.math3.distribution.PoissonDistribution;
+import org.apache.commons.math3.distribution.ExponentialDistribution;
 
 
 public class NodeNeuronsManager {
@@ -69,9 +84,7 @@ public class NodeNeuronsManager {
   private HashMap<Long, Double> lastFiringTimes;
   private HashMap<Long, Double> lastBurningTimes;
   private HashMap<Long, Double> presynapticWeights;
-  private PoissonDistribution poissonD;
-  private final static int POISSON_ITERATIONS=15;
-  private final static double POISSON_PRECISION=1000.0;
+  private ExponentialDistribution exponentialD;
   
   public NodeNeuronsManager(
       Node r, 
@@ -101,10 +114,8 @@ public class NodeNeuronsManager {
     lastFiringTimes = new HashMap<Long, Double>();
     lastBurningTimes = new HashMap<Long, Double>();
     presynapticWeights = new HashMap<Long, Double>();
-    poissonD = new PoissonDistribution(
-        n.getExternalInput().getTimeStep()*
-        POISSON_PRECISION,
-        POISSON_ITERATIONS); 
+    exponentialD = new ExponentialDistribution(
+        n.getExternalInput().getTimeStep()); 
   }
   
   public Double getT_arp(){
@@ -280,7 +291,7 @@ public class NodeNeuronsManager {
       return;
     }
     /* Case of poissonian external inputs */
-    fireTime = currentTime+(((double)(poissonD.sample()))/POISSON_PRECISION);
+    fireTime = currentTime+((double)(exponentialD.sample()));
     setPreSynapticWeight(extNeuronId, n.getAmplitudeValue(extNeuronId ));
     setTimeToFire(extNeuronId, fireTime);
     addActiveNeuron(extNeuronId, fireTime, currentTime, 1);

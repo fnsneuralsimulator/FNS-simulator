@@ -1,33 +1,48 @@
 /**
-* This file is part of FNS (Firnet NeuroScience), ver.2.0
+* "FNS" (Firnet NeuroScience), ver.3.x
+*				
+* FNS is an event-driven Spiking Neural Network framework, oriented 
+* to data-driven neural simulations.
 *
-* (c) 2018, Mario Salerno, Gianluca Susi, Alessandro Cristini, Emanuele Paracone,
-* Fernando Maestú.
+* (c) 2020, Gianluca Susi, Emanuele Paracone, Mario Salerno, 
+* Alessandro Cristini, Fernando Maestú.
 *
 * CITATION:
 * When using FNS for scientific publications, cite us as follows:
 *
-* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, Mario 
-* Salerno, Fernando Maestú, Ernesto Pereda (2018). "FNS: an event-driven spiking 
-* neural network simulator based on the LIFL neuron model". 
-* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM Centre for 
-* Biomedical Technology, Technical University of Madrid; University of Rome "Tor 
-* Vergata".   
+* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, 
+* Mario Salerno, Fernando Maestú, Ernesto Pereda (2020). 
+* "FNS: an event-driven spiking neural network simulator based on the 
+* LIFL neuron model". 
+* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM 
+* Centre for Biomedical Technology, Technical University of Madrid; 
+* University of Rome "Tor Vergata".   
 * Paper under review.
 *
-* FNS is free software: you can redistribute it and/or modify it under the terms 
-* of the GNU General Public License version 3 as published by  the Free Software 
-* Foundation.
+* FNS is free software: you can redistribute it and/or modify it 
+* under the terms of the GNU General Public License version 3 as 
+* published by the Free Software Foundation.
 *
-* FNS is distributed in the hope that it will be useful, but WITHOUT ANY 
-* WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-* A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+* FNS is distributed in the hope that it will be useful, but WITHOUT 
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+* or FITNESS FOR A PARTICULAR PURPOSE. 
+* See the GNU General Public License for more details.
 * 
-* You should have received a copy of the GNU General Public License along with 
-* FNS. If not, see <http://www.gnu.org/licenses/>.
+* You should have received a copy of the GNU General Public License 
+* along with FNS. If not, see <http://www.gnu.org/licenses/>.
+* 
 * -----------------------------------------------------------
+*  
 * Website:   http://www.fnsneuralsimulator.org
-*/
+* 
+* Contacts:  fnsneuralsimulator (at) gmail.com
+*	    gianluca.susi82 (at) gmail.com
+*	    emanuele.paracone (at) gmail.com
+*
+*
+* -----------------------------------------------------------
+* -----------------------------------------------------------
+**/
 
 
 package utils.configuration;
@@ -57,6 +72,7 @@ public class NodeCfg {
   private Double external_inputs_time_offset;
   private Integer external_inputs_fireduration;
   private Double external_inputs_timestep;
+  private Integer external_inputs_outdegree;
   //private Double external_inputs_firerate;
   private Double external_inputs_amplitude;
   private Boolean small_world_topology;
@@ -68,7 +84,7 @@ public class NodeCfg {
   private Double etam;
   private Double taup;
   private Double taum;
-  private Double pw_max;
+  private Double w_max;
   private Double to;
   
 
@@ -224,6 +240,13 @@ public class NodeCfg {
     this.external_inputs_fireduration = external_inputs_fireduration;
   }
   
+  public Integer getExternal_inputs_outdegree() {
+    return external_inputs_outdegree;
+  }
+
+  public void setExternal_inputs_outdegree(Integer external_inputs_outdegree) {
+    this.external_inputs_outdegree = external_inputs_outdegree;
+  }
   
   public Integer getBn() {
     return Bn;
@@ -281,12 +304,12 @@ public class NodeCfg {
     this.taum = taum;
   }
 
-  public Double getPw_max() {
-    return pw_max;
+  public Double getW_max() {
+    return w_max;
   }
 
-  public void setPw_max(Double pw_max) {
-    this.pw_max = pw_max;
+  public void setW_max(Double w_max) {
+    this.w_max = w_max;
   }
 
   public Double getTo() {

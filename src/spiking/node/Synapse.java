@@ -1,39 +1,53 @@
 /**
-* This file is part of FNS (Firnet NeuroScience), ver.2.0
+* "FNS" (Firnet NeuroScience), ver.3.x
+*				
+* FNS is an event-driven Spiking Neural Network framework, oriented 
+* to data-driven neural simulations.
 *
-* (c) 2018, Mario Salerno, Gianluca Susi, Alessandro Cristini, Emanuele Paracone,
-* Fernando Maestú.
+* (c) 2020, Gianluca Susi, Emanuele Paracone, Mario Salerno, 
+* Alessandro Cristini, Fernando Maestú.
 *
 * CITATION:
 * When using FNS for scientific publications, cite us as follows:
 *
-* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, Mario 
-* Salerno, Fernando Maestú, Ernesto Pereda (2018). "FNS: an event-driven spiking 
-* neural network simulator based on the LIFL neuron model". 
-* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM Centre for 
-* Biomedical Technology, Technical University of Madrid; University of Rome "Tor 
-* Vergata".   
+* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, 
+* Mario Salerno, Fernando Maestú, Ernesto Pereda (2020). 
+* "FNS: an event-driven spiking neural network simulator based on the 
+* LIFL neuron model". 
+* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM 
+* Centre for Biomedical Technology, Technical University of Madrid; 
+* University of Rome "Tor Vergata".   
 * Paper under review.
 *
-* FNS is free software: you can redistribute it and/or modify it under the terms 
-* of the GNU General Public License version 3 as published by  the Free Software 
-* Foundation.
+* FNS is free software: you can redistribute it and/or modify it 
+* under the terms of the GNU General Public License version 3 as 
+* published by the Free Software Foundation.
 *
-* FNS is distributed in the hope that it will be useful, but WITHOUT ANY 
-* WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-* A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+* FNS is distributed in the hope that it will be useful, but WITHOUT 
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+* or FITNESS FOR A PARTICULAR PURPOSE. 
+* See the GNU General Public License for more details.
 * 
-* You should have received a copy of the GNU General Public License along with 
-* FNS. If not, see <http://www.gnu.org/licenses/>.
+* You should have received a copy of the GNU General Public License 
+* along with FNS. If not, see <http://www.gnu.org/licenses/>.
+* 
 * -----------------------------------------------------------
+*  
 * Website:   http://www.fnsneuralsimulator.org
-*/
+* 
+* Contacts:  fnsneuralsimulator (at) gmail.com
+*	    gianluca.susi82 (at) gmail.com
+*	    emanuele.paracone (at) gmail.com
+*
+*
+* -----------------------------------------------------------
+* -----------------------------------------------------------
+**/
 
 package spiking.node;
 
 import java.io.Serializable;
 import java.util.Comparator;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -46,10 +60,10 @@ public class Synapse implements Comparable<Synapse>, Serializable{
   private static final long serialVersionUID = -4428703256832002027L;
   private final static String TAG = "[Syapse] ";
   private final static Boolean verbose = true;
-  private Long axonNeuronId;
-  private Long dendriteNeuronId;
-  private Integer axonRegionId;
-  private Integer dendriteRegionId;
+  private Long firingNeuronId;
+  private Long burningNeuronId;
+  private Integer firingNodeId;
+  private Integer burningNodeId;
   private Boolean fromExternalNode=false;
   private Boolean fromExternalInput=false;
   private Double length;
@@ -57,43 +71,20 @@ public class Synapse implements Comparable<Synapse>, Serializable{
   private Double presynaptic_w;
   private Double lastBurningTime;
   
-  
-//  public Synapse(
-//      Integer axonRegionId, 
-//      Long axonNeuronId, 
-//      Integer dendriteRegionId, 
-//      Long dendriteNeuronId, 
-//      Double length, 
-//      Double mu_w,
-//      Double presynaptic_w,
-//      Boolean fromExternalInput
-//      ) {
-//    this.axonRegionId = axonRegionId;
-//    this.axonNeuronId = axonNeuronId;
-//    this.dendriteRegionId = dendriteRegionId;
-//    this.dendriteNeuronId = dendriteNeuronId;
-//    this.length=length;
-//    this.presynaptic_w=presynaptic_w;
-//    this.fromExternalInput=fromExternalInput;
-//    this.setPostsynapticWeight(mu_w);
-//    
-//  }
-  
   public Synapse(
-//      Boolean torem,
-      Integer axonRegionId, 
-      Long axonNeuronId, 
-      Integer dendriteRegionId, 
-      Long dendriteNeuronId, 
+      Integer firingNodeId, 
+      Long firingNeuronId, 
+      Integer burningNodeId, 
+      Long burningNeuronId, 
       Double length, 
       Double mu_w,
       Double presynaptic_w,
       Boolean fromExternalInput,
       Boolean fromExternalNode) {
-    this.axonRegionId = axonRegionId;
-    this.axonNeuronId = axonNeuronId;
-    this.dendriteRegionId = dendriteRegionId;
-    this.dendriteNeuronId = dendriteNeuronId;
+    this.firingNodeId = firingNodeId;
+    this.firingNeuronId = firingNeuronId;
+    this.burningNodeId = burningNodeId;
+    this.burningNeuronId = burningNeuronId;
     this.fromExternalNode=fromExternalNode;
     this.length=length;
     this.presynaptic_w= presynaptic_w;
@@ -101,21 +92,6 @@ public class Synapse implements Comparable<Synapse>, Serializable{
     this.setPostsynapticWeight(mu_w);    
   }
   
-//  public Synapse(
-//      Integer axonRegionId, 
-//      Long axonNeuronId, 
-//      Integer dendriteRegionId, 
-//      Long dendriteNeuronId, 
-//      Double length, 
-//      Boolean fromExternalInput ) {
-//    this.axonRegionId = axonRegionId;
-//    this.axonNeuronId = axonNeuronId;
-//    this.dendriteRegionId = dendriteRegionId;
-//    this.dendriteNeuronId = dendriteNeuronId;
-//    this.setFromExternalInput(fromExternalInput);
-//    this.length=length;
-//    this.setPostsynapticWeight(mu_w);
-//  }
   
   public Boolean fromExternalNode(){
     return fromExternalNode;
@@ -123,47 +99,47 @@ public class Synapse implements Comparable<Synapse>, Serializable{
   
   
   public Long getAxonNeuronId() {
-    return axonNeuronId;
+    return firingNeuronId;
   }
   
   public Long getFiring(){
-    return axonNeuronId;
+    return firingNeuronId;
   }
 
-  public void setAxonNeuronId(Long axonNeuronId) {
-    this.axonNeuronId = axonNeuronId;
+  public void setAxonNeuronId(Long firingNeuronId) {
+    this.firingNeuronId = firingNeuronId;
   }
 
-  public Long getDendriteNeuronId() {
-    return dendriteNeuronId;
+  public Long getBurningNeuronId() {
+    return burningNeuronId;
   }
-  
-//  public BurningNeuron getBurning(){
-//    return new BurningNeuron(dendriteRegionId, dendriteNeuronId);
-//  }
   
   public Long getBurning(){
-    return dendriteNeuronId;
+    return burningNeuronId;
   }
 
-  public void setDendriteNeuronId(Long dendriteNeuronId) {
-    this.dendriteNeuronId = dendriteNeuronId;
+  public void setBurningNeuronId(Long burningNeuronId) {
+    this.burningNeuronId = burningNeuronId;
   }
 
   public Integer getAxonNodeId() {
-    return axonRegionId;
+    return firingNodeId;
   }
 
-  public void setAxonRegionId(Integer axonRegionId) {
-    this.axonRegionId = axonRegionId;
+  public Integer getFiringNodeId() {
+    return firingNodeId;
   }
 
-  public Integer getDendriteNodeId() {
-    return dendriteRegionId;
+  public void setAxonNodeId(Integer firingNodeId) {
+    this.firingNodeId = firingNodeId;
   }
 
-  public void setDendriteRegionId(Integer dendriteRegionId) {
-    this.dendriteRegionId = dendriteRegionId;
+  public Integer getBurningNodeId() {
+    return burningNodeId;
+  }
+
+  public void setBurningNodeId(Integer burningNodeId) {
+    this.burningNodeId = burningNodeId;
   }
 
 
@@ -208,8 +184,8 @@ public class Synapse implements Comparable<Synapse>, Serializable{
 
   @Override
   public String toString() {
-    return "[firing:" + axonRegionId+"-"+axonNeuronId
-        + ", burning:"+dendriteRegionId +"-"+ dendriteNeuronId 
+    return "[firing:" + firingNodeId+"-"+firingNeuronId
+        + ", burning:"+burningNodeId +"-"+ burningNeuronId 
         +" from external:"+ fromExternalNode+"]";
   }
 
@@ -224,18 +200,18 @@ public class Synapse implements Comparable<Synapse>, Serializable{
     
     Synapse rhs = (Synapse) obj;
     return new EqualsBuilder()
-        .append(axonRegionId, rhs.axonRegionId)
-        .append(axonNeuronId, rhs.axonNeuronId)
-        .append(dendriteRegionId, rhs.dendriteRegionId)
-        .append(dendriteNeuronId, rhs.dendriteNeuronId).isEquals();
+        .append(firingNodeId, rhs.firingNodeId)
+        .append(firingNeuronId, rhs.firingNeuronId)
+        .append(burningNodeId, rhs.burningNodeId)
+        .append(burningNeuronId, rhs.burningNeuronId).isEquals();
   }
 
   @Override
   public int hashCode() {
     // you pick a hard-coded, randomly chosen, non-zero, odd number
        // ideally different for each class
-    return new HashCodeBuilder(17, 37).append(7l*axonNeuronId+9l+axonRegionId)
-        .append(dendriteNeuronId*dendriteRegionId+3l*axonNeuronId+17l).toHashCode();    
+    return new HashCodeBuilder(17, 37).append(7l*firingNeuronId+9l+firingNodeId)
+        .append(burningNeuronId*burningNodeId+3l*firingNeuronId+17l).toHashCode();    
   }
   
   @Override
@@ -243,16 +219,16 @@ public class Synapse implements Comparable<Synapse>, Serializable{
     if (this==o)
       return 0;
 
-    int retval = axonNeuronId.compareTo(o.getAxonNeuronId());
+    int retval = firingNeuronId.compareTo(o.getAxonNeuronId());
     if (retval!=0)
       return retval;      
-    retval = dendriteNeuronId.compareTo(o.getDendriteNeuronId());
+    retval = burningNeuronId.compareTo(o.getBurningNeuronId());
     if (retval!=0)
       return retval;    
-    retval = axonRegionId.compareTo(o.getAxonNodeId());
+    retval = firingNodeId.compareTo(o.getAxonNodeId());
     if (retval!=0)
       return retval;
-    retval = dendriteRegionId.compareTo(o.getDendriteNodeId());  
+    retval = burningNodeId.compareTo(o.getBurningNodeId());  
     
     return retval;
   }

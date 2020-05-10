@@ -1,34 +1,48 @@
 /**
-* This file is part of FNS (Firnet NeuroScience), ver.2.0
+* "FNS" (Firnet NeuroScience), ver.3.x
+*				
+* FNS is an event-driven Spiking Neural Network framework, oriented 
+* to data-driven neural simulations.
 *
-* (c) 2018, Mario Salerno, Gianluca Susi, Alessandro Cristini, Emanuele Paracone,
-* Fernando Maestú.
+* (c) 2020, Gianluca Susi, Emanuele Paracone, Mario Salerno, 
+* Alessandro Cristini, Fernando Maestú.
 *
 * CITATION:
 * When using FNS for scientific publications, cite us as follows:
 *
-* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, Mario 
-* Salerno, Fernando Maestú, Ernesto Pereda (2018). "FNS: an event-driven spiking 
-* neural network simulator based on the LIFL neuron model". 
-* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM Centre for 
-* Biomedical Technology, Technical University of Madrid; University of Rome "Tor 
-* Vergata".   
+* Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, 
+* Mario Salerno, Fernando Maestú, Ernesto Pereda (2020). 
+* "FNS: an event-driven spiking neural network simulator based on the 
+* LIFL neuron model". 
+* Laboratory of Cognitive and Computational Neuroscience, UPM-UCM 
+* Centre for Biomedical Technology, Technical University of Madrid; 
+* University of Rome "Tor Vergata".   
 * Paper under review.
 *
-* FNS is free software: you can redistribute it and/or modify it under the terms 
-* of the GNU General Public License version 3 as published by  the Free Software 
-* Foundation.
+* FNS is free software: you can redistribute it and/or modify it 
+* under the terms of the GNU General Public License version 3 as 
+* published by the Free Software Foundation.
 *
-* FNS is distributed in the hope that it will be useful, but WITHOUT ANY 
-* WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-* A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+* FNS is distributed in the hope that it will be useful, but WITHOUT 
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+* or FITNESS FOR A PARTICULAR PURPOSE. 
+* See the GNU General Public License for more details.
 * 
-* You should have received a copy of the GNU General Public License along with 
-* FNS. If not, see <http://www.gnu.org/licenses/>.
+* You should have received a copy of the GNU General Public License 
+* along with FNS. If not, see <http://www.gnu.org/licenses/>.
+* 
 * -----------------------------------------------------------
+*  
 * Website:   http://www.fnsneuralsimulator.org
-*/
-
+* 
+* Contacts:  fnsneuralsimulator (at) gmail.com
+*	    gianluca.susi82 (at) gmail.com
+*	    emanuele.paracone (at) gmail.com
+*
+*
+* -----------------------------------------------------------
+* -----------------------------------------------------------
+**/
 
 package spiking.node;
 
@@ -36,14 +50,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-
 import spiking.controllers.node.NodeThread;
 import spiking.internode.InterNodeSpike;
 import spiking.simulator.SpikingNeuralSimulator;
 import utils.exceptions.BadCurveException;
 import utils.statistics.StatisticsCollector;
 import utils.tools.IntegerCouple;
-
 import org.apache.commons.math3.distribution.GammaDistribution;
 
 public class NodesManager implements Serializable {
@@ -66,7 +78,6 @@ public class NodesManager implements Serializable {
   //the maximum number of neurons within a single node
   private Long maxN=0l;
   private double compressionFactor=1.0;
-  //the total number of burning neurons
   //the total number of excitatory neuron
   private Long excitatory=0l;
   //the total number of inhibithory neuron
@@ -141,7 +152,7 @@ public class NodesManager implements Serializable {
         new IntegerCouple(node1.getNodeId(), 
         node2.getNodeId()), 
         n_conn);
-    _addInterRegionConnection(
+    _addInterNodeConnection(
         node1.getNodeId(),
         node2.getNodeId(),
         Ne_xn_ratio,
@@ -168,7 +179,7 @@ public class NodesManager implements Serializable {
 //    Integer src =  (reg1Id<reg2Id)? reg1Id: reg2Id;
 //    Integer dst =  (reg1Id<reg2Id)? reg2Id: reg1Id;
     nodesConnections.put(new IntegerCouple(reg1Id, reg2Id), regi);
-    _addInterRegionConnection(
+    _addInterNodeConnection(
         reg1Id, 
         reg2Id, 
         weight, 
@@ -179,7 +190,7 @@ public class NodesManager implements Serializable {
         inter_node_conn_type);
   }
   
-  private void _addInterRegionConnection(
+  private void _addInterNodeConnection(
       Integer node1id, 
       Integer node2id, 
       Double weight, 
@@ -195,7 +206,7 @@ public class NodesManager implements Serializable {
     if (length<minTractLength)
       minTractLength=length;
     try {
-      __addInterRegionConnection(
+      __addInterNodeConnection(
           node1id, 
           node2id, 
           weight,
@@ -215,7 +226,7 @@ public class NodesManager implements Serializable {
    * between neurons of the two nodes
    * @throws BadCurveException 
    */
-  private void __addInterRegionConnection(
+  private void __addInterNodeConnection(
       Integer reg1Id, 
       Integer reg2Id, 
       Double Ne_xn_ratio, 
@@ -447,7 +458,7 @@ public class NodesManager implements Serializable {
   }
   
   private void deliverInterNodeSpike(InterNodeSpike irs){
-    nodeThreads.get(irs.getSyn().getDendriteNodeId()).burnInterNodeSpike(irs);
+    nodeThreads.get(irs.getSyn().getBurningNodeId()).burnInterNodeSpike(irs);
   }
 
   
