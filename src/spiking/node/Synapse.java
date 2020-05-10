@@ -60,10 +60,10 @@ public class Synapse implements Comparable<Synapse>, Serializable{
   private static final long serialVersionUID = -4428703256832002027L;
   private final static String TAG = "[Syapse] ";
   private final static Boolean verbose = true;
-  private Long axonNeuronId;
-  private Long dendriteNeuronId;
-  private Integer axonRegionId;
-  private Integer dendriteRegionId;
+  private Long firingNeuronId;
+  private Long burningNeuronId;
+  private Integer firingNodeId;
+  private Integer burningNodeId;
   private Boolean fromExternalNode=false;
   private Boolean fromExternalInput=false;
   private Double length;
@@ -72,19 +72,19 @@ public class Synapse implements Comparable<Synapse>, Serializable{
   private Double lastBurningTime;
   
   public Synapse(
-      Integer axonRegionId, 
-      Long axonNeuronId, 
-      Integer dendriteRegionId, 
-      Long dendriteNeuronId, 
+      Integer firingNodeId, 
+      Long firingNeuronId, 
+      Integer burningNodeId, 
+      Long burningNeuronId, 
       Double length, 
       Double mu_w,
       Double presynaptic_w,
       Boolean fromExternalInput,
       Boolean fromExternalNode) {
-    this.axonRegionId = axonRegionId;
-    this.axonNeuronId = axonNeuronId;
-    this.dendriteRegionId = dendriteRegionId;
-    this.dendriteNeuronId = dendriteNeuronId;
+    this.firingNodeId = firingNodeId;
+    this.firingNeuronId = firingNeuronId;
+    this.burningNodeId = burningNodeId;
+    this.burningNeuronId = burningNeuronId;
     this.fromExternalNode=fromExternalNode;
     this.length=length;
     this.presynaptic_w= presynaptic_w;
@@ -99,51 +99,47 @@ public class Synapse implements Comparable<Synapse>, Serializable{
   
   
   public Long getAxonNeuronId() {
-    return axonNeuronId;
+    return firingNeuronId;
   }
   
   public Long getFiring(){
-    return axonNeuronId;
+    return firingNeuronId;
   }
 
-  public void setAxonNeuronId(Long axonNeuronId) {
-    this.axonNeuronId = axonNeuronId;
+  public void setAxonNeuronId(Long firingNeuronId) {
+    this.firingNeuronId = firingNeuronId;
   }
 
-  public Long getDendriteNeuronId() {
-    return dendriteNeuronId;
+  public Long getBurningNeuronId() {
+    return burningNeuronId;
   }
   
   public Long getBurning(){
-    return dendriteNeuronId;
+    return burningNeuronId;
   }
 
-  public void setDendriteNeuronId(Long dendriteNeuronId) {
-    this.dendriteNeuronId = dendriteNeuronId;
+  public void setBurningNeuronId(Long burningNeuronId) {
+    this.burningNeuronId = burningNeuronId;
   }
 
   public Integer getAxonNodeId() {
-    return axonRegionId;
+    return firingNodeId;
   }
 
   public Integer getFiringNodeId() {
-    return axonRegionId;
+    return firingNodeId;
   }
 
-  public void setAxonRegionId(Integer axonRegionId) {
-    this.axonRegionId = axonRegionId;
-  }
-
-  public Integer getDendriteNodeId() {
-    return dendriteRegionId;
+  public void setAxonNodeId(Integer firingNodeId) {
+    this.firingNodeId = firingNodeId;
   }
 
   public Integer getBurningNodeId() {
-    return dendriteRegionId;
+    return burningNodeId;
   }
 
-  public void setDendriteRegionId(Integer dendriteRegionId) {
-    this.dendriteRegionId = dendriteRegionId;
+  public void setBurningNodeId(Integer burningNodeId) {
+    this.burningNodeId = burningNodeId;
   }
 
 
@@ -188,8 +184,8 @@ public class Synapse implements Comparable<Synapse>, Serializable{
 
   @Override
   public String toString() {
-    return "[firing:" + axonRegionId+"-"+axonNeuronId
-        + ", burning:"+dendriteRegionId +"-"+ dendriteNeuronId 
+    return "[firing:" + firingNodeId+"-"+firingNeuronId
+        + ", burning:"+burningNodeId +"-"+ burningNeuronId 
         +" from external:"+ fromExternalNode+"]";
   }
 
@@ -204,18 +200,18 @@ public class Synapse implements Comparable<Synapse>, Serializable{
     
     Synapse rhs = (Synapse) obj;
     return new EqualsBuilder()
-        .append(axonRegionId, rhs.axonRegionId)
-        .append(axonNeuronId, rhs.axonNeuronId)
-        .append(dendriteRegionId, rhs.dendriteRegionId)
-        .append(dendriteNeuronId, rhs.dendriteNeuronId).isEquals();
+        .append(firingNodeId, rhs.firingNodeId)
+        .append(firingNeuronId, rhs.firingNeuronId)
+        .append(burningNodeId, rhs.burningNodeId)
+        .append(burningNeuronId, rhs.burningNeuronId).isEquals();
   }
 
   @Override
   public int hashCode() {
     // you pick a hard-coded, randomly chosen, non-zero, odd number
        // ideally different for each class
-    return new HashCodeBuilder(17, 37).append(7l*axonNeuronId+9l+axonRegionId)
-        .append(dendriteNeuronId*dendriteRegionId+3l*axonNeuronId+17l).toHashCode();    
+    return new HashCodeBuilder(17, 37).append(7l*firingNeuronId+9l+firingNodeId)
+        .append(burningNeuronId*burningNodeId+3l*firingNeuronId+17l).toHashCode();    
   }
   
   @Override
@@ -223,16 +219,16 @@ public class Synapse implements Comparable<Synapse>, Serializable{
     if (this==o)
       return 0;
 
-    int retval = axonNeuronId.compareTo(o.getAxonNeuronId());
+    int retval = firingNeuronId.compareTo(o.getAxonNeuronId());
     if (retval!=0)
       return retval;      
-    retval = dendriteNeuronId.compareTo(o.getDendriteNeuronId());
+    retval = burningNeuronId.compareTo(o.getBurningNeuronId());
     if (retval!=0)
       return retval;    
-    retval = axonRegionId.compareTo(o.getAxonNodeId());
+    retval = firingNodeId.compareTo(o.getAxonNodeId());
     if (retval!=0)
       return retval;
-    retval = dendriteRegionId.compareTo(o.getDendriteNodeId());  
+    retval = burningNodeId.compareTo(o.getBurningNodeId());  
     
     return retval;
   }

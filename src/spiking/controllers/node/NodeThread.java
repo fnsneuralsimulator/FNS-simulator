@@ -604,14 +604,6 @@ public class NodeThread extends Thread{
         //case of first firing of a burst
         //time update
         currentTime = spikeTime;
-        sc.collectFireSpike(
-            n.getId(), 
-            firingNeuronId, 
-            spikeTime, 
-            nMan.getMaxN(), 
-            nMan.getCompressionFactor(),
-            (firingNeuronId<n.getExcitatory()),
-            (firingNeuronId>=n.getN()) );
         //firing spikes detecting and storing
         if (firingNeuronId<n.getN()){
           //State resetting to passive mode
@@ -621,13 +613,21 @@ public class NodeThread extends Thread{
         // last firing time for neuron
         nnMan.setLastFiringTime(firingNeuronId, currentTime);
         if (firingNeuronId>=n.getN()){
-          //debprintln("external input fire resetting...");
           //ext time-to-fire resetting
           nnMan.resetTimeToFire(firingNeuronId);
           //external routine
           nnMan.extInputReset(firingNeuronId, currentTime);
-          //debprintln("external input fire reset.");
+          if (currentTime>n.getExternalInput().getFireDuration())
+            continue;
         }
+        sc.collectFireSpike(
+            n.getId(), 
+            firingNeuronId, 
+            spikeTime, 
+            nMan.getMaxN(), 
+            nMan.getCompressionFactor(),
+            (firingNeuronId<n.getExcitatory()),
+            (firingNeuronId>=n.getN()) );
         //search for burning neurons connected to neuron_id
         makeNeuronFire(firingNeuronId, currentTime);
       }
@@ -874,26 +874,12 @@ public class NodeThread extends Thread{
     if (n.isExternalInput(firingNeuronId)){
       int eod=n.getExternalOutDegree();
       int eoj=n.getExternalOutJump();
-      //if (eod==1)
-      //  burnNeuron(
-      //      null,
-      //      firingNeuronId, 
-      //      n.getId(), 
-      //      firingNeuronId%n.getN(), 
-      //      n.getId(), 
-      //      0.1,
-      //      1.0,
-      //      n.getExternalAmplitude(),
-      //      currentTime, 
-      //      currentTime, 
-      //      true);
-      //else
-      for (int i=0; i<eod; ++i){
+      if (eod==1){
         burnNeuron(
             null,
             firingNeuronId, 
             n.getId(), 
-            (firingNeuronId+(eoj << i))%n.getN(), 
+            firingNeuronId%n.getN(), 
             n.getId(), 
             0.1,
             1.0,
@@ -902,6 +888,21 @@ public class NodeThread extends Thread{
             currentTime, 
             true);
       }
+      else
+        for (int i=0; i<eod; ++i){
+          burnNeuron(
+              null,
+              firingNeuronId, 
+              n.getId(), 
+              (firingNeuronId+(eoj*i))%n.getN(), 
+              n.getId(), 
+              0.1,
+              1.0,
+              n.getExternalAmplitude(),
+              currentTime, 
+              currentTime, 
+              true);
+        }
       return;
     }
     for (int i=0; i<synapses.size();++i){
@@ -910,7 +911,7 @@ public class NodeThread extends Thread{
           currentTime);
       // this is an inter-node synapse, the burning node 
       // must deal with this spike
-      if (!(synapses.get(i).getDendriteNodeId().equals(n.getId()))){
+      if (!(synapses.get(i).getBurningNodeId().equals(n.getId()))){
         continue;
       }
       burnNeuron(synapses.get(i), currentTime, currentTime, false);
@@ -933,10 +934,10 @@ public class NodeThread extends Thread{
         Boolean fromExternalInput){
     burnNeuron(
         s,
-        s.getBurning(),
-        s.getBurningNodeId(),
         s.getFiring(),
         s.getFiringNodeId(),
+        s.getBurning(),
+        s.getBurningNodeId(),
         s.getLength(),
         s.getPostSynapticWeight(),
         s.getPreSynapticWeight(),

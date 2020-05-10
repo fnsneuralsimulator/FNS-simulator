@@ -48,14 +48,14 @@ package spiking.node;
 
 public class FiringNeuron {
   
-  private Integer firingRegionId;
+  private Integer firingNodeId;
   private Long firingNeuronId;
   private Double firingTime;
   private Boolean isExcitatory;
   private Boolean isExternal;
   
-  public FiringNeuron(Integer firingRegionId, Long firingNeuronId, Double firingTime, Boolean isExcitatory, Boolean isExternal){
-    this.firingRegionId=firingRegionId;
+  public FiringNeuron(Integer firingNodeId, Long firingNeuronId, Double firingTime, Boolean isExcitatory, Boolean isExternal){
+    this.firingNodeId=firingNodeId;
     this.firingNeuronId=firingNeuronId;
     this.firingTime=firingTime;
     this.isExternal=isExternal;
@@ -65,8 +65,8 @@ public class FiringNeuron {
       this.isExcitatory=isExcitatory;
   }
 
-  public Integer getFiringRegionId() {
-    return firingRegionId;
+  public Integer getFiringNodeId() {
+    return firingNodeId;
   }
 
   public Long getFiringNeuronId() {

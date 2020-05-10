@@ -201,7 +201,7 @@ public class StatisticsCollector extends Thread {
   
   
   public synchronized void collectFireSpike(
-      Integer firingRegionId, 
+      Integer firingNodeId, 
       Long firingNeuronId, 
       Double firingTime, 
       Long maxN, 
@@ -210,7 +210,7 @@ public class StatisticsCollector extends Thread {
       Boolean isExternal){
     processFireSpike(
         new CollectedFire(
-            firingRegionId, 
+            firingNodeId, 
             firingNeuronId, 
             firingTime, 
             maxN, 
@@ -223,14 +223,14 @@ public class StatisticsCollector extends Thread {
 
   private void processFireSpike(CollectedFire cf) {
     CompressedFire compF = new CompressedFire(
-        cf.getFiringRegionId(), 
+        cf.getFiringNodeId(), 
         cf.getFiringNeuronId(), 
         cf.getFiringTime(), 
         cf.getMaxN(), 
         cf.getCompressionFactor());
     Integer tmp = compressor.get(
         new CompressedFire(
-            cf.getFiringRegionId(), 
+            cf.getFiringNodeId(), 
             cf.getFiringNeuronId(), 
             cf.getFiringTime(), 
             cf.getMaxN(), 
@@ -239,9 +239,9 @@ public class StatisticsCollector extends Thread {
       return;
     firingNeurons.add(new Double(compF.getCompressedNeuronId()));
     firingTimes.add(cf.getFiringTime());
-    if (checkall ||( NOI.get(cf.getFiringRegionId())!=null )){
+    if (checkall ||( NOI.get(cf.getFiringNodeId())!=null )){
       FiringNeuron fn= new FiringNeuron(
-          cf.getFiringRegionId(),
+          cf.getFiringNodeId(),
           cf.getFiringNeuronId(),
           cf.getFiringTime(),
           cf.getIsExcitatory(),
@@ -375,7 +375,10 @@ public class StatisticsCollector extends Thread {
             }
         }
       }
-      towritefile= new File(defFileName+"_burning.csv");
+      if (reducedOutput)
+        towritefile= new File(defFileName+"_burning_r.csv");
+      else
+        towritefile= new File(defFileName+"_burning.csv");
       if (!towritefile.exists()){
         towritefile.createNewFile();
         new_burn_file=true;
@@ -384,13 +387,7 @@ public class StatisticsCollector extends Thread {
            BufferedWriter bw = new BufferedWriter(fw);
       burnWriter = new PrintWriter(bw);
       if (new_burn_file){
-        if (reducedOutput)
-          burnWriter.println(
-              "Burning Time, "
-              + "Burning Node, "
-              + "Burning Neuron, "
-              + "To Internal State");
-        else
+        if (!reducedOutput)
           burnWriter.println(
               "Burning Time, "
               + "Firing Node, "
@@ -414,15 +411,15 @@ public class StatisticsCollector extends Thread {
         String fromStateToPrint;
         String toStateToPrint;
         if (fromState==null){
-          fromStateToPrint=reducedOutput?"10101":"refr";
-          toStateToPrint=reducedOutput?"10101":"refr";
+          fromStateToPrint=reducedOutput?"0":"refr";
+          toStateToPrint=reducedOutput?"0":"refr";
         }
         else{
           fromStateToPrint=""+df.format(fromState);
           toStateToPrint=""+df.format(fromState+stepInState);
         }
         if (stepInState==null)
-          stepInStateToPrint=reducedOutput?"10101":"refr";
+          stepInStateToPrint=reducedOutput?"0":"refr";
         else
           stepInStateToPrint=""+df.format(stepInState);
         if (reducedOutput)
@@ -460,7 +457,10 @@ public class StatisticsCollector extends Thread {
           +wrotes_split
           +" complete.");
       it=firingSpikesHashMap.keySet().iterator();
-      towritefile= new File(defFileName+"_firing.csv");
+      if (reducedOutput)
+        towritefile= new File(defFileName+"_firing_r.csv");
+      else
+        towritefile= new File(defFileName+"_firing.csv");
       if (towritefile.exists())
         fire_fw = new FileWriter(towritefile,true);
       else{
@@ -471,13 +471,7 @@ public class StatisticsCollector extends Thread {
            BufferedWriter fire_bw = new BufferedWriter(fire_fw);
       fireWriter=new PrintWriter(fire_bw);
       if (new_fire_file){
-        if (reducedOutput)
-          fireWriter.println(
-              "Firing Time,"
-              +" Firing Node,"
-              +" Firing Neuron, "
-              +" External Source");
-        else
+        if (!reducedOutput)
           fireWriter.println(
               "Firing Time,"
               +" Firing Node,"
@@ -488,21 +482,26 @@ public class StatisticsCollector extends Thread {
       while (it.hasNext()){
         Long key = it.next();
         String excitStr;
+        String isExternalStr;
         if (firingSpikesHashMap.get(key).isExcitatory())
           excitStr="excitatory";
         else
           excitStr="inhibitory";
+        if (firingSpikesHashMap.get(key).isExternal())
+          isExternalStr=reducedOutput?"1":"true";
+        else
+          isExternalStr=reducedOutput?"0":"false";
         if (reducedOutput)
           fireWriter.println(
               df.format(firingSpikesHashMap.get(key).getFiringTime())+", "
-              +firingSpikesHashMap.get(key).getFiringRegionId()+", "
+              +firingSpikesHashMap.get(key).getFiringNodeId()+", "
               + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
-              + firingSpikesHashMap.get(key).isExternal()
+              + isExternalStr
               );
         else
           fireWriter.println(
               df.format(firingSpikesHashMap.get(key).getFiringTime())+", "
-              +firingSpikesHashMap.get(key).getFiringRegionId()+", "
+              +firingSpikesHashMap.get(key).getFiringNodeId()+", "
               + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
               + excitStr+", "
               + firingSpikesHashMap.get(key).isExternal()
@@ -550,7 +549,8 @@ public class StatisticsCollector extends Thread {
         String stepInStateToPrint;
         String fromStateToPrint;
         String toStateToPrint;
-        String refrString="10101";
+        String fromExternalInput;
+        String refrString="0";
         if (fromState==null){
           fromStateToPrint=refrString;
           toStateToPrint=refrString;
@@ -560,7 +560,7 @@ public class StatisticsCollector extends Thread {
           toStateToPrint=""+(fromState+stepInState);
         }
         if (stepInState==null)
-          stepInStateToPrint="10101";
+          stepInStateToPrint="0";
         else
           stepInStateToPrint=stepInState.toString();
         burnWriter.println(
@@ -569,7 +569,6 @@ public class StatisticsCollector extends Thread {
             + burningSpikesHashMap.get(key).getFiringNeuronId()+", "
             + burningSpikesHashMap.get(key).getBurningNodeId()+", "
             + burningSpikesHashMap.get(key).getBurningNeuronId()+", "
-            + burningSpikesHashMap.get(key).fromExternalInput()+", "
             + burningSpikesHashMap.get(key).fromExternalInputInteger()+", "
             + fromStateToPrint +", "
             + toStateToPrint +", "
@@ -603,14 +602,14 @@ public class StatisticsCollector extends Thread {
         //if (reducedOutput)
         //  fireWriter.println(
         //      firingSpikesHashMap.get(key).getFiringTime().toString()+", "
-        //      +firingSpikesHashMap.get(key).getFiringRegionId()+", "
+        //      +firingSpikesHashMap.get(key).getFiringNodeId()+", "
         //      + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
         //      + (firingSpikesHashMap.get(key).isExternal()?'1':'0')
         //      );
         //else
         fireWriter.println(
             firingSpikesHashMap.get(key).getFiringTime().toString()+", "
-            +firingSpikesHashMap.get(key).getFiringRegionId()+", "
+            +firingSpikesHashMap.get(key).getFiringNodeId()+", "
             + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
             + (firingSpikesHashMap.get(key).isExcitatory()?'1':'0')+", "
             + (firingSpikesHashMap.get(key).isExternal()?'1':'0')

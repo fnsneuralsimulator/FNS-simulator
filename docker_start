@@ -1,0 +1,5 @@
+#!/bin/bash
+
+MVN_FNS_PATH=/usr/local/fns
+M2_PATH=$(pwd)
+docker run --rm -w $MVN_FNS_PATH -v $(pwd):$MVN_FNS_PATH -v $M2_PATH:/root/.m2 -it --name fns maven:3-openjdk-15 ./start $@
