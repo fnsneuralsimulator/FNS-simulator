@@ -604,14 +604,6 @@ public class NodeThread extends Thread{
         //case of first firing of a burst
         //time update
         currentTime = spikeTime;
-        sc.collectFireSpike(
-            n.getId(), 
-            firingNeuronId, 
-            spikeTime, 
-            nMan.getMaxN(), 
-            nMan.getCompressionFactor(),
-            (firingNeuronId<n.getExcitatory()),
-            (firingNeuronId>=n.getN()) );
         //firing spikes detecting and storing
         if (firingNeuronId<n.getN()){
           //State resetting to passive mode
@@ -621,13 +613,21 @@ public class NodeThread extends Thread{
         // last firing time for neuron
         nnMan.setLastFiringTime(firingNeuronId, currentTime);
         if (firingNeuronId>=n.getN()){
-          //debprintln("external input fire resetting...");
           //ext time-to-fire resetting
           nnMan.resetTimeToFire(firingNeuronId);
           //external routine
           nnMan.extInputReset(firingNeuronId, currentTime);
-          //debprintln("external input fire reset.");
+          if (currentTime>n.getExternalInput().getFireDuration())
+            continue;
         }
+        sc.collectFireSpike(
+            n.getId(), 
+            firingNeuronId, 
+            spikeTime, 
+            nMan.getMaxN(), 
+            nMan.getCompressionFactor(),
+            (firingNeuronId<n.getExcitatory()),
+            (firingNeuronId>=n.getN()) );
         //search for burning neurons connected to neuron_id
         makeNeuronFire(firingNeuronId, currentTime);
       }
