@@ -650,6 +650,8 @@ public class SpikingNeuralSimulator extends Thread{
         options.addOption("r", "reduced-output", false, 
             "enables reduced CSV files, i.e., outputs that indicates "
             +"only spiking events and inner states of the neurons");
+        options.addOption("g", "gephi", false, 
+            "produce also a csv for Gephi");
         options.addOption("h", "help", false, "shows this help");
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -708,6 +710,8 @@ public class SpikingNeuralSimulator extends Thread{
       sns.sc.setMatlab();
     if (cmd.hasOption("reduced-output"))
       sns.sc.setReducedOutput();
+    if (cmd.hasOption("gephi"))
+      sns.sc.setGephi();
     try {
       sns.initFromConfigFileAndConnectivityPackage(
           (new File(args[0]+"/config.xml")).getAbsolutePath(), 
