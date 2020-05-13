@@ -54,7 +54,12 @@ public class FiringNeuron {
   private Boolean isExcitatory;
   private Boolean isExternal;
   
-  public FiringNeuron(Integer firingNodeId, Long firingNeuronId, Double firingTime, Boolean isExcitatory, Boolean isExternal){
+  public FiringNeuron(
+      Integer firingNodeId, 
+      Long firingNeuronId, 
+      Double firingTime, 
+      Boolean isExcitatory, 
+      Boolean isExternal){
     this.firingNodeId=firingNodeId;
     this.firingNeuronId=firingNeuronId;
     this.firingTime=firingTime;

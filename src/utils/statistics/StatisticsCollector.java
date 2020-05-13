@@ -64,8 +64,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import connectivity.conn_package.PackageReader;
 import spiking.node.FiringNeuron;
-//import spiking.node.SpikingSynapse;
-import spiking.node.Synapse;
 import utils.plotter.FastScatterPlotter;
 import utils.plotter.ScatterPlotter;
 import utils.tools.CompressedFire;
@@ -78,8 +76,6 @@ public class StatisticsCollector extends Thread {
   private volatile Long passive2active=0l;
   private volatile Long active2passive=0l;
   public  volatile Long missedFires=0l;
-  //private volatile HashMap<Long, SpikingSynapse>burningSpikesHashMap = 
-  //    new HashMap<Long, SpikingSynapse>();
   private volatile HashMap<Long, CollectedBurn>burningSpikesHashMap = 
       new HashMap<Long, CollectedBurn>();
   private volatile HashMap<Long, FiringNeuron>firingSpikesHashMap = 
@@ -106,6 +102,7 @@ public class StatisticsCollector extends Thread {
   private volatile int wrotes_split=0;
   private volatile String filename = "";
   private volatile Boolean matlab=false;
+  private volatile Boolean gephi=false;
   private volatile Boolean reducedOutput=false;
   private volatile int count=1;
   private volatile ArrayList<CollectedFire> newFires=
@@ -182,6 +179,10 @@ public class StatisticsCollector extends Thread {
   public void setReducedOutput() {
     reducedOutput=true;
   }
+
+  public void setGephi() {
+    gephi=true;
+  }
   
   public synchronized void collectActive(){
     ++active;
@@ -257,7 +258,6 @@ public class StatisticsCollector extends Thread {
   }
   
   public synchronized void collectBurnSpike(
-      //Synapse s, 
       Long firingNeuronId,
       Integer firingNodeId,
       Long burningNeuronId,
@@ -272,7 +272,6 @@ public class StatisticsCollector extends Thread {
       Double fireTime) {
     processBurnSpike(
         new CollectedBurn(
-            //s, 
             firingNeuronId,
             firingNodeId,
             burningNeuronId,
@@ -517,6 +516,8 @@ public class StatisticsCollector extends Thread {
       fireWriter.close();
       if (matlab)
         makeMatlabCsv();
+      if (gephi);
+        makeGephiCsv();
       reset();
       System.out.println(
           "[Statistics Collector] "
@@ -555,7 +556,7 @@ public class StatisticsCollector extends Thread {
         String stepInStateToPrint;
         String fromStateToPrint;
         String toStateToPrint;
-        String fromExternalInput;
+        //String fromExternalInput;
         String refrString="0";
         if (fromState==null){
           fromStateToPrint=refrString;
@@ -605,14 +606,6 @@ public class StatisticsCollector extends Thread {
       fireWriter=new PrintWriter(fire_bw);
       while (it.hasNext()){
         Long key = it.next();
-        //if (reducedOutput)
-        //  fireWriter.println(
-        //      firingSpikesHashMap.get(key).getFiringTime().toString()+", "
-        //      +firingSpikesHashMap.get(key).getFiringNodeId()+", "
-        //      + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
-        //      + (firingSpikesHashMap.get(key).isExternal()?'1':'0')
-        //      );
-        //else
         fireWriter.println(
             firingSpikesHashMap.get(key).getFiringTime().toString()+", "
             +firingSpikesHashMap.get(key).getFiringNodeId()+", "
@@ -632,6 +625,47 @@ public class StatisticsCollector extends Thread {
     }
   }
   
+  private void makeGephiCsv(){
+    if (filename=="")
+      return;
+    PrintWriter burnWriter;
+    PrintWriter fireWriter;
+    try {
+      Iterator<Long> it = burningSpikesHashMap.keySet().iterator();
+      File towritefile;
+      FileWriter fire_fw;
+      towritefile= new File(defFileName+"_gephi.csv");
+      if (!towritefile.exists())
+        towritefile.createNewFile();
+      FileWriter fw = new FileWriter(towritefile,true);
+           BufferedWriter bw = new BufferedWriter(fw);
+      burnWriter = new PrintWriter(bw);
+      burnWriter.println( "Firing, Burning");
+      while (it.hasNext()){
+        Long key = it.next();
+        if(!burningSpikesHashMap.get(key).fromExternalInput()){
+          burnWriter.println(
+              + burningSpikesHashMap.get(key).getFiringNodeId()+"-"
+              + burningSpikesHashMap.get(key).getFiringNeuronId()+", "
+              + burningSpikesHashMap.get(key).getBurningNodeId()+"-"
+              + burningSpikesHashMap.get(key).getBurningNeuronId());
+        }
+      }
+      burnWriter.flush();
+      burnWriter.close();
+      System.out.println(
+          "[Statistics Collector] "
+          +towritefile.getAbsolutePath()
+          +" update "
+          +wrotes_split
+          +" complete.");
+    } catch (FileNotFoundException | UnsupportedEncodingException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
   
   public void setMinMaxNe_xn_ratios(Double minNe_xn_ratio, Double maxNe_xn_ratio){
     this.minNe_xn_ratio=minNe_xn_ratio;
