@@ -516,7 +516,7 @@ public class StatisticsCollector extends Thread {
       fireWriter.close();
       if (matlab)
         makeMatlabCsv();
-      if (gephi);
+      if (gephi)
         makeGephiCsv();
       reset();
       System.out.println(
