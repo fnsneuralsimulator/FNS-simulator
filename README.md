@@ -30,7 +30,9 @@ Biomedical Technology, Technical University of Madrid; University of Rome
 Run using Docker
 ------------
 
-To run FNS with Docker, you can use the public Docker Hub image:  
+To run FNS with Docker, you can use the public Docker Hub image.
+Please navigate the terminal until the FNS folder (where you placed the [SIMULATION_FOLDER] ) and type the following command:
+
 `docker run --rm -v $(pwd)/[SIMULATION_FOLDER]:/usr/local/fns/[SIMULATION_FOLDER] -it --name fns fnsneuralsimulator/fns-simulator:latest fns [SIMULATION_FOLDER/EXPERIMENT][SWITCHES]`
 
 You can also compile the FNS simulator through the Docker image:  
