@@ -1,1 +1,3 @@
-java -Dfile.encoding=Cp1252 -jar target/fns-V3.3.64-jar-with-dependencies.jar $@
+#!/bin/bash
+
+java $JAVA_OPTS -Dfile.encoding=Cp1252 -jar target/fns-V3.3.64-jar-with-dependencies.jar $@
