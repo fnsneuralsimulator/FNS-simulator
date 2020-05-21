@@ -53,7 +53,6 @@ import java.util.PriorityQueue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
 import spiking.internode.InterNodeBurningSpike;
 import spiking.internode.InterNodeSpike;
 import spiking.node.Node;

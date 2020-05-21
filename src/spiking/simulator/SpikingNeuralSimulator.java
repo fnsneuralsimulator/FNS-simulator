@@ -158,7 +158,11 @@ public class SpikingNeuralSimulator extends Thread{
    */
   public void runNewSplit(double newStopTime){
     double stopTime=(newStopTime>total_time)?total_time:newStopTime;
-    println("running new splits with new stop simulated time:"+stopTime);
+    println(
+        "running new split "
+        +splitCount
+        +" with new stop simulated time:"
+        +stopTime);
     nMan.runNewSplit(stopTime);
   }
   
@@ -250,7 +254,7 @@ public class SpikingNeuralSimulator extends Thread{
       if (currentTime>=total_time)
         killAll();
       else{
-        printBreakLine();
+        //printBreakLine();
         try {
           sleep(5);
         } catch (InterruptedException e) {
