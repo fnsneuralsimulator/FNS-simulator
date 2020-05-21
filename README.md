@@ -30,8 +30,10 @@ Biomedical Technology, Technical University of Madrid; University of Rome
 Run using Docker
 ------------
 
-To run FNS with Docker, you can use the public Docker Hub image:  
-`docker run --rm -v $(pwd)/[SIMULATION_FOLDER]:/usr/local/fns/[SIMULATION_FOLDER] -it --name fns fnsneuralsimulator/fns-simulator:latest fns [SIMULATION_FOLDER/EXPERIMENT]`
+To run FNS with Docker, you can use the public Docker Hub image.
+Please navigate the terminal until the FNS folder (where you placed the [SIMULATION_FOLDER] ) and type the following command:
+
+`docker run --rm -v $(pwd)/[SIMULATION_FOLDER]:/usr/local/fns/[SIMULATION_FOLDER] -it --name fns fnsneuralsimulator/fns-simulator:latest fns [SIMULATION_FOLDER/EXPERIMENT][SWITCHES]`
 
 You can also compile the FNS simulator through the Docker image:  
 
@@ -51,10 +53,6 @@ FNS is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
-
-FNS is free software: you can redistribute it and/or modify it under the terms 
-of the GNU General Public License version 3 as published by  the Free Software 
-Foundation.
 
 FNS is distributed in the hope that it will be useful, but WITHOUT ANY 
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR 
