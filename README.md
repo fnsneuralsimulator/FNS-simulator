@@ -36,7 +36,7 @@ Please navigate the terminal until the FNS folder (where you placed the [SIMULAT
 
 `docker run --rm -v $(pwd)/[SIMULATION_FOLDER]:/usr/local/fns/[SIMULATION_FOLDER] -it --name fns fnsneuralsimulator/fns-simulator:latest fns [SIMULATION_FOLDER/EXPERIMENT][SWITCHES]`
 
-(prefix 'sudo' for linux privileges). Replace '-it' with '-d' to detach and run FNS in the background. 
+(prefix 'sudo' for linux privileges). Replace '-it' with '-d' if you prefer to detach and run FNS in the background. 
 
 You can also compile the FNS simulator through the Docker image:  
 
