@@ -47,7 +47,7 @@ where `[SIMULATION_FOLDER]` is the folder which contains the simulation packages
 
 To make sure you're using the latest version of Docker, type:
 
-`docker pull fnsneuralsimulator/fns-simulator:latest'
+`docker pull fnsneuralsimulator/fns-simulator:latest`
 
 Please refer to the [user guide](https://docs.google.com/document/d/1-oJK6dzu6KIggYonajqVq8xA6mUZ3ZZdBMq7zVMyTcA/export?format=pdf) for additional information.
 
