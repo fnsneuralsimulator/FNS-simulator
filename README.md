@@ -36,7 +36,8 @@ Please navigate the terminal until the FNS folder (where you placed the [SIMULAT
 
 `docker run --rm -v $(pwd)/[SIMULATION_FOLDER]:/usr/local/fns/[SIMULATION_FOLDER] -it --name fns fnsneuralsimulator/fns-simulator:latest fns [SIMULATION_FOLDER/EXPERIMENT][SWITCHES]`
 
-Replace '-it' with '-d' if you prefer to detach and run FNS in the background. Specify the field JAVA_OPTS in case you need to modify the heap size.
+* Replace '-it' with '-d' if you prefer to detach and run FNS in the background;
+* Specify the field JAVA_OPTS in case you need to modify the heap size.
 
 You can also compile the FNS simulator through the Docker image:  
 
