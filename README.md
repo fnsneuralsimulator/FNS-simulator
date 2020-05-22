@@ -30,9 +30,7 @@ Biomedical Technology, Technical University of Madrid; University of Rome
 Run using Docker
 ------------
 
-To run FNS with Docker, you can use the public Docker Hub image.
-
-[Install docker](https://docs.docker.com/install/) 
+To run FNS with [Docker](https://docs.docker.com/install/), you can use the public Docker Hub image. 
 
 Please navigate the terminal until the FNS folder (where you placed the [SIMULATION_FOLDER] ) and type the following command:
 
