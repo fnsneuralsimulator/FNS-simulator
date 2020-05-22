@@ -32,7 +32,7 @@ Run using Docker
 
 To run FNS with [Docker](https://docs.docker.com/install/), you can use the public Docker Hub image. 
 
-Please navigate the terminal until the FNS folder (where you placed the `[SIMULATION_FOLDER]` ) and type the following command (consider the prefix 'sudo' for linux privileges):
+Please navigate the terminal until the FNS folder (where you placed the `[SIMULATION_FOLDER]` ) and type the following command (consider the prefix `sudo` for linux privileges):
 
 `docker run --rm -v $(pwd)/[SIMULATION_FOLDER]:/usr/local/fns/[SIMULATION_FOLDER] -it -e JAVA_OPTS="" --name fns fnsneuralsimulator/fns-simulator:latest fns [SIMULATION_FOLDER/EXPERIMENT][SWITCHES]`
 
