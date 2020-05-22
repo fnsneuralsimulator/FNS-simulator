@@ -45,6 +45,9 @@ You can also compile the FNS simulator through the Docker image:
 
 where `[SIMULATION_FOLDER]` is the folder which contains the simulation packages, `[EXPERIMENT]` is the package which contains the set of configuration files for a single simulation, and `.m2` is the directory for your maven repositories. 
 
+To make sure you're using the latest version of Docker, type:
+
+`docker pull fnsneuralsimulator/fns-simulator:latest'
 
 Please refer to the [user guide](https://docs.google.com/document/d/1-oJK6dzu6KIggYonajqVq8xA6mUZ3ZZdBMq7zVMyTcA/export?format=pdf) for additional information.
 
