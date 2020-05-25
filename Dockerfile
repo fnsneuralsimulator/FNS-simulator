@@ -1,5 +1,6 @@
 FROM maven:3-openjdk-15
 
+MAINTAINER fnsneuralsimulator
 ENV workdir /usr/local/fns
 ADD src/ ${workdir}/src/
 ADD target/ ${workdir}/target/
