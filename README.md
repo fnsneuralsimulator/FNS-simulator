@@ -30,10 +30,18 @@ Biomedical Technology, Technical University of Madrid; University of Rome
 Run using Docker
 ------------
 
-To run FNS with Docker, you can use the public Docker Hub image.
-Please navigate the terminal until the FNS folder (where you placed the [SIMULATION_FOLDER] ) and type the following command:
+To run FNS with [Docker](https://docs.docker.com/install/), you can use the public Docker Hub image. 
 
+<<<<<<< HEAD
 `docker run --rm -v $(pwd)/[SIMULATION_FOLDER]:/usr/local/fns/[SIMULATION_FOLDER] -d --name fns fnsneuralsimulator/fns-simulator:latest fns [SIMULATION_FOLDER/EXPERIMENT][SWITCHES]`
+=======
+Please navigate the terminal until the FNS folder (where you placed the `[SIMULATION_FOLDER]` ) and type the following command (consider the prefix `sudo` for linux privileges):
+
+`docker run --rm -v $(pwd)/[SIMULATION_FOLDER]:/usr/local/fns/[SIMULATION_FOLDER] -it -e JAVA_OPTS="" --name fns fnsneuralsimulator/fns-simulator:latest fns [SIMULATION_FOLDER/EXPERIMENT][SWITCHES]`
+
+* replace `-it` with `-d` if you prefer to detach and run FNS in the background;
+* specify the field `JAVA_OPTS` in case you need to modify the heap size.
+>>>>>>> ddd211d0981cd1c1f5b0a7da5cd569c4e2b1cbc9
 
 To see the command output, open the docker logs for the container:
 
@@ -42,7 +50,11 @@ You can also compile the FNS simulator through the Docker image:
 
 `docker run --rm -v $(pwd)/.m2/:/root/.m2 -it --name fns fnsneuralsimulator/fns-simulator:latest compile_fns`
 
-where `[SIMULATION_FOLDER]` is the folder which contains the simulation packages, `[EXPERIMENT]` is the package which contains the set of configuration files for a single simulation, and `.m2` is the directory for your maven repositories
+where `[SIMULATION_FOLDER]` is the folder which contains the simulation packages, `[EXPERIMENT]` is the package which contains the set of configuration files for a single simulation, and `.m2` is the directory for your maven repositories. 
+
+To make sure you are using the latest version of Docker, type:
+
+`docker pull fnsneuralsimulator/fns-simulator:latest`
 
 Please refer to the [user guide](https://docs.google.com/document/d/1-oJK6dzu6KIggYonajqVq8xA6mUZ3ZZdBMq7zVMyTcA/export?format=pdf) for additional information.
 
