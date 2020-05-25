@@ -39,13 +39,6 @@ Please navigate the terminal until the FNS folder (where you placed the `[SIMULA
 * replace `-it` with `-d` if you prefer to detach and run FNS in the background;
 * specify the field `JAVA_OPTS` in case you need to modify the heap size.
 
-To see the command output, open the docker logs for the container:
-
-`docker logs ...`
-You can also compile the FNS simulator through the Docker image:  
-
-`docker run --rm -v $(pwd)/.m2/:/root/.m2 -it --name fns fnsneuralsimulator/fns-simulator:latest compile_fns`
-
 where `[SIMULATION_FOLDER]` is the folder which contains the simulation packages, `[EXPERIMENT]` is the package which contains the set of configuration files for a single simulation, and `.m2` is the directory for your maven repositories. 
 
 To make sure you are using the latest version of Docker, type:
