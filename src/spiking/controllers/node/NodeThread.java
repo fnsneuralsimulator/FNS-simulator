@@ -948,17 +948,17 @@ public class NodeThread extends Thread{
 
   public void burnNeuron(
       Synapse s, 
-      Long firingNeuronId,
-      Integer firingNodeId,
-      Long burningNeuronId,
-      Integer burningNodeId,
-      Double axon_length,
-      Double postsynapticWeight,
-      Double presynapticWeight,
-      Double burnTime, 
-      Double fireTime, 
-      Boolean fromExternalInput){
-    Double tmp, dsxNumerator, dsxDenominator, riseTermXFactor, oldSx;
+      long firingNeuronId,
+      int firingNodeId,
+      long burningNeuronId,
+      int burningNodeId,
+      double axon_length,
+      double postsynapticWeight,
+      double presynapticWeight,
+      double burnTime, 
+      double fireTime, 
+      boolean fromExternalInput){
+    double tmp, dsxNumerator, dsxDenominator, riseTermXFactor, oldSx;
     int arp;
     //distinguish cases of no initial network activity : already activated
     arp=(nnMan.getLastFiringTime(burningNeuronId).equals(Constants.TIME_TO_FIRE_DEF_VAL))?0:1;
@@ -1020,10 +1020,10 @@ public class NodeThread extends Thread{
       startTime = System.currentTimeMillis();
       
       //BURNING NEURON
-      Double sx = nnMan.getState(burningNeuronId);
+      double sx = nnMan.getState(burningNeuronId);
       oldSx=sx;
       //step in state
-      Double sy = postsynapticWeight*presynapticWeight;
+      double sy = postsynapticWeight*presynapticWeight;
       // UPDATING List of Active Neurons
       // case of passive neuron
       if (nnMan.getTimeToFire(burningNeuronId)
@@ -1039,7 +1039,7 @@ public class NodeThread extends Thread{
                 burningNeuronId, 
                 burnTime+Constants.EPSILON);
           else{
-            Double activeTransitionDelay=(1.0/(sx-1));
+            double activeTransitionDelay=(1.0/(sx-1));
             nnMan.setTimeToFire(
                 burningNeuronId, 
                 burnTime+ activeTransitionDelay);
