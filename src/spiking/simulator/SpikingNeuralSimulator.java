@@ -654,6 +654,10 @@ public class SpikingNeuralSimulator extends Thread{
         options.addOption("r", "reduced-output", false, 
             "enables reduced CSV files, i.e., outputs that indicates "
             +"only spiking events and inner states of the neurons");
+        options.addOption("R", "super-reduced-output", false, 
+            "enables super-reduced CSV files, i.e., outputs that indicates "
+            +"only spiking events and inner states of the neurons"
+            +" with reduced precision");
         options.addOption("g", "gephi", false, 
             "produce also a csv for Gephi");
         options.addOption("h", "help", false, "shows this help");
@@ -714,6 +718,8 @@ public class SpikingNeuralSimulator extends Thread{
       sns.sc.setMatlab();
     if (cmd.hasOption("reduced-output"))
       sns.sc.setReducedOutput();
+    if (cmd.hasOption("super-reduced-output"))
+      sns.sc.setSuperReducedOutput();
     if (cmd.hasOption("gephi"))
       sns.sc.setGephi();
     try {

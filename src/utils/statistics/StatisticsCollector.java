@@ -104,6 +104,7 @@ public class StatisticsCollector extends Thread {
   private volatile Boolean matlab=false;
   private volatile Boolean gephi=false;
   private volatile Boolean reducedOutput=false;
+  private Boolean superReducedOutput=false;
   private volatile int count=1;
   private volatile ArrayList<CollectedFire> newFires=
       new ArrayList<CollectedFire>();
@@ -178,6 +179,10 @@ public class StatisticsCollector extends Thread {
 
   public void setReducedOutput() {
     reducedOutput=true;
+  }
+
+  public void setSuperReducedOutput() {
+    superReducedOutput=true;
   }
 
   public void setGephi() {
@@ -358,13 +363,15 @@ public class StatisticsCollector extends Thread {
     Boolean new_fire_file=false;
     File towritefile;
     FileWriter fire_fw;
-    DecimalFormat df = new DecimalFormat("#.################"); 
+    DecimalFormat df = superReducedOutput? 
+      new DecimalFormat("#.##"):
+      new DecimalFormat("#.################"); 
     try {
       Iterator<Long> it = burningSpikesHashMap.keySet().iterator();
       if (firstFiringNeurons==null) {
 //        int count = 1;
         for(;;++count) {
-          if (reducedOutput)
+          if (reducedOutput||superReducedOutput)
             towritefile= new File(
                 filename
                 +String.format("%03d", count)
@@ -382,6 +389,8 @@ public class StatisticsCollector extends Thread {
       }
       if (reducedOutput)
         towritefile= new File(defFileName+"_burning_r.csv");
+      else if (superReducedOutput)
+        towritefile= new File(defFileName+"_burning_R.csv");
       else
         towritefile= new File(defFileName+"_burning.csv");
       if (!towritefile.exists()){
@@ -392,7 +401,7 @@ public class StatisticsCollector extends Thread {
            BufferedWriter bw = new BufferedWriter(fw);
       burnWriter = new PrintWriter(bw);
       if (new_burn_file){
-        if (!reducedOutput)
+        if (!(reducedOutput||superReducedOutput))
           burnWriter.println(
               "Burning Time, "
               + "Firing Node, "
@@ -416,18 +425,18 @@ public class StatisticsCollector extends Thread {
         String fromStateToPrint;
         String toStateToPrint;
         if (fromState==null){
-          fromStateToPrint=reducedOutput?"0":"refr";
-          toStateToPrint=reducedOutput?"0":"refr";
+          fromStateToPrint=(reducedOutput||superReducedOutput)?"0":"refr";
+          toStateToPrint=(reducedOutput||superReducedOutput)?"0":"refr";
         }
         else{
           fromStateToPrint=""+df.format(fromState);
           toStateToPrint=""+df.format(fromState+stepInState);
         }
         if (stepInState==null)
-          stepInStateToPrint=reducedOutput?"0":"refr";
+          stepInStateToPrint=(reducedOutput||superReducedOutput)?"0":"refr";
         else
           stepInStateToPrint=""+df.format(stepInState);
-        if (reducedOutput)
+        if (reducedOutput||superReducedOutput)
           burnWriter.println(
               df.format(burningSpikesHashMap.get(key).getBurnTime())+", "
               + burningSpikesHashMap.get(key).getBurningNodeId()+", "
@@ -464,6 +473,8 @@ public class StatisticsCollector extends Thread {
       it=firingSpikesHashMap.keySet().iterator();
       if (reducedOutput)
         towritefile= new File(defFileName+"_firing_r.csv");
+      else if (superReducedOutput)
+        towritefile= new File(defFileName+"_firing_R.csv");
       else
         towritefile= new File(defFileName+"_firing.csv");
       if (towritefile.exists())
@@ -476,7 +487,7 @@ public class StatisticsCollector extends Thread {
            BufferedWriter fire_bw = new BufferedWriter(fire_fw);
       fireWriter=new PrintWriter(fire_bw);
       if (new_fire_file){
-        if (!reducedOutput)
+        if (!(reducedOutput||superReducedOutput))
           fireWriter.println(
               "Firing Time,"
               +" Firing Node,"
@@ -493,10 +504,10 @@ public class StatisticsCollector extends Thread {
         else
           excitStr="inhibitory";
         if (firingSpikesHashMap.get(key).isExternal())
-          isExternalStr=reducedOutput?"1":"true";
+          isExternalStr=(reducedOutput||superReducedOutput)?"1":"true";
         else
-          isExternalStr=reducedOutput?"0":"false";
-        if (reducedOutput)
+          isExternalStr=(reducedOutput||superReducedOutput)?"0":"false";
+        if (reducedOutput||superReducedOutput)
           fireWriter.println(
               df.format(firingSpikesHashMap.get(key).getFiringTime())+", "
               +firingSpikesHashMap.get(key).getFiringNodeId()+", "
