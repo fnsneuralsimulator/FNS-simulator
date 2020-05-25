@@ -364,18 +364,23 @@ public class StatisticsCollector extends Thread {
     File towritefile;
     FileWriter fire_fw;
     DecimalFormat df = superReducedOutput? 
-      new DecimalFormat("#.##"):
+      new DecimalFormat("#.###"):
       new DecimalFormat("#.################"); 
     try {
       Iterator<Long> it = burningSpikesHashMap.keySet().iterator();
       if (firstFiringNeurons==null) {
 //        int count = 1;
         for(;;++count) {
-          if (reducedOutput||superReducedOutput)
+          if (reducedOutput)
             towritefile= new File(
                 filename
                 +String.format("%03d", count)
                 +"_burning_r.csv");
+          if (superReducedOutput)
+            towritefile= new File(
+                filename
+                +String.format("%03d", count)
+                +"_burning_R.csv");
           else
             towritefile= new File(
                 filename
