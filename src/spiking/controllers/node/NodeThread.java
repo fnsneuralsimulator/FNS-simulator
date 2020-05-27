@@ -100,6 +100,7 @@ public class NodeThread extends Thread{
   private FastMath fm = new FastMath();
   private Double debugMaxWPDiff=0.0;
   private Boolean do_fast;
+  private Boolean isNOI;
   private Boolean lif = false;
   private Boolean exp_decay = false;
   long[] times= new long[10];
@@ -176,7 +177,8 @@ public class NodeThread extends Thread{
       Double avgNeuronalSignalSpeed,
       Boolean lif,
       Boolean exp_decay,
-      Boolean do_fast){
+      Boolean do_fast,
+      Boolean isNOI){
     this.n=new Node(
         id,
         n, 
@@ -209,7 +211,8 @@ public class NodeThread extends Thread{
         avgNeuronalSignalSpeed,
         lif,
         exp_decay,
-        do_fast);
+        do_fast,
+        isNOI);
   }
   
   /**
@@ -300,7 +303,8 @@ public class NodeThread extends Thread{
       Double avgNeuronalSignalSpeed,
       Boolean lif, 
       Boolean exp_decay, 
-      Boolean do_fast){
+      Boolean do_fast,
+      Boolean isNOI){
     this.n=new Node(id,
         n,
         externalInputs,
@@ -340,7 +344,8 @@ public class NodeThread extends Thread{
         avgNeuronalSignalSpeed,
         lif, 
         exp_decay, 
-        do_fast);
+        do_fast,
+        isNOI);
     
   }
 
@@ -381,7 +386,8 @@ public class NodeThread extends Thread{
       Double avgNeuronalSignalSpeed,
       Boolean lif, 
       Boolean exp_decay, 
-      Boolean do_fast){
+      Boolean do_fast,
+      Boolean isNOI){
     sc=nMan.getStatisticsCollector();
     queuesMap = new HashMap<Synapse, NiceQueue>();
     internodeFires = new ArrayList<InterNodeSpike>();
@@ -406,6 +412,7 @@ public class NodeThread extends Thread{
     this.lif=lif;
     this.exp_decay=exp_decay;
     this.do_fast=do_fast;
+    this.isNOI=isNOI;
   }
   
   /**
@@ -529,14 +536,15 @@ public class NodeThread extends Thread{
                       fixedBurnSpike.getSyn().getAxonNeuronId();
                   lastCollectedBurstFiringBurnTime=
                       fixedBurnSpike.getBurnTime();
-                  sc.collectFireSpike(
-                      n.getId(), 
-                      fixedBurnSpike.getSyn().getAxonNeuronId(),
-                      fixedBurnSpike.getBurnTime(), 
-                      nMan.getMaxN(), 
-                      nMan.getCompressionFactor(),
-                      (fixedBurnSpike.getSyn().getAxonNeuronId()<n.getExcitatory()),
-                      (fixedBurnSpike.getSyn().getAxonNeuronId()>=n.getN()) );
+                  if(isNOI) 
+                    sc.collectFireSpike(
+                        n.getId(), 
+                        fixedBurnSpike.getSyn().getAxonNeuronId(),
+                        fixedBurnSpike.getBurnTime(), 
+                        nMan.getMaxN(), 
+                        nMan.getCompressionFactor(),
+                        (fixedBurnSpike.getSyn().getAxonNeuronId()<n.getExcitatory()),
+                        (fixedBurnSpike.getSyn().getAxonNeuronId()>=n.getN()) );
                 }
                 continue;
               }
@@ -561,14 +569,15 @@ public class NodeThread extends Thread{
                     fixedBurnSpike.getSyn().getAxonNeuronId();
                 lastCollectedBurstFiringBurnTime=
                     fixedBurnSpike.getBurnTime();
-                sc.collectFireSpike(
-                    n.getId(), 
-                    fixedBurnSpike.getSyn().getAxonNeuronId(),
-                    fixedBurnSpike.getBurnTime(), 
-                    nMan.getMaxN(), 
-                    nMan.getCompressionFactor(),
-                    (fixedBurnSpike.getSyn().getAxonNeuronId()<n.getExcitatory()),
-                    (fixedBurnSpike.getSyn().getAxonNeuronId()>=n.getN()) );
+                if(isNOI) 
+                  sc.collectFireSpike(
+                      n.getId(), 
+                      fixedBurnSpike.getSyn().getAxonNeuronId(),
+                      fixedBurnSpike.getBurnTime(), 
+                      nMan.getMaxN(), 
+                      nMan.getCompressionFactor(),
+                      (fixedBurnSpike.getSyn().getAxonNeuronId()<n.getExcitatory()),
+                      (fixedBurnSpike.getSyn().getAxonNeuronId()>=n.getN()) );
               }
               continue;
             }
@@ -619,14 +628,15 @@ public class NodeThread extends Thread{
           if (currentTime>n.getExternalInput().getFireDuration())
             continue;
         }
-        sc.collectFireSpike(
-            n.getId(), 
-            firingNeuronId, 
-            spikeTime, 
-            nMan.getMaxN(), 
-            nMan.getCompressionFactor(),
-            (firingNeuronId<n.getExcitatory()),
-            (firingNeuronId>=n.getN()) );
+        if(isNOI) 
+          sc.collectFireSpike(
+              n.getId(), 
+              firingNeuronId, 
+              spikeTime, 
+              nMan.getMaxN(), 
+              nMan.getCompressionFactor(),
+              (firingNeuronId<n.getExcitatory()),
+              (firingNeuronId>=n.getN()) );
         //search for burning neurons connected to neuron_id
         makeNeuronFire(firingNeuronId, currentTime);
       }
@@ -1044,7 +1054,8 @@ public class NodeThread extends Thread{
                 burningNeuronId, 
                 burnTime+ activeTransitionDelay);
           }
-          sc.collectPassive2active();
+          if(isNOI) 
+            sc.collectPassive2active();
           nnMan.addActiveNeuron(
               burningNeuronId, 
               nnMan.getTimeToFire(burningNeuronId), 
@@ -1052,7 +1063,8 @@ public class NodeThread extends Thread{
               2);
         }
         else{
-          sc.collectPassive();
+          if(isNOI) 
+            sc.collectPassive();
         }
         times[1]+=System.currentTimeMillis()-startTime;
       }
@@ -1084,7 +1096,8 @@ public class NodeThread extends Thread{
           if (sx<nnMan.getSpikingThr()){
             nnMan.removeActiveNeuron(burningNeuronId);
             nnMan.resetTimeToFire(burningNeuronId);
-            sc.collectActive2passive();
+            if (isNOI)
+              sc.collectActive2passive();
           }
           else{
             //updating firing delay
@@ -1095,7 +1108,8 @@ public class NodeThread extends Thread{
                 nnMan.getTimeToFire(burningNeuronId), 
                 currentTime, 
                 3);
-            sc.collectActive();
+             if(isNOI) 
+              sc.collectActive();
           }
           //active to passive
           if (sx<0){
@@ -1104,14 +1118,16 @@ public class NodeThread extends Thread{
             nnMan.setState(burningNeuronId,sx);
             nnMan.removeActiveNeuron(burningNeuronId);
             nnMan.resetTimeToFire(burningNeuronId);
-            sc.collectActive2passive();
+            if(isNOI) 
+              sc.collectActive2passive();
           }
         }
         else{
           oldSx=sx;
           nnMan.removeActiveNeuron(burningNeuronId);
           nnMan.resetTimeToFire(burningNeuronId);
-          sc.collectActive2passive();
+          if(isNOI) 
+            sc.collectActive2passive();
         }
         times[2]+=System.currentTimeMillis()-startTime;
       }
@@ -1120,36 +1136,38 @@ public class NodeThread extends Thread{
       nnMan.setLastBurningTime(burningNeuronId, burnTime);
       times[4]+=System.currentTimeMillis()-startTime;
       // collecting the spike
-      sc.collectBurnSpike(
-          firingNeuronId,
-          firingNodeId,
-          burningNeuronId,
-          burningNodeId,
-          burnTime,
-          fromExternalInput, 
-          oldSx, 
-          sy, 
-          postsynapticWeight,
-          presynapticWeight,
-          nnMan.getTimeToFire(burningNeuronId),
-          fireTime);
+      if(isNOI) 
+        sc.collectBurnSpike(
+            firingNeuronId,
+            firingNodeId,
+            burningNeuronId,
+            burningNodeId,
+            burnTime,
+            fromExternalInput, 
+            oldSx, 
+            sy, 
+            postsynapticWeight,
+            presynapticWeight,
+            nnMan.getTimeToFire(burningNeuronId),
+            fireTime);
       times[3]+=System.currentTimeMillis()-startTime;
     }
     else{
       // collecting the spike
-      sc.collectBurnSpike(
-          firingNeuronId,
-          firingNodeId,
-          burningNeuronId,
-          burningNodeId,
-          burnTime,
-          fromExternalInput, 
-          null, 
-          null, 
-          postsynapticWeight,
-          presynapticWeight,
-          nnMan.getTimeToFire(burningNeuronId),
-          fireTime);
+      if(isNOI) 
+        sc.collectBurnSpike(
+            firingNeuronId,
+            firingNodeId,
+            burningNeuronId,
+            burningNodeId,
+            burnTime,
+            fromExternalInput, 
+            null, 
+            null, 
+            postsynapticWeight,
+            presynapticWeight,
+            nnMan.getTimeToFire(burningNeuronId),
+            fireTime);
     }
   }
   

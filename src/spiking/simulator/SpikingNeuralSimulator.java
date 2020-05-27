@@ -71,8 +71,11 @@ public class SpikingNeuralSimulator extends Thread{
   private final static Boolean verbose = true;
   private Boolean debug = false;
   private NodesManager nMan;
-  Double minQueuesValue = Double.MAX_VALUE;
-  NiceQueue minQueue=null;
+  private Double minQueuesValue = Double.MAX_VALUE;
+  private NiceQueue minQueue=null;
+  // the nodes of interest NOI
+  private HashMap <Integer,Boolean> NOI;
+  private volatile Boolean checkall=false;
   private double total_time=10;
   private double cycle_time;
   public final static long simulationNeurons=100l;
@@ -424,7 +427,8 @@ public class SpikingNeuralSimulator extends Thread{
                 avgNeuronalSignalSpeed,
                 lif,
                 exp_decay,
-                do_fast));
+                do_fast,
+                (checkall||NOI.get(cpm.getNode(i).getId())) ));
       }
       else{
         Integer tmpExternalType; 
@@ -495,7 +499,8 @@ public class SpikingNeuralSimulator extends Thread{
                     avgNeuronalSignalSpeed,
                     lif,
                     exp_decay,
-                    do_fast));
+                    do_fast,
+                    (checkall||NOI.get(cpm.getNode(i).getId())) ));
       }
     }
     calculateCompressionFactor();
@@ -594,7 +599,8 @@ public class SpikingNeuralSimulator extends Thread{
   
   
   public void setNOI(HashMap <Integer, Boolean> NOI){
-    sc.setNOI(NOI);
+    //sc.setNOI(NOI);
+    this.NOI=NOI;
   }
 
   //================   printing functions ============================
@@ -711,7 +717,8 @@ public class SpikingNeuralSimulator extends Thread{
     }
     else {
       filename = Experiment.getExperimentDir()+"all_nodes_";
-      sns.sc.checkAll();
+      //sns.checkAll();
+      checkall=true;
     }
     sns.sc.set_filename(filename);
     if (cmd.hasOption("matlab"))
