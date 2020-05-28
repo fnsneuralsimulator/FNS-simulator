@@ -113,7 +113,9 @@ public class PackageReader {
   
   private void readCentersFile(){
     int i=0;
-    try (BufferedReader br = new BufferedReader(new FileReader(packagePath+CENTRES_FILE_NAME))){
+    try (BufferedReader br = 
+        new BufferedReader(
+            new FileReader(packagePath+CENTRES_FILE_NAME))){
       for (String line; (line=br.readLine())!=null;){
         String [] tokens = line.split(" ");
         String [] goodTkns = new String [4];
@@ -153,7 +155,9 @@ public class PackageReader {
     int i=0;
     Double d;
     edgesNum=0l;
-    try (BufferedReader br = new BufferedReader(new FileReader(packagePath+WEIGHTS_FILE_NAME))){
+    try (BufferedReader br = 
+        new BufferedReader(
+            new FileReader(packagePath+WEIGHTS_FILE_NAME))){
       for (String line; (line=br.readLine())!=null;){
         String [] tokens = line.split(" ");
         String [] goodTkns = new String [vertexNum];
@@ -179,10 +183,8 @@ public class PackageReader {
         ++i;
       }
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

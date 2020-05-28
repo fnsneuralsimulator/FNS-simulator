@@ -66,7 +66,7 @@ public class NodesManager implements Serializable {
   private final static Boolean verbose = true;
   private final static Integer goodCurveGuessThreshold= 5;
   private final static Integer badCurveGuessThreshold= 15;
-  private StatisticsCollector sc;
+  //private StatisticsCollector sc;
   private Boolean debug = false;
   //ergion threads array list 
   private ArrayList<NodeThread> nodeThreads = new ArrayList<NodeThread>();
@@ -100,16 +100,16 @@ public class NodesManager implements Serializable {
   
   public NodesManager(
       SpikingNeuralSimulator sim, 
-      StatisticsCollector sc,
+      //StatisticsCollector sc,
       Double bop_conservative_p){
     this.sim=sim;
-    this.sc=sc;
+    //this.sc=sc;
     this.bop_conservative_p = bop_conservative_p;
   }
 
-  public StatisticsCollector getStatisticsCollector() {
-    return sc;
-  }
+  //public StatisticsCollector getStatisticsCollector() {
+  //  return sc;
+  //}
   
   public void addNodeThread(NodeThread regT){
     if (initialized)
@@ -321,7 +321,7 @@ public class NodesManager implements Serializable {
         ++goodCurveGuess;
       }
       if (goodCurveGuess>=goodCurveGuessThreshold){
-        sc.setBadCurve();
+        sim.setBadCurve();
         if (goodCurveGuess>=badCurveGuessThreshold)
           throw new BadCurveException("the gamma curve G("+alpha_lambda+", "+ 
               (alpha_lambda/mu_lambda)+" has a shape which is not compliant with firnet scope.");

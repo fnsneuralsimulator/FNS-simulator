@@ -27,6 +27,7 @@
 /home/knizontes/projects/FNS-simulator/src/utils/plotter/ScatterPlotter.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/plotObjects/Noteable.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/plotObjects/BaseLine.java
+/home/knizontes/projects/FNS-simulator/src/utils/statistics/BurningWriter.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/plotObjects/BasePlot.java
 /home/knizontes/projects/FNS-simulator/src/utils/configuration/NodeInterconnectionCfg.java
 /home/knizontes/projects/FNS-simulator/src/utils/experiment/Experiment.java
@@ -112,3 +113,4 @@
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/components/LegendPanel.java
 /home/knizontes/projects/FNS-simulator/src/spiking/node/neuron/BurningNeuron.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/plotObjects/BaseLabel.java
+/home/knizontes/projects/FNS-simulator/src/utils/statistics/FiringWriter.java

@@ -53,22 +53,23 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.text.DecimalFormat;
+//import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+//import java.util.HashMap;
+//import java.util.Iterator;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import connectivity.conn_package.PackageReader;
-import spiking.node.FiringNeuron;
-import utils.plotter.FastScatterPlotter;
-import utils.plotter.ScatterPlotter;
-import utils.tools.CompressedFire;
+//import spiking.node.FiringNeuron;
+//import utils.plotter.FastScatterPlotter;
+//import utils.plotter.ScatterPlotter;
+//import utils.tools.CompressedFire;
 
-public class StatisticsCollector extends Thread {
+public class StatisticsCollector /*extends Thread*/ {
   
   private final String TAG = "[Statistic Collector] ";
   private volatile Long active=0l;
@@ -76,36 +77,23 @@ public class StatisticsCollector extends Thread {
   private volatile Long passive2active=0l;
   private volatile Long active2passive=0l;
   public  volatile Long missedFires=0l;
-  private volatile HashMap<Long, CollectedBurn>burningSpikesHashMap = 
-      new HashMap<Long, CollectedBurn>();
-  private volatile HashMap<Long, FiringNeuron>firingSpikesHashMap = 
-      new HashMap<Long, FiringNeuron>();
-  private volatile ArrayList<Double> firingNeurons= 
-      new ArrayList<Double>();
-  private volatile ArrayList<Double> firingTimes= 
-      new ArrayList<Double>();
-  private volatile ArrayList<Double> firstFiringNeurons= null;
+  private BlockingQueue<CollectedBurn> burningSpikesQueue;
+  private BlockingQueue<CollectedFire> firingSpikesQueue;
   private volatile ArrayList<Double> firstFiringTimes= null;
-  private volatile HashMap<CompressedFire, Integer> compressor= 
-      new HashMap<CompressedFire, Integer>();
-  private volatile Double simulatedTime=0.0;
   private volatile Double minMissedAxonalDelay = Double.MAX_VALUE;
   private volatile Double minNe_xn_ratio;
   private volatile Double maxNe_xn_ratio;
   private volatile Boolean badCurve=false;
   private volatile long firingSpikesCounter=0l;
   private volatile long burningSpikesCounter=0l;
-  // the nodes of interest NOI
-  //private HashMap <Integer,Boolean> NOI;
-  //private volatile Boolean checkall=false;
-  private long serialize_after = 10000l;
+  private int serialize_after = 10000;
   private volatile int wrotes_split=0;
   private volatile String filename = "";
   private volatile Boolean matlab=false;
   private volatile Boolean gephi=false;
   private volatile Boolean reducedOutput=false;
   private Boolean superReducedOutput=false;
-  private volatile int count=1;
+  private int count=1;
   private volatile ArrayList<CollectedFire> newFires=
       new ArrayList<CollectedFire>();
   private volatile ArrayList<CollectedBurn> newBurns=
@@ -114,63 +102,66 @@ public class StatisticsCollector extends Thread {
   private Condition eventQueueCondition = lock.newCondition();
   private Boolean keepRunning=true;
   private String defFileName=null;
+  private BurningWriter burningWriter;
+  private FiringWriter firingWriter;
   
   
-  public void run() {
-    for(;keepRunning;) {
-      if ((newBurns.size()<=0)&&(newFires.size()<=0))
-        wait_event();
-      while (newBurns.size()>0) 
-        processBurnSpike(newBurns.remove(0));
-      while (newFires.size()>0) 
-        processFireSpike(newFires.remove(0));
-    }
-    while (newBurns.size()>0) 
-      processBurnSpike(newBurns.remove(0));
-    while (newFires.size()>0) 
-      processFireSpike(newFires.remove(0));
+  //public void run() {
+  //  for(;keepRunning;) {
+  //    if ((newBurns.size()<=0)&&(newFires.size()<=0))
+  //      wait_event();
+  //    while (newBurns.size()>0) 
+  //      processBurnSpike(newBurns.remove(0));
+  //    while (newFires.size()>0) 
+  //      processFireSpike(newFires.remove(0));
+  //  }
+  //  while (newBurns.size()>0) 
+  //    processBurnSpike(newBurns.remove(0));
+  //  while (newFires.size()>0) 
+  //    processFireSpike(newFires.remove(0));
+  //}
+  
+  public void start(){
+    burningWriter.start();
+    firingWriter.start(); 
   }
-  
+
   public void kill(){
     keepRunning=false;
-    lock.lock();
-    eventQueueCondition.signal();
-    lock.unlock();
+    burningWriter.close();
+    firingWriter.close(); 
   }
   
-  private void new_event() {
-    lock.lock();
-    eventQueueCondition.signal();
-    lock.unlock();
-  }
+  //private void new_event() {
+  //  lock.lock();
+  //  eventQueueCondition.signal();
+  //  lock.unlock();
+  //}
+  //
+  //private void wait_event() {
+  //  lock.lock();
+  //  try {
+  //    eventQueueCondition.await();
+  //  } catch (InterruptedException e) {
+  //    e.printStackTrace();
+  //  }
+  //  lock.unlock();
+  //}
   
-  private void wait_event() {
-    lock.lock();
-    try {
-      eventQueueCondition.await();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    lock.unlock();
-  }
-  
-  public void setSerializeAfter(long sa){
+  public void setSerializeAfter(int sa){
     serialize_after = sa;
+    burningSpikesQueue= new ArrayBlockingQueue<CollectedBurn>(sa);
+    firingSpikesQueue= new ArrayBlockingQueue<CollectedFire>(sa);
+    burningWriter= new BurningWriter(
+        filename,
+        burningSpikesQueue);
+    firingWriter= new FiringWriter(
+        filename,
+        firingSpikesQueue);
   }
   
   public void set_filename(String filename){
     this.filename=filename;
-  }
-  
-  private void reset(){
-    burningSpikesHashMap = new HashMap<Long, CollectedBurn >();
-    firingSpikesHashMap = new HashMap<Long, FiringNeuron>();
-    if (firstFiringNeurons==null){
-      firstFiringNeurons=firingNeurons;
-      firstFiringTimes=firingTimes;
-    }
-    firingNeurons= new ArrayList<Double>();
-    firingTimes= new ArrayList<Double>();
   }
   
   public void setMatlab() {
@@ -214,53 +205,41 @@ public class StatisticsCollector extends Thread {
       Double compressionFactor, 
       Boolean isExcitatory, 
       Boolean isExternal){
-    processFireSpike(
-        new CollectedFire(
-            firingNodeId, 
-            firingNeuronId, 
-            firingTime, 
-            maxN, 
-            compressionFactor, 
-            isExcitatory, 
-            isExternal
-            ));
-    new_event();
+    //processFireSpike(
+    try{
+      firingSpikesQueue.put(
+          new CollectedFire(
+              firingNodeId, 
+              firingNeuronId, 
+              firingTime, 
+              maxN, 
+              compressionFactor, 
+              isExcitatory, 
+              isExternal
+              ));
+     }
+     catch (InterruptedException e) {
+       e.printStackTrace();
+     }
+    //new_event();
   }
 
-  private void processFireSpike(CollectedFire cf) {
-    CompressedFire compF = new CompressedFire(
-        cf.getFiringNodeId(), 
-        cf.getFiringNeuronId(), 
-        cf.getFiringTime(), 
-        cf.getMaxN(), 
-        cf.getCompressionFactor());
-    Integer tmp = compressor.get(
-        new CompressedFire(
-            cf.getFiringNodeId(), 
-            cf.getFiringNeuronId(), 
-            cf.getFiringTime(), 
-            cf.getMaxN(), 
-            cf.getCompressionFactor()));
-    if (tmp!=null)
-      return;
-    firingNeurons.add(new Double(compF.getCompressedNeuronId()));
-    firingTimes.add(cf.getFiringTime());
-    //if (checkall ||( NOI.get(cf.getFiringNodeId())!=null )){
-      FiringNeuron fn= new FiringNeuron(
-          cf.getFiringNodeId(),
-          cf.getFiringNeuronId(),
-          cf.getFiringTime(),
-          cf.getIsExcitatory(),
-          cf.getIsExternal());
-      firingSpikesHashMap.put(new Long(firingSpikesCounter), fn);
-    //}
-    ++firingSpikesCounter;
-    if ((firingSpikesCounter%serialize_after)==0){
-      makeCsv(filename);
-      if (firstFiringNeurons==null)
-        simulatedTime=cf.getFiringTime();
-    }
-  }
+  //private void processFireSpike(CollectedFire cf) {
+  //    FiringNeuron fn= new FiringNeuron(
+  //        cf.getFiringNodeId(),
+  //        cf.getFiringNeuronId(),
+  //        cf.getFiringTime(),
+  //        cf.getIsExcitatory(),
+  //        cf.getIsExternal());
+  //    firingSpikesHashMap.put(new Long(firingSpikesCounter), fn);
+  //  //}
+  //  ++firingSpikesCounter;
+  //  if ((firingSpikesCounter%serialize_after)==0){
+  //    makeCsv(filename);
+  //    //if (firstFiringNeurons==null)
+  //    //  simulatedTime=cf.getFiringTime();
+  //  }
+  //}
   
   public synchronized void collectBurnSpike(
       Long firingNeuronId,
@@ -275,29 +254,35 @@ public class StatisticsCollector extends Thread {
       Double presynapticWeight, 
       Double timeToFire,
       Double fireTime) {
-    processBurnSpike(
-        new CollectedBurn(
-            firingNeuronId,
-            firingNodeId,
-            burningNeuronId,
-            burningNodeId,
-            burnTime, 
-            fromExternalSource, 
-            fromState, 
-            stepInState, 
-            postsynapticWeight, 
-            presynapticWeight, 
-            timeToFire, 
-            fireTime));
-    new_event();
+    try{
+      burningSpikesQueue.put(
+          new CollectedBurn(
+              firingNeuronId,
+              firingNodeId,
+              burningNeuronId,
+              burningNodeId,
+              burnTime, 
+              fromExternalSource, 
+              fromState, 
+              stepInState, 
+              postsynapticWeight, 
+              presynapticWeight, 
+              timeToFire, 
+              fireTime));
+     }
+     catch (InterruptedException e) {
+       e.printStackTrace();
+     }
+    //new_event();
   }
   
-  private void processBurnSpike(CollectedBurn cb) {
-    //if (checkall ||( NOI.get(cb.getBurningNodeId())!=null )){
-      burningSpikesHashMap.put(new Long(burningSpikesCounter), cb);
-    //}
-    ++burningSpikesCounter;
-  }
+  //private void processBurnSpike(CollectedBurn cb) {
+  //  //if (checkall ||( NOI.get(cb.getBurningNodeId())!=null )){
+  //    burningSpikesHashMap.put(new Long(burningSpikesCounter), cb);
+  //    burningSpikesQueue.put(cb);.
+  //  //}
+  //  ++burningSpikesCounter;
+  //}
   
   public synchronized void collectMissedFire(Double missedAxonalDelay){
     if (missedAxonalDelay<minMissedAxonalDelay)
@@ -305,393 +290,401 @@ public class StatisticsCollector extends Thread {
     ++missedFires;
   }
   
-  public void printFirePlot(){
-    double [] x = new double [firingTimes.size()];
-    double [] y = new double [firingNeurons.size()];
-    for (int i=0; i<firingNeurons.size();++i){
-      x[i]=firingTimes.get(i);
-      y[i]=firingNeurons.get(i).doubleValue();
-    }
-    System.out.println(
-        "[Statistics Collector] X size:"
-        +x.length
-        +", Y size:"
-        +y.length);
-    System.out.println(
-        "[Statistics Collector] firing times size:"
-        +firingTimes.size()
-        +", firing neurons size:"
-        +firingNeurons.size());
-    ScatterPlotter frame = 
-      new ScatterPlotter("FNS", x, y,simulatedTime); 
-    frame.setVisible();
-  }
+  //public void printFirePlot(){
+  //  double [] x = new double [firingTimes.size()];
+  //  double [] y = new double [firingNeurons.size()];
+  //  for (int i=0; i<firingNeurons.size();++i){
+  //    x[i]=firingTimes.get(i);
+  //    y[i]=firingNeurons.get(i).doubleValue();
+  //  }
+  //  System.out.println(
+  //      "[Statistics Collector] X size:"
+  //      +x.length
+  //      +", Y size:"
+  //      +y.length);
+  //  System.out.println(
+  //      "[Statistics Collector] firing times size:"
+  //      +firingTimes.size()
+  //      +", firing neurons size:"
+  //      +firingNeurons.size());
+  //  ScatterPlotter frame = 
+  //    new ScatterPlotter("FNS", x, y,simulatedTime); 
+  //  frame.setVisible();
+  //}
   
-  public void printFirePlot(String outputFileName){
-    double [] x = new double [firstFiringTimes.size()];
-    double [] y = new double [firstFiringNeurons.size()];
-    for (int i=0; i<firstFiringNeurons.size();++i){
-      x[i]=firstFiringTimes.get(i);
-      y[i]=firstFiringNeurons.get(i).doubleValue();
-    }
-    System.out.println(
-        "[Statistics Collector] X size:"
-        +x.length
-        +", Y size:"
-        +y.length);
-    System.out.println(
-        "[Statistics Collector] firing times size:"
-        +firstFiringTimes.size()
-        +", firing neurons size:"
-        +firstFiringNeurons.size());
-    ScatterPlotter frame = 
-        new ScatterPlotter(
-            "F. N. S.", 
-            x, 
-            y,
-            simulatedTime,outputFileName); 
-    frame.setVisible();
-  }
+  //public void printFirePlot(String outputFileName){
+  //  double [] x = new double [firstFiringTimes.size()];
+  //  double [] y = new double [firstFiringNeurons.size()];
+  //  for (int i=0; i<firstFiringNeurons.size();++i){
+  //    x[i]=firstFiringTimes.get(i);
+  //    y[i]=firstFiringNeurons.get(i).doubleValue();
+  //  }
+  //  System.out.println(
+  //      "[Statistics Collector] X size:"
+  //      +x.length
+  //      +", Y size:"
+  //      +y.length);
+  //  System.out.println(
+  //      "[Statistics Collector] firing times size:"
+  //      +firstFiringTimes.size()
+  //      +", firing neurons size:"
+  //      +firstFiringNeurons.size());
+  //  ScatterPlotter frame = 
+  //      new ScatterPlotter(
+  //          "F. N. S.", 
+  //          x, 
+  //          y,
+  //          simulatedTime,outputFileName); 
+  //  frame.setVisible();
+  //}
   
-  public void makeCsv(String filename){
-    if (filename=="")
-      return;
-    ++wrotes_split;
-    PrintWriter burnWriter;
-    PrintWriter fireWriter;
-    Boolean new_burn_file=false;
-    Boolean new_fire_file=false;
-    File towritefile;
-    FileWriter fire_fw;
-    DecimalFormat df = superReducedOutput? 
-      new DecimalFormat("#.###"):
-      new DecimalFormat("#.################"); 
-    try {
-      Iterator<Long> it = burningSpikesHashMap.keySet().iterator();
-      if (firstFiringNeurons==null) {
-//        int count = 1;
-        for(;;++count) {
-          if (reducedOutput)
-            towritefile= new File(
-                filename
-                +String.format("%03d", count)
-                +"_burning_r.csv");
-          if (superReducedOutput)
-            towritefile= new File(
-                filename
-                +String.format("%03d", count)
-                +"_burning_R.csv");
-          else
-            towritefile= new File(
-                filename
-                +String.format("%03d", count)
-                +"_burning.csv");
-            if(!towritefile.exists()){
-              defFileName=filename+String.format("%03d", count);
-                break;
-            }
-        }
-      }
-      if (reducedOutput)
-        towritefile= new File(defFileName+"_burning_r.csv");
-      else if (superReducedOutput)
-        towritefile= new File(defFileName+"_burning_R.csv");
-      else
-        towritefile= new File(defFileName+"_burning.csv");
-      if (!towritefile.exists()){
-        towritefile.createNewFile();
-        new_burn_file=true;
-      }
-      FileWriter fw = new FileWriter(towritefile,true);
-           BufferedWriter bw = new BufferedWriter(fw);
-      burnWriter = new PrintWriter(bw);
-      if (new_burn_file){
-        if (!(reducedOutput||superReducedOutput))
-          burnWriter.println(
-              "Burning Time, "
-              + "Firing Node, "
-              + "Firing Neuron, "
-              + "Burning Node, "
-              + "Burning Neuron, "
-              + "External Source, "
-              + "From Internal State, "
-              + "To Internal State, "
-              + "Step in State, "
-              +" Post Synaptic Weight, "
-              + "Pre Synaptic Weight, "
-              + "Instant to Fire, "
-              + "(Afferent) Firing Time");
-            }
-      while (it.hasNext()){
-        Long key = it.next();
-        Double fromState = burningSpikesHashMap.get(key).getFromState();
-        Double stepInState=burningSpikesHashMap.get(key).getStepInState();
-        String stepInStateToPrint;
-        String fromStateToPrint;
-        String toStateToPrint;
-        if (fromState==null){
-          fromStateToPrint=(reducedOutput||superReducedOutput)?"0":"refr";
-          toStateToPrint=(reducedOutput||superReducedOutput)?"0":"refr";
-        }
-        else{
-          fromStateToPrint=""+df.format(fromState);
-          toStateToPrint=""+df.format(fromState+stepInState);
-        }
-        if (stepInState==null)
-          stepInStateToPrint=(reducedOutput||superReducedOutput)?"0":"refr";
-        else
-          stepInStateToPrint=""+df.format(stepInState);
-        if (reducedOutput||superReducedOutput)
-          burnWriter.println(
-              df.format(burningSpikesHashMap.get(key).getBurnTime())+", "
-              + burningSpikesHashMap.get(key).getBurningNodeId()+", "
-              + burningSpikesHashMap.get(key).getBurningNeuronId()+", "
-              + toStateToPrint
-              );
-        else
-          burnWriter.println(
-              df.format(burningSpikesHashMap.get(key).getBurnTime())+", "
-              + burningSpikesHashMap.get(key).getFiringNodeId()+", "
-              + burningSpikesHashMap.get(key).getFiringNeuronId()+", "
-              + burningSpikesHashMap.get(key).getBurningNodeId()+", "
-              + burningSpikesHashMap.get(key).getBurningNeuronId()+", "
-              + burningSpikesHashMap.get(key).fromExternalInput()+", "
-              + fromStateToPrint +", "
-              + toStateToPrint +", "
-              + stepInStateToPrint+", "
-              + df.format(burningSpikesHashMap.get(key).getPostSynapticWeight())+", "
-              + df.format(burningSpikesHashMap.get(key).getPreSynapticWeight())+","
-              + df.format(burningSpikesHashMap.get(key).getTimeToFire())+","
-              + df.format((burningSpikesHashMap.get(key).getFireTime()!=null)?
-                  burningSpikesHashMap.get(key).getFireTime():0)
-              );
-//        System.out.println("[statistics]" + df.format(burningSpikesHashMap.get(key).getPostSynapticWeight()));
-      }
-      burnWriter.flush();
-      burnWriter.close();
-      System.out.println(
-          "[Statistics Collector] "
-          +towritefile.getAbsolutePath()
-          +" update "
-          +wrotes_split
-          +" complete.");
-      it=firingSpikesHashMap.keySet().iterator();
-      if (reducedOutput)
-        towritefile= new File(defFileName+"_firing_r.csv");
-      else if (superReducedOutput)
-        towritefile= new File(defFileName+"_firing_R.csv");
-      else
-        towritefile= new File(defFileName+"_firing.csv");
-      if (towritefile.exists())
-        fire_fw = new FileWriter(towritefile,true);
-      else{
-        towritefile.createNewFile();
-        fire_fw = new FileWriter(towritefile);
-        new_fire_file=true;
-      }
-           BufferedWriter fire_bw = new BufferedWriter(fire_fw);
-      fireWriter=new PrintWriter(fire_bw);
-      if (new_fire_file){
-        if (!(reducedOutput||superReducedOutput))
-          fireWriter.println(
-              "Firing Time,"
-              +" Firing Node,"
-              +" Firing Neuron, "
-              +" Neuron Type,"
-              +" External Source");
-      }
-      while (it.hasNext()){
-        Long key = it.next();
-        String excitStr;
-        String isExternalStr;
-        if (firingSpikesHashMap.get(key).isExcitatory())
-          excitStr="excitatory";
-        else
-          excitStr="inhibitory";
-        if (firingSpikesHashMap.get(key).isExternal())
-          isExternalStr=(reducedOutput||superReducedOutput)?"1":"true";
-        else
-          isExternalStr=(reducedOutput||superReducedOutput)?"0":"false";
-        if (reducedOutput||superReducedOutput)
-          fireWriter.println(
-              df.format(firingSpikesHashMap.get(key).getFiringTime())+", "
-              +firingSpikesHashMap.get(key).getFiringNodeId()+", "
-              + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
-              + isExternalStr
-              );
-        else
-          fireWriter.println(
-              df.format(firingSpikesHashMap.get(key).getFiringTime())+", "
-              +firingSpikesHashMap.get(key).getFiringNodeId()+", "
-              + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
-              + excitStr+", "
-              + firingSpikesHashMap.get(key).isExternal()
-              );
-      }
-      fireWriter.flush();
-      fireWriter.close();
-      if (matlab)
-        makeMatlabCsv();
-      if (gephi)
-        makeGephiCsv();
-      reset();
-      System.out.println(
-          "[Statistics Collector] "
-          +towritefile.getAbsolutePath()
-          +" update "
-          +wrotes_split
-          +" complete.");
-    } catch (FileNotFoundException | UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    System.out.println("[Statistics Collector] Firings:"+firingSpikesCounter);
-  }
+  //public void makeCsv(String filename){
+  //  if (filename=="")
+  //    return;
+  //  ++wrotes_split;
+  //  PrintWriter burnWriter;
+  //  PrintWriter fireWriter;
+  //  Boolean new_burn_file=false;
+  //  Boolean new_fire_file=false;
+  //  File towritefile;
+  //  FileWriter fire_fw;
+  //  CollectedBurn cb;
+  //  CollectedFire cf;
+  //  DecimalFormat df = superReducedOutput? 
+  //    new DecimalFormat("#.###"):
+  //    new DecimalFormat("#.################"); 
+  //  try {
+  //    //Iterator<Long> it = burningSpikesHashMap.keySet().iterator();
+  //    if (firstFiringNeurons==null) {
+////        int count = 1;
+  //      for(;;++count) {
+  //        if (reducedOutput)
+  //          towritefile= new File(
+  //              filename
+  //              +String.format("%03d", count)
+  //              +"_burning_r.csv");
+  //        if (superReducedOutput)
+  //          towritefile= new File(
+  //              filename
+  //              +String.format("%03d", count)
+  //              +"_burning_R.csv");
+  //        else
+  //          towritefile= new File(
+  //              filename
+  //              +String.format("%03d", count)
+  //              +"_burning.csv");
+  //          if(!towritefile.exists()){
+  //            defFileName=filename+String.format("%03d", count);
+  //              break;
+  //          }
+  //      }
+  //    }
+  //    if (reducedOutput)
+  //      towritefile= new File(defFileName+"_burning_r.csv");
+  //    else if (superReducedOutput)
+  //      towritefile= new File(defFileName+"_burning_R.csv");
+  //    else
+  //      towritefile= new File(defFileName+"_burning.csv");
+  //    if (!towritefile.exists()){
+  //      towritefile.createNewFile();
+  //      new_burn_file=true;
+  //    }
+  //    FileWriter fw = new FileWriter(towritefile,true);
+  //         BufferedWriter bw = new BufferedWriter(fw);
+  //    burnWriter = new PrintWriter(bw);
+  //    if (new_burn_file){
+  //      if (!(reducedOutput||superReducedOutput))
+  //        burnWriter.println(
+  //            "Burning Time, "
+  //            + "Firing Node, "
+  //            + "Firing Neuron, "
+  //            + "Burning Node, "
+  //            + "Burning Neuron, "
+  //            + "External Source, "
+  //            + "From Internal State, "
+  //            + "To Internal State, "
+  //            + "Step in State, "
+  //            +" Post Synaptic Weight, "
+  //            + "Pre Synaptic Weight, "
+  //            + "Instant to Fire, "
+  //            + "(Afferent) Firing Time");
+  //          }
+  //    //while (it.hasNext()){
+  //    while (cb=burningSpikesQueue.take()){
+  //      //Long key = it.next();
+  //      //Double fromState = cb.getFromState();
+  //      //Double stepInState=cb.getStepInState();
+  //      Double fromState = cb.getFromState();
+  //      Double stepInState=cb.getStepInState();
+  //      String stepInStateToPrint;
+  //      String fromStateToPrint;
+  //      String toStateToPrint;
+  //      if (fromState==null){
+  //        fromStateToPrint=(reducedOutput||superReducedOutput)?"0":"refr";
+  //        toStateToPrint=(reducedOutput||superReducedOutput)?"0":"refr";
+  //      }
+  //      else{
+  //        fromStateToPrint=""+df.format(fromState);
+  //        toStateToPrint=""+df.format(fromState+stepInState);
+  //      }
+  //      if (stepInState==null)
+  //        stepInStateToPrint=(reducedOutput||superReducedOutput)?"0":"refr";
+  //      else
+  //        stepInStateToPrint=""+df.format(stepInState);
+  //      if (reducedOutput||superReducedOutput)
+  //        burnWriter.println(
+  //            df.format(cb.getBurnTime())+", "
+  //            + cb.getBurningNodeId()+", "
+  //            + cb.getBurningNeuronId()+", "
+  //            + toStateToPrint
+  //            );
+  //      else
+  //        burnWriter.println(
+  //            df.format(cb.getBurnTime())+", "
+  //            + cb.getFiringNodeId()+", "
+  //            + cb.getFiringNeuronId()+", "
+  //            + cb.getBurningNodeId()+", "
+  //            + cb.getBurningNeuronId()+", "
+  //            + cb.fromExternalInput()+", "
+  //            + fromStateToPrint +", "
+  //            + toStateToPrint +", "
+  //            + stepInStateToPrint+", "
+  //            + df.format(cb.getPostSynapticWeight())+", "
+  //            + df.format(cb.getPreSynapticWeight())+","
+  //            + df.format(cb.getTimeToFire())+","
+  //            + df.format((cb.getFireTime()!=null)?
+  //                cb.getFireTime():0)
+  //            );
+////        System.out.println("[statistics]" + df.format(cb.getPostSynapticWeight()));
+  //    }
+  //    burnWriter.flush();
+  //    burnWriter.close();
+  //    System.out.println(
+  //        "[Statistics Collector] "
+  //        +towritefile.getAbsolutePath()
+  //        +" update "
+  //        +wrotes_split
+  //        +" complete.");
+  //    //it=firingSpikesHashMap.keySet().iterator();
+  //    if (reducedOutput)
+  //      towritefile= new File(defFileName+"_firing_r.csv");
+  //    else if (superReducedOutput)
+  //      towritefile= new File(defFileName+"_firing_R.csv");
+  //    else
+  //      towritefile= new File(defFileName+"_firing.csv");
+  //    if (towritefile.exists())
+  //      fire_fw = new FileWriter(towritefile,true);
+  //    else{
+  //      towritefile.createNewFile();
+  //      fire_fw = new FileWriter(towritefile);
+  //      new_fire_file=true;
+  //    }
+  //         BufferedWriter fire_bw = new BufferedWriter(fire_fw);
+  //    fireWriter=new PrintWriter(fire_bw);
+  //    if (new_fire_file){
+  //      if (!(reducedOutput||superReducedOutput))
+  //        fireWriter.println(
+  //            "Firing Time,"
+  //            +" Firing Node,"
+  //            +" Firing Neuron, "
+  //            +" Neuron Type,"
+  //            +" External Source");
+  //    }
+  //    while (cf=collectedFireSpikesQueue.take()){
+  //      //Long key = it.next();
+  //      String excitStr;
+  //      String isExternalStr;
+  //      if (cf.isExcitatory())
+  //        excitStr="excitatory";
+  //      else
+  //        excitStr="inhibitory";
+  //      if (cf.isExternal())
+  //        isExternalStr=(reducedOutput||superReducedOutput)?"1":"true";
+  //      else
+  //        isExternalStr=(reducedOutput||superReducedOutput)?"0":"false";
+  //      if (reducedOutput||superReducedOutput)
+  //        fireWriter.println(
+  //            df.format(cf.getFiringTime())+", "
+  //            +cf.getFiringNodeId()+", "
+  //            + cf.getFiringNeuronId()+", "
+  //            + isExternalStr
+  //            );
+  //      else
+  //        fireWriter.println(
+  //            df.format(cf.getFiringTime())+", "
+  //            +cf.getFiringNodeId()+", "
+  //            + cf.getFiringNeuronId()+", "
+  //            + excitStr+", "
+  //            + cf.isExternal()
+  //            );
+  //    }
+  //    fireWriter.flush();
+  //    fireWriter.close();
+  //    if (matlab)
+  //      makeMatlabCsv();
+  //    if (gephi)
+  //      makeGephiCsv();
+  //    reset();
+  //    System.out.println(
+  //        "[Statistics Collector] "
+  //        +towritefile.getAbsolutePath()
+  //        +" update "
+  //        +wrotes_split
+  //        +" complete.");
+  //  } catch (FileNotFoundException | UnsupportedEncodingException e) {
+  //    e.printStackTrace();
+  //  } catch (IOException e) {
+  //    // TODO Auto-generated catch block
+  //    e.printStackTrace();
+  //  }
+  //  System.out.println("[Statistics Collector] Firings:"+firingSpikesCounter);
+  //}
   
-  private void makeMatlabCsv(){
-    if (filename=="")
-      return;
-    PrintWriter burnWriter;
-    PrintWriter fireWriter;
-    try {
-      Iterator<Long> it = burningSpikesHashMap.keySet().iterator();
-      File towritefile;
-      FileWriter fire_fw;
-      towritefile= new File(defFileName+"_burning_matlab.csv");
-      if (!towritefile.exists())
-        towritefile.createNewFile();
-      FileWriter fw = new FileWriter(towritefile,true);
-           BufferedWriter bw = new BufferedWriter(fw);
-      burnWriter = new PrintWriter(bw);
-      while (it.hasNext()){
-        Long key = it.next();
-        Double fromState = burningSpikesHashMap.get(key).getFromState();
-        Double stepInState=burningSpikesHashMap.get(key).getStepInState();
-        String stepInStateToPrint;
-        String fromStateToPrint;
-        String toStateToPrint;
-        //String fromExternalInput;
-        String refrString="0";
-        if (fromState==null){
-          fromStateToPrint=refrString;
-          toStateToPrint=refrString;
-        }
-        else{
-          fromStateToPrint=fromState.toString();
-          toStateToPrint=""+(fromState+stepInState);
-        }
-        if (stepInState==null)
-          stepInStateToPrint="0";
-        else
-          stepInStateToPrint=stepInState.toString();
-        burnWriter.println(
-            burningSpikesHashMap.get(key).getBurnTime().toString()+", "
-            + burningSpikesHashMap.get(key).getFiringNodeId()+", "
-            + burningSpikesHashMap.get(key).getFiringNeuronId()+", "
-            + burningSpikesHashMap.get(key).getBurningNodeId()+", "
-            + burningSpikesHashMap.get(key).getBurningNeuronId()+", "
-            + burningSpikesHashMap.get(key).fromExternalInputInteger()+", "
-            + fromStateToPrint +", "
-            + toStateToPrint +", "
-            + stepInStateToPrint+", "
-            + burningSpikesHashMap.get(key).getPostSynapticWeight()+", "
-            + burningSpikesHashMap.get(key).getPreSynapticWeight()+","
-            + burningSpikesHashMap.get(key).getTimeToFire()+","
-            + burningSpikesHashMap.get(key).getFireTime()
-            );
-      }
-      burnWriter.flush();
-      burnWriter.close();
-      System.out.println(
-          "[Statistics Collector] "
-          +towritefile.getAbsolutePath()
-          +" update "
-          +wrotes_split
-          +" complete.");
-      it=firingSpikesHashMap.keySet().iterator();
-      towritefile= new File(defFileName+"_firing_matlab.csv");
-      if (towritefile.exists())
-        fire_fw = new FileWriter(towritefile,true);
-      else{
-        towritefile.createNewFile();
-        fire_fw = new FileWriter(towritefile);
-      }
-           BufferedWriter fire_bw = new BufferedWriter(fire_fw);
-      fireWriter=new PrintWriter(fire_bw);
-      while (it.hasNext()){
-        Long key = it.next();
-        fireWriter.println(
-            firingSpikesHashMap.get(key).getFiringTime().toString()+", "
-            +firingSpikesHashMap.get(key).getFiringNodeId()+", "
-            + firingSpikesHashMap.get(key).getFiringNeuronId()+", "
-            + (firingSpikesHashMap.get(key).isExcitatory()?'1':'0')+", "
-            + (firingSpikesHashMap.get(key).isExternal()?'1':'0')
-            );
-      }
-      fireWriter.flush();
-      fireWriter.close();
-      System.out.println("[Statistics Collector] "+towritefile.getAbsolutePath()+" update "+wrotes_split+" complete.");
-    } catch (FileNotFoundException | UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
+  //private void makeMatlabCsv(){
+  //  if (filename=="")
+  //    return;
+  //  PrintWriter burnWriter;
+  //  PrintWriter fireWriter;
+  //  try {
+  //    //Iterator<Long> it = burningSpikesHashMap.keySet().iterator();
+  //    File towritefile;
+  //    FileWriter fire_fw;
+  //    towritefile= new File(defFileName+"_burning_matlab.csv");
+  //    if (!towritefile.exists())
+  //      towritefile.createNewFile();
+  //    FileWriter fw = new FileWriter(towritefile,true);
+  //         BufferedWriter bw = new BufferedWriter(fw);
+  //    burnWriter = new PrintWriter(bw);
+  //    while (it.hasNext()){
+  //      Long key = it.next();
+  //      Double fromState = cb.getFromState();
+  //      Double stepInState=cb.getStepInState();
+  //      String stepInStateToPrint;
+  //      String fromStateToPrint;
+  //      String toStateToPrint;
+  //      //String fromExternalInput;
+  //      String refrString="0";
+  //      if (fromState==null){
+  //        fromStateToPrint=refrString;
+  //        toStateToPrint=refrString;
+  //      }
+  //      else{
+  //        fromStateToPrint=fromState.toString();
+  //        toStateToPrint=""+(fromState+stepInState);
+  //      }
+  //      if (stepInState==null)
+  //        stepInStateToPrint="0";
+  //      else
+  //        stepInStateToPrint=stepInState.toString();
+  //      burnWriter.println(
+  //          cb.getBurnTime().toString()+", "
+  //          + cb.getFiringNodeId()+", "
+  //          + cb.getFiringNeuronId()+", "
+  //          + cb.getBurningNodeId()+", "
+  //          + cb.getBurningNeuronId()+", "
+  //          + cb.fromExternalInputInteger()+", "
+  //          + fromStateToPrint +", "
+  //          + toStateToPrint +", "
+  //          + stepInStateToPrint+", "
+  //          + cb.getPostSynapticWeight()+", "
+  //          + cb.getPreSynapticWeight()+","
+  //          + cb.getTimeToFire()+","
+  //          + cb.getFireTime()
+  //          );
+  //    }
+  //    burnWriter.flush();
+  //    burnWriter.close();
+  //    System.out.println(
+  //        "[Statistics Collector] "
+  //        +towritefile.getAbsolutePath()
+  //        +" update "
+  //        +wrotes_split
+  //        +" complete.");
+  //    it=firingSpikesHashMap.keySet().iterator();
+  //    towritefile= new File(defFileName+"_firing_matlab.csv");
+  //    if (towritefile.exists())
+  //      fire_fw = new FileWriter(towritefile,true);
+  //    else{
+  //      towritefile.createNewFile();
+  //      fire_fw = new FileWriter(towritefile);
+  //    }
+  //         BufferedWriter fire_bw = new BufferedWriter(fire_fw);
+  //    fireWriter=new PrintWriter(fire_bw);
+  //    while (it.hasNext()){
+  //      Long key = it.next();
+  //      fireWriter.println(
+  //          cf.getFiringTime().toString()+", "
+  //          +cf.getFiringNodeId()+", "
+  //          + cf.getFiringNeuronId()+", "
+  //          + (cf.isExcitatory()?'1':'0')+", "
+  //          + (cf.isExternal()?'1':'0')
+  //          );
+  //    }
+  //    fireWriter.flush();
+  //    fireWriter.close();
+  //    System.out.println("[Statistics Collector] "+towritefile.getAbsolutePath()+" update "+wrotes_split+" complete.");
+  //  } catch (FileNotFoundException | UnsupportedEncodingException e) {
+  //    e.printStackTrace();
+  //  } catch (IOException e) {
+  //    e.printStackTrace();
+  //  }
+  //}
   
-  private void makeGephiCsv(){
-    if (filename=="")
-      return;
-    PrintWriter burnWriter;
-    PrintWriter fireWriter;
-    try {
-      Iterator<Long> it = burningSpikesHashMap.keySet().iterator();
-      File towritefile;
-      FileWriter fire_fw;
-      towritefile= new File(defFileName+"_gephi.csv");
-      if (!towritefile.exists())
-        towritefile.createNewFile();
-      FileWriter fw = new FileWriter(towritefile,true);
-           BufferedWriter bw = new BufferedWriter(fw);
-      burnWriter = new PrintWriter(bw);
-      burnWriter.println( "Firing, Burning");
-      while (it.hasNext()){
-        Long key = it.next();
-        if(!burningSpikesHashMap.get(key).fromExternalInput()){
-          burnWriter.println(
-              + burningSpikesHashMap.get(key).getFiringNodeId()+"-"
-              + burningSpikesHashMap.get(key).getFiringNeuronId()+", "
-              + burningSpikesHashMap.get(key).getBurningNodeId()+"-"
-              + burningSpikesHashMap.get(key).getBurningNeuronId());
-        }
-      }
-      burnWriter.flush();
-      burnWriter.close();
-      System.out.println(
-          "[Statistics Collector] "
-          +towritefile.getAbsolutePath()
-          +" update "
-          +wrotes_split
-          +" complete.");
-    } catch (FileNotFoundException | UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
+  //private void makeGephiCsv(){
+  //  if (filename=="")
+  //    return;
+  //  PrintWriter burnWriter;
+  //  PrintWriter fireWriter;
+  //  try {
+  //    //Iterator<Long> it = burningSpikesHashMap.keySet().iterator();
+  //    File towritefile;
+  //    FileWriter fire_fw;
+  //    towritefile= new File(defFileName+"_gephi.csv");
+  //    if (!towritefile.exists())
+  //      towritefile.createNewFile();
+  //    FileWriter fw = new FileWriter(towritefile,true);
+  //         BufferedWriter bw = new BufferedWriter(fw);
+  //    burnWriter = new PrintWriter(bw);
+  //    burnWriter.println( "Firing, Burning");
+  //    while (it.hasNext()){
+  //      Long key = it.next();
+  //      if(!cb.fromExternalInput()){
+  //        burnWriter.println(
+  //            + cb.getFiringNodeId()+"-"
+  //            + cb.getFiringNeuronId()+", "
+  //            + cb.getBurningNodeId()+"-"
+  //            + cb.getBurningNeuronId());
+  //      }
+  //    }
+  //    burnWriter.flush();
+  //    burnWriter.close();
+  //    System.out.println(
+  //        "[Statistics Collector] "
+  //        +towritefile.getAbsolutePath()
+  //        +" update "
+  //        +wrotes_split
+  //        +" complete.");
+  //  } catch (FileNotFoundException | UnsupportedEncodingException e) {
+  //    e.printStackTrace();
+  //  } catch (IOException e) {
+  //    // TODO Auto-generated catch block
+  //    e.printStackTrace();
+  //  }
+  //}
   
-  public void setMinMaxNe_xn_ratios(Double minNe_xn_ratio, Double maxNe_xn_ratio){
+  public void setMinMaxNe_xn_ratios(
+      Double minNe_xn_ratio, 
+      Double maxNe_xn_ratio){
     this.minNe_xn_ratio=minNe_xn_ratio;
     this.maxNe_xn_ratio=maxNe_xn_ratio;  
   }
   
   public void PrintResults(){
-    String minNe_xn_ratioStr=(minNe_xn_ratio==PackageReader.MIN_NE_EN_RATIO_DEF)?
+    String minNe_xn_ratioStr =
+        (minNe_xn_ratio==PackageReader.MIN_NE_EN_RATIO_DEF)?
         "no connection between nodes":(""+minNe_xn_ratio);
-    String maxNe_xn_ratioStr=(maxNe_xn_ratio==PackageReader.MAX_NE_EN_RATIO_DEF)?
+    String maxNe_xn_ratioStr = 
+        (maxNe_xn_ratio==PackageReader.MAX_NE_EN_RATIO_DEF)?
         "no connection between nodes":(""+maxNe_xn_ratio);
     System.out.println("active to active:"+active);
     System.out.println("active to passive:"+active2passive);

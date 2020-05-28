@@ -53,7 +53,15 @@ public class CollectedFire {
     return isExcitatory;
   }
 
+  public Boolean isExcitatory() {
+    return isExcitatory;
+  }
+
   public Boolean getIsExternal() {
+    return isExternal;
+  }
+  
+  public Boolean isExternal() {
     return isExternal;
   }
   
