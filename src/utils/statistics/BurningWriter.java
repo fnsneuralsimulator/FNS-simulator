@@ -290,10 +290,14 @@ public class BurningWriter extends Thread {
         burningSpikesQueue.wait();
       pw.flush();
       pw.close();
-      pwMatlab.flush();
-      pwMatlab.close();
-      pwGephi.flush();
-      pwGephi.close();
+      if (pwMatlab!=null){
+        pwMatlab.flush();
+        pwMatlab.close();
+      }
+      if (pwGephi!=null){
+        pwGephi.flush();
+        pwGephi.close();
+      }
     } catch (InterruptedException e){
       e.printStackTrace();
     }
