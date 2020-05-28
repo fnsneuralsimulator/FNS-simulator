@@ -53,10 +53,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-//import java.text.DecimalFormat;
 import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.Iterator;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -64,10 +61,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import connectivity.conn_package.PackageReader;
-//import spiking.node.FiringNeuron;
-//import utils.plotter.FastScatterPlotter;
-//import utils.plotter.ScatterPlotter;
-//import utils.tools.CompressedFire;
 
 public class StatisticsCollector /*extends Thread*/ {
   
@@ -106,20 +99,6 @@ public class StatisticsCollector /*extends Thread*/ {
   private FiringWriter firingWriter;
   
   
-  //public void run() {
-  //  for(;keepRunning;) {
-  //    if ((newBurns.size()<=0)&&(newFires.size()<=0))
-  //      wait_event();
-  //    while (newBurns.size()>0) 
-  //      processBurnSpike(newBurns.remove(0));
-  //    while (newFires.size()>0) 
-  //      processFireSpike(newFires.remove(0));
-  //  }
-  //  while (newBurns.size()>0) 
-  //    processBurnSpike(newBurns.remove(0));
-  //  while (newFires.size()>0) 
-  //    processFireSpike(newFires.remove(0));
-  //}
   
   public void start(){
     burningWriter.start();
@@ -131,22 +110,6 @@ public class StatisticsCollector /*extends Thread*/ {
     burningWriter.close();
     firingWriter.close(); 
   }
-  
-  //private void new_event() {
-  //  lock.lock();
-  //  eventQueueCondition.signal();
-  //  lock.unlock();
-  //}
-  //
-  //private void wait_event() {
-  //  lock.lock();
-  //  try {
-  //    eventQueueCondition.await();
-  //  } catch (InterruptedException e) {
-  //    e.printStackTrace();
-  //  }
-  //  lock.unlock();
-  //}
   
   public void setSerializeAfter(int sa){
     serialize_after = sa;
@@ -254,25 +217,26 @@ public class StatisticsCollector /*extends Thread*/ {
       Double presynapticWeight, 
       Double timeToFire,
       Double fireTime) {
-    try{
-      burningSpikesQueue.put(
-          new CollectedBurn(
-              firingNeuronId,
-              firingNodeId,
-              burningNeuronId,
-              burningNodeId,
-              burnTime, 
-              fromExternalSource, 
-              fromState, 
-              stepInState, 
-              postsynapticWeight, 
-              presynapticWeight, 
-              timeToFire, 
-              fireTime));
-     }
-     catch (InterruptedException e) {
-       e.printStackTrace();
-     }
+    //try{
+    //  burningSpikesQueue.put(
+    //      new CollectedBurn(
+    //          firingNeuronId,
+    //          firingNodeId,
+    //          burningNeuronId,
+    //          burningNodeId,
+    //          burnTime, 
+    //          fromExternalSource, 
+    //          fromState, 
+    //          stepInState, 
+    //          postsynapticWeight, 
+    //          presynapticWeight, 
+    //          timeToFire, 
+    //          fireTime)
+    //          );
+    //}
+    //catch (InterruptedException e) {
+    //  e.printStackTrace();
+    //}
     //new_event();
   }
   
@@ -686,10 +650,10 @@ public class StatisticsCollector /*extends Thread*/ {
     String maxNe_xn_ratioStr = 
         (maxNe_xn_ratio==PackageReader.MAX_NE_EN_RATIO_DEF)?
         "no connection between nodes":(""+maxNe_xn_ratio);
-    System.out.println("active to active:"+active);
-    System.out.println("active to passive:"+active2passive);
-    System.out.println("passive to passive:"+passive);
-    System.out.println("passive to active:"+passive2active);
+    //System.out.println("active to active:"+active);
+    //System.out.println("active to passive:"+active2passive);
+    //System.out.println("passive to passive:"+passive);
+    //System.out.println("passive to active:"+passive2active);
 //    System.out.println("min Ne en ratio:"+minNe_xn_ratioStr);
 //    System.out.println("max Ne en ratio:"+maxNe_xn_ratioStr);
     System.out.println("missed Fires:"+missedFires);
