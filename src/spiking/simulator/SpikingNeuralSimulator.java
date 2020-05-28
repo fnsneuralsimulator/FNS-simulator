@@ -68,7 +68,7 @@ import org.apache.commons.cli.*;
 
 public class SpikingNeuralSimulator extends Thread{
   private final static String TAG = "[Spiking Neural Simulator] ";
-  private final static Boolean verbose = true;
+  private Boolean verbose = true;
   private Boolean debug = false;
   private NodesManager nMan;
   private Double minQueuesValue = Double.MAX_VALUE;
@@ -161,11 +161,12 @@ public class SpikingNeuralSimulator extends Thread{
    */
   public void runNewSplit(double newStopTime){
     double stopTime=(newStopTime>total_time)?total_time:newStopTime;
-    println(
-        "running new split "
-        +splitCount
-        +" with new stop simulated time:"
-        +stopTime);
+    if (verbose||((splitCount%100)==0))
+      println(
+          "running new split "
+          +splitCount
+          +" with new stop simulated time:"
+          +stopTime);
     nMan.runNewSplit(stopTime);
   }
   
@@ -506,9 +507,9 @@ public class SpikingNeuralSimulator extends Thread{
     calculateCompressionFactor();
     times[2]=System.currentTimeMillis()-lastTime;
     lastTime+=times[2];
-    println("adding inter-node connection probability...\n");
+    println("adding inter-node connection ...");
     for (int i=0; i<conns.size();++i){
-      println("src: "+conns.get(i).getSrc()+", dst: "+conns.get(i).getDst()+"\n");
+      println("adding connection bundle: "+conns.get(i).getSrc()+"-"+conns.get(i).getDst());
       addInterNodeThreadConnection(
           nMan.getNodeThread(conns.get(i).getSrc()), 
           nMan.getNodeThread(conns.get(i).getDst()), 
@@ -608,6 +609,10 @@ public class SpikingNeuralSimulator extends Thread{
     this.checkall=true;
   }
 
+  public void setVerbose(){
+    verbose=true;
+  }
+
   //================   printing functions ============================
   
   private void println(String s){
@@ -671,6 +676,7 @@ public class SpikingNeuralSimulator extends Thread{
             +" with reduced precision");
         options.addOption("g", "gephi", false, 
             "produce also a csv for Gephi");
+        options.addOption("v", "verbose", false, "print verbose output");
         options.addOption("h", "help", false, "shows this help");
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -734,6 +740,8 @@ public class SpikingNeuralSimulator extends Thread{
       sns.sc.setSuperReducedOutput();
     if (cmd.hasOption("gephi"))
       sns.sc.setGephi();
+    if (cmd.hasOption("verbose"))
+      sns.setVerbose();
     try {
       sns.initFromConfigFileAndConnectivityPackage(
           (new File(args[0]+"/config.xml")).getAbsolutePath(), 
