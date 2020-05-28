@@ -42,6 +42,7 @@ org/math/plot/DataSelectTable$Model.class
 org/math/plot/components/DatasFrame.class
 org/math/plot/utils/FastMath.class
 org/math/plot/render/Projection.class
+utils/statistics/FiringWriter.class
 org/math/plot/components/PlotToolBar$1.class
 org/math/plot/utils/NumbersUtils.class
 org/math/plot/MatrixTablePanel$1.class
@@ -114,6 +115,7 @@ org/math/plot/components/ScalesFrame$ScalePanel$6.class
 org/math/plot/components/ScalesFrame.class
 spiking/node/NodesManager.class
 org/math/plot/plotObjects/BaseDependant.class
+utils/statistics/BurningWriter.class
 org/math/plot/plotObjects/Label.class
 utils/configuration/NodeInterconnectionCfg.class
 org/math/plot/ParametersPanel.class

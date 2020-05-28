@@ -178,7 +178,8 @@ public class NodeThread extends Thread{
       Boolean lif,
       Boolean exp_decay,
       Boolean do_fast,
-      Boolean isNOI){
+      Boolean isNOI,
+      StatisticsCollector sc){
     this.n=new Node(
         id,
         n, 
@@ -212,7 +213,8 @@ public class NodeThread extends Thread{
         lif,
         exp_decay,
         do_fast,
-        isNOI);
+        isNOI,
+        sc);
   }
   
   /**
@@ -304,7 +306,8 @@ public class NodeThread extends Thread{
       Boolean lif, 
       Boolean exp_decay, 
       Boolean do_fast,
-      Boolean isNOI){
+      Boolean isNOI,
+      StatisticsCollector sc){
     this.n=new Node(id,
         n,
         externalInputs,
@@ -345,7 +348,8 @@ public class NodeThread extends Thread{
         lif, 
         exp_decay, 
         do_fast,
-        isNOI);
+        isNOI,
+        sc);
     
   }
 
@@ -387,8 +391,9 @@ public class NodeThread extends Thread{
       Boolean lif, 
       Boolean exp_decay, 
       Boolean do_fast,
-      Boolean isNOI){
-    sc=nMan.getStatisticsCollector();
+      Boolean isNOI,
+      StatisticsCollector sc){
+    this.sc=sc;
     queuesMap = new HashMap<Synapse, NiceQueue>();
     internodeFires = new ArrayList<InterNodeSpike>();
     nnMan = new NodeNeuronsManager(n, 

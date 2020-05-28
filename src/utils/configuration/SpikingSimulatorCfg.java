@@ -63,7 +63,7 @@ import utils.constants.Constants;
 public class SpikingSimulatorCfg {
   
   private int stop=1000;
-  private long serialize_after=1000;
+  private int serialize_after=1000;
   private Double avg_neuronal_signal_speed=5.1;
   private NeuManCfg global_neuron_manager;
   private ArrayList<NodeCfg> node = new ArrayList<NodeCfg>();
@@ -107,7 +107,7 @@ public class SpikingSimulatorCfg {
     this.stop = stop;
   }
 
-  public long getSerialize_after() {
+  public int getSerialize_after() {
     return serialize_after;
   }
 
