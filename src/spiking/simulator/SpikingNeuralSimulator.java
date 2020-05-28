@@ -616,7 +616,6 @@ public class SpikingNeuralSimulator extends Thread{
   //================   printing functions ============================
   
   private void println(String s){
-    if (verbose)
       System.out.println(TAG+s);
   }
   
