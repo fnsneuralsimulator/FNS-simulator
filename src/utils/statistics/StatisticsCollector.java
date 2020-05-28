@@ -96,8 +96,8 @@ public class StatisticsCollector extends Thread {
   private volatile long firingSpikesCounter=0l;
   private volatile long burningSpikesCounter=0l;
   // the nodes of interest NOI
-  private HashMap <Integer,Boolean> NOI;
-  private volatile Boolean checkall=false;
+  //private HashMap <Integer,Boolean> NOI;
+  //private volatile Boolean checkall=false;
   private long serialize_after = 10000l;
   private volatile int wrotes_split=0;
   private volatile String filename = "";
@@ -245,7 +245,7 @@ public class StatisticsCollector extends Thread {
       return;
     firingNeurons.add(new Double(compF.getCompressedNeuronId()));
     firingTimes.add(cf.getFiringTime());
-    if (checkall ||( NOI.get(cf.getFiringNodeId())!=null )){
+    //if (checkall ||( NOI.get(cf.getFiringNodeId())!=null )){
       FiringNeuron fn= new FiringNeuron(
           cf.getFiringNodeId(),
           cf.getFiringNeuronId(),
@@ -253,7 +253,7 @@ public class StatisticsCollector extends Thread {
           cf.getIsExcitatory(),
           cf.getIsExternal());
       firingSpikesHashMap.put(new Long(firingSpikesCounter), fn);
-    }
+    //}
     ++firingSpikesCounter;
     if ((firingSpikesCounter%serialize_after)==0){
       makeCsv(filename);
@@ -293,9 +293,9 @@ public class StatisticsCollector extends Thread {
   }
   
   private void processBurnSpike(CollectedBurn cb) {
-    if (checkall ||( NOI.get(cb.getBurningNodeId())!=null )){
+    //if (checkall ||( NOI.get(cb.getBurningNodeId())!=null )){
       burningSpikesHashMap.put(new Long(burningSpikesCounter), cb);
-    }
+    //}
     ++burningSpikesCounter;
   }
   
@@ -713,9 +713,9 @@ public class StatisticsCollector extends Thread {
   //  region2checkMask=mask;
   //}
 
-  public void setNOI(HashMap <Integer, Boolean> NOI){
-    this.NOI=NOI;
-  }
+  //public void setNOI(HashMap <Integer, Boolean> NOI){
+  //  this.NOI=NOI;
+  //}
   
   public void checkAll(){
     checkall=true;
