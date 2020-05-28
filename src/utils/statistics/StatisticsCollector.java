@@ -98,8 +98,6 @@ public class StatisticsCollector /*extends Thread*/ {
   private BurningWriter burningWriter;
   private FiringWriter firingWriter;
   
-  
-  
   public void start(){
     burningWriter.start();
     firingWriter.start(); 
