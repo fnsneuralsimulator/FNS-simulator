@@ -215,8 +215,10 @@ public class FiringWriter extends Thread {
         firingSpikesQueue.wait();
       pw.flush();
       pw.close();
-      pwMatlab.flush();
-      pwMatlab.close();
+      if (pwMatlab!=null){
+        pwMatlab.flush();
+        pwMatlab.close();
+      }
     } catch (InterruptedException e) {
       e.printStackTrace();
     }

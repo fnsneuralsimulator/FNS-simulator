@@ -1059,18 +1059,18 @@ public class NodeThread extends Thread{
                 burningNeuronId, 
                 burnTime+ activeTransitionDelay);
           }
-          if(isNOI) 
-            sc.collectPassive2active();
+          //if(isNOI) 
+          //  sc.collectPassive2active();
           nnMan.addActiveNeuron(
               burningNeuronId, 
               nnMan.getTimeToFire(burningNeuronId), 
               currentTime, 
               2);
         }
-        else{
-          if(isNOI) 
-            sc.collectPassive();
-        }
+        //else{
+        //  if(isNOI) 
+        //    sc.collectPassive();
+        //}
         times[1]+=System.currentTimeMillis()-startTime;
       }
       // case of active neuron
@@ -1101,8 +1101,8 @@ public class NodeThread extends Thread{
           if (sx<nnMan.getSpikingThr()){
             nnMan.removeActiveNeuron(burningNeuronId);
             nnMan.resetTimeToFire(burningNeuronId);
-            if (isNOI)
-              sc.collectActive2passive();
+            //if (isNOI)
+            //  sc.collectActive2passive();
           }
           else{
             //updating firing delay
@@ -1113,8 +1113,8 @@ public class NodeThread extends Thread{
                 nnMan.getTimeToFire(burningNeuronId), 
                 currentTime, 
                 3);
-             if(isNOI) 
-              sc.collectActive();
+             //if(isNOI) 
+             // sc.collectActive();
           }
           //active to passive
           if (sx<0){
@@ -1123,16 +1123,16 @@ public class NodeThread extends Thread{
             nnMan.setState(burningNeuronId,sx);
             nnMan.removeActiveNeuron(burningNeuronId);
             nnMan.resetTimeToFire(burningNeuronId);
-            if(isNOI) 
-              sc.collectActive2passive();
+            //if(isNOI) 
+            //  sc.collectActive2passive();
           }
         }
         else{
           oldSx=sx;
           nnMan.removeActiveNeuron(burningNeuronId);
           nnMan.resetTimeToFire(burningNeuronId);
-          if(isNOI) 
-            sc.collectActive2passive();
+          //if(isNOI) 
+          //  sc.collectActive2passive();
         }
         times[2]+=System.currentTimeMillis()-startTime;
       }
