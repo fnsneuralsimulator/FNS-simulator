@@ -1,5 +1,6 @@
 *.class
 bin/
+experiments*
 experiments/*
 .classpath
 .project
