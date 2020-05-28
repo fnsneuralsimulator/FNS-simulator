@@ -717,9 +717,9 @@ public class StatisticsCollector extends Thread {
   //  this.NOI=NOI;
   //}
   
-  public void checkAll(){
-    checkall=true;
-  }
+  //public void checkAll(){
+  //  checkall=true;
+  //}
   
   
 }
