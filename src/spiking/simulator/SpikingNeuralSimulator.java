@@ -68,7 +68,7 @@ import org.apache.commons.cli.*;
 
 public class SpikingNeuralSimulator extends Thread{
   private final static String TAG = "[Spiking Neural Simulator] ";
-  private Boolean verbose = true;
+  private Boolean verbose = false;
   private Boolean debug = false;
   private NodesManager nMan;
   private Double minQueuesValue = Double.MAX_VALUE;
