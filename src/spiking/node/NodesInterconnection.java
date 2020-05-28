@@ -120,6 +120,12 @@ public class NodesInterconnection extends IntegerCouple{
   public Double getLength(){
     if (mu_lambda==null){
       System.out.println("[NODES INTERCONNECTION WARNING] length 0 error");
+      try {
+          throw new Exception();
+       }
+       catch (Exception e) {
+          e.printStackTrace();
+       }
       System.exit(1);
     }
     return mu_lambda;
