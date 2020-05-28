@@ -506,8 +506,9 @@ public class SpikingNeuralSimulator extends Thread{
     calculateCompressionFactor();
     times[2]=System.currentTimeMillis()-lastTime;
     lastTime+=times[2];
-    System.out.println("adding inter-node connection probability...\n");
+    println("adding inter-node connection probability...\n");
     for (int i=0; i<conns.size();++i){
+      println("src: "+conns.get(i).getSrc()+", dst: "+conns.get(i).getDst()+"\n");
       addInterNodeThreadConnection(
           nMan.getNodeThread(conns.get(i).getSrc()), 
           nMan.getNodeThread(conns.get(i).getDst()), 
@@ -601,6 +602,10 @@ public class SpikingNeuralSimulator extends Thread{
   public void setNOI(HashMap <Integer, Boolean> NOI){
     //sc.setNOI(NOI);
     this.NOI=NOI;
+  }
+
+  public void checkAll(){
+    this.checkall=true;
   }
 
   //================   printing functions ============================
@@ -717,8 +722,8 @@ public class SpikingNeuralSimulator extends Thread{
     }
     else {
       filename = Experiment.getExperimentDir()+"all_nodes_";
-      //sns.checkAll();
-      checkall=true;
+      sns.checkAll();
+      //sns.setCheckalle;
     }
     sns.sc.set_filename(filename);
     if (cmd.hasOption("matlab"))
