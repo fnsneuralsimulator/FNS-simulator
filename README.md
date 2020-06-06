@@ -36,15 +36,10 @@ Please navigate the terminal until the FNS folder (where you placed the `[SIMULA
 
 `docker run --rm -v $(pwd)/[SIMULATION_FOLDER]:/usr/local/fns/[SIMULATION_FOLDER] -it -e JAVA_OPTS="" --name fns fnsneuralsimulator/fns-simulator:latest fns [SIMULATION_FOLDER/EXPERIMENT][SWITCHES]`
 
+where `[SIMULATION_FOLDER]` is the folder which contains the simulation packages, `[EXPERIMENT]` is the package which contains the set of configuration files for a single simulation.
+
 * replace `-it` with `-d` if you prefer to detach and run FNS in the background;
 * specify the field `JAVA_OPTS` in case you need to modify the heap size.
-
-<<<<<<< HEAD
-where `[SIMULATION_FOLDER]` is the folder which contains the simulation packages, `[EXPERIMENT]` is the package which contains the set of configuration files for a single simulation, and `.m2` is the directory for your maven repositories. 
-=======
-
-where `[SIMULATION_FOLDER]` is the folder which contains the simulation packages, `[EXPERIMENT]` is the package which contains the set of configuration files for a single simulation.
->>>>>>> 737857765eb7caa8eed9d36bc62f05e68a7fd39c
 
 To make sure you are using the latest version of Docker, type:
 
