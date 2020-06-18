@@ -1,5 +1,4 @@
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/render/Projection3D.java
-/home/knizontes/projects/FNS-simulator/src/spiking/controllers/node/NodeBurningsThread.java
 /home/knizontes/projects/FNS-simulator/src/utils/statistics/CollectedFire.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/Plot2DPanel.java
 /home/knizontes/projects/FNS-simulator/src/spiking/node/NodesInterconnection.java
@@ -56,7 +55,6 @@
 /home/knizontes/projects/FNS-simulator/src/utils/statistics/CollectedBurn.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/plots/StaircasePlot.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/plots/ScatterPlot.java
-/home/knizontes/projects/FNS-simulator/src/spiking/controllers/node/NodeFiringsThread.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/plotObjects/Axis.java
 /home/knizontes/projects/FNS-simulator/src/org/math/plot/render/AWTDrawer.java
 /home/knizontes/projects/FNS-simulator/src/org/math/io/FilePrintable.java

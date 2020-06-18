@@ -118,11 +118,11 @@ public class SpikingNeuralSimulator extends Thread{
   */
   private static final Double bop_to_cycle_factor = 1.0;
   private static final Double bop_conservative_p = 0.9999;
-  private StatisticsCollector sc = new StatisticsCollector();
+  private ArrayList<StatisticsCollector> scs = 
+      new ArrayList <StatisticsCollector>();
   
   public SpikingNeuralSimulator (){
     nMan = new NodesManager(this, bop_conservative_p);
-    //sc.start();
   }
   
   private void addNodeThread(NodeThread node){
@@ -186,8 +186,13 @@ public class SpikingNeuralSimulator extends Thread{
     keep_running=false;
     println("node threads stopped.");
     println("killing statistics collector...");
-    sc.kill();
+    killscs();
     println("statistics collector stopped.");
+  }
+
+  private void killscs(){
+    for (int i=0; i<scs.size(); ++i)
+      scs.get(i).kill();
   }
 
 /**
@@ -274,6 +279,60 @@ public class SpikingNeuralSimulator extends Thread{
     }
     return true;
   }
+
+  private void setMinMaxNe_xn_ratiosScs(
+      Double minNe_xn_ratio, 
+      Double maxNe_xn_ratio){
+    for (int i=0; i<scs.size(); ++i)
+      scs.get(i).setMinMaxNe_xn_ratios(
+          minNe_xn_ratio, 
+          maxNe_xn_ratio);
+  }
+
+  private void setSerializeAfterScs(int serializeAfter){
+    for (int i=0; i<scs.size(); ++i)
+      scs.get(i).setSerializeAfter(serializeAfter);
+  }
+ 
+  private void startScs(){
+    for (int i=0; i<scs.size(); ++i)
+      scs.get(i).start();
+  }
+
+  private void setFilenameScs(String filename){
+    for (int i=0; i<scs.size(); ++i)
+      scs.get(i).setFilename(filename+"-"+i);    
+  }
+ 
+  private void setMatlabScs(){
+    for (int i=0; i<scs.size(); ++i)
+      scs.get(i).setMatlab();    
+  }
+ 
+  private void setReducedOutputScs(){
+    for (int i=0; i<scs.size(); ++i)
+      scs.get(i).setReducedOutput();    
+  }
+ 
+  private void setSuperReducedOutputScs(){
+    for (int i=0; i<scs.size(); ++i)
+      scs.get(i).setSuperReducedOutput();    
+  }
+ 
+  private void setGephiScs(){
+    for (int i=0; i<scs.size(); ++i)
+      scs.get(i).setGephi();    
+  }
+ 
+  private void printResultsScs(){
+    for (int i=0; i<scs.size(); ++i){
+      System.out.println(
+          "\n==============| node "+
+          i+
+          "|=============");
+      scs.get(i).PrintResults();    
+    }
+  }
  
   /**
   *   Read the config files for nodes and connectivity topology,
@@ -297,7 +356,9 @@ public class SpikingNeuralSimulator extends Thread{
     println("reading connectivity package file:"+connPkgPath);
     ConnectivityPackageManager cpm = new ConnectivityPackageManager(); 
     cpm.readConnectivityPackage(connPkgPath);
-    sc.setMinMaxNe_xn_ratios(
+    for (int i=0; i<cpm.getNodesNum();++i)
+      scs.add(new StatisticsCollector());
+    setMinMaxNe_xn_ratiosScs(
         cpm.getMinNe_xn_ratio(), 
         cpm.getMaxNe_xn_ratio());
     ArrayList<NodesInterconnection> conns = 
@@ -313,7 +374,7 @@ public class SpikingNeuralSimulator extends Thread{
     Integer serializeAfter=ssc.getSerialize_after();
     if (serializeAfter==null)
       serializeAfter=SERIALIZE_AFTER;
-    sc.setSerializeAfter(serializeAfter);
+    setSerializeAfterScs(serializeAfter);
     times[1]=System.currentTimeMillis()-lastTime;
     lastTime+=times[1];
     System.out.println("creating and adding nodes...\n");
@@ -433,7 +494,7 @@ public class SpikingNeuralSimulator extends Thread{
                 exp_decay,
                 do_fast,
                 (checkall||NOI.get(cpm.getNode(i).getId())),
-                sc));
+                scs.get(i)));
       }
       else{
         Integer tmpExternalType; 
@@ -506,7 +567,7 @@ public class SpikingNeuralSimulator extends Thread{
                     exp_decay,
                     do_fast,
                     (checkall||NOI.get(cpm.getNode(i).getId())),
-                    sc));
+                    scs.get(i)));
       }
     }
     calculateCompressionFactor();
@@ -531,7 +592,7 @@ public class SpikingNeuralSimulator extends Thread{
     init();
     times[4]=System.currentTimeMillis()-lastTime;
     lastTime+=times[4];
-    sc.start();
+    startScs();
   }
   
   /**
@@ -740,15 +801,15 @@ public class SpikingNeuralSimulator extends Thread{
       sns.checkAll();
       //sns.setCheckalle;
     }
-    sns.sc.set_filename(filename);
+    sns.setFilenameScs(filename);
     if (cmd.hasOption("matlab"))
-      sns.sc.setMatlab();
+      sns.setMatlabScs();
     if (cmd.hasOption("reduced-output"))
-      sns.sc.setReducedOutput();
+      sns.setReducedOutputScs();
     if (cmd.hasOption("super-reduced-output"))
-      sns.sc.setSuperReducedOutput();
+      sns.setSuperReducedOutputScs();
     if (cmd.hasOption("gephi"))
-      sns.sc.setGephi();
+      sns.setGephiScs();
     if (cmd.hasOption("verbose"))
       sns.setVerbose();
     try {
@@ -767,8 +828,8 @@ public class SpikingNeuralSimulator extends Thread{
     } catch (InterruptedException e1) {
       e1.printStackTrace();
     }
-    sns.sc.PrintResults();
-    sns.sc.kill();
+    sns.printResultsScs();
+    sns.killscs();
     try{
       //sns.sc.makeCsv(filename);
       System.out.println("done.");
