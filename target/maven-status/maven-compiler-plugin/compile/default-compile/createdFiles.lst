@@ -92,6 +92,7 @@ spiking/node/SynapsesManager.class
 org/math/plot/DataSelectPanel$ParameterRow$4.class
 org/math/plot/utils/Histogram.class
 org/math/plot/components/PlotToolBar$6.class
+spiking/controllers/node/NodeBurningsThread.class
 utils/tools/CompressedFire.class
 org/math/plot/DataSelectPanel$ParameterRow$1.class
 org/math/plot/plots/GaussianDensityLayerPlot.class
@@ -152,6 +153,7 @@ org/math/plot/components/LegendPanel$Legend$1.class
 org/math/io/files/ASCIIFile.class
 org/math/io/littleendian/LEDataOutputStream.class
 spiking/controllers/node/NodeLink.class
+spiking/controllers/node/NodeFiringsThread.class
 utils/configuration/NodeCfg.class
 org/math/plot/plots/Plot$DefaultDataPanel$2.class
 org/math/plot/plotObjects/Line.class

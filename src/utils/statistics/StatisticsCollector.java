@@ -79,7 +79,7 @@ public class StatisticsCollector /*extends Thread*/ {
   private volatile Boolean badCurve=false;
   private volatile long firingSpikesCounter=0l;
   private volatile long burningSpikesCounter=0l;
-  private int serialize_after = 10000;
+  private int serializeAfter = 10000;
   private volatile int wrotes_split=0;
   private volatile String filename = "";
   private volatile Boolean matlab=false;
@@ -110,7 +110,7 @@ public class StatisticsCollector /*extends Thread*/ {
   }
   
   public void setSerializeAfter(int sa){
-    serialize_after = sa;
+    serializeAfter = sa;
     burningSpikesQueue= new ArrayBlockingQueue<CollectedBurn>(sa);
     firingSpikesQueue= new ArrayBlockingQueue<CollectedFire>(sa);
     burningWriter= new BurningWriter(
@@ -119,6 +119,10 @@ public class StatisticsCollector /*extends Thread*/ {
     firingWriter= new FiringWriter(
         filename,
         firingSpikesQueue);
+  }
+
+  public int getSerializeAfter(){
+    return serializeAfter;
   }
   
   public void set_filename(String filename){
@@ -158,32 +162,40 @@ public class StatisticsCollector /*extends Thread*/ {
   }
   
   
-  public synchronized void collectFireSpike(
-      Integer firingNodeId, 
-      Long firingNeuronId, 
-      Double firingTime, 
-      Long maxN, 
-      Double compressionFactor, 
-      Boolean isExcitatory, 
-      Boolean isExternal){
-    //processFireSpike(
+  public synchronized void collectFireSpike(CollectedFire cf){
     try{
-      firingSpikesQueue.put(
-          new CollectedFire(
-              firingNodeId, 
-              firingNeuronId, 
-              firingTime, 
-              maxN, 
-              compressionFactor, 
-              isExcitatory, 
-              isExternal
-              ));
+      firingSpikesQueue.put(cf);
      }
      catch (InterruptedException e) {
        e.printStackTrace();
      }
-    //new_event();
   }
+  //public synchronized void collectFireSpike(
+  //    Integer firingNodeId, 
+  //    Long firingNeuronId, 
+  //    Double firingTime, 
+  //    Long maxN, 
+  //    Double compressionFactor, 
+  //    Boolean isExcitatory, 
+  //    Boolean isExternal){
+  //  //processFireSpike(
+  //  try{
+  //    firingSpikesQueue.put(
+  //        new CollectedFire(
+  //            firingNodeId, 
+  //            firingNeuronId, 
+  //            firingTime, 
+  //            maxN, 
+  //            compressionFactor, 
+  //            isExcitatory, 
+  //            isExternal
+  //            ));
+  //   }
+  //   catch (InterruptedException e) {
+  //     e.printStackTrace();
+  //   }
+  //  //new_event();
+  //}
 
   //private void processFireSpike(CollectedFire cf) {
   //    FiringNeuron fn= new FiringNeuron(
@@ -195,48 +207,57 @@ public class StatisticsCollector /*extends Thread*/ {
   //    firingSpikesHashMap.put(new Long(firingSpikesCounter), fn);
   //  //}
   //  ++firingSpikesCounter;
-  //  if ((firingSpikesCounter%serialize_after)==0){
+  //  if ((firingSpikesCounter%serializeAfter)==0){
   //    makeCsv(filename);
   //    //if (firstFiringNeurons==null)
   //    //  simulatedTime=cf.getFiringTime();
   //  }
   //}
   
-  public synchronized void collectBurnSpike(
-      Long firingNeuronId,
-      Integer firingNodeId,
-      Long burningNeuronId,
-      Integer burningNodeId,
-      Double burnTime, 
-      Boolean fromExternalSource, 
-      Double fromState, 
-      Double stepInState, 
-      Double postsynapticWeight, 
-      Double presynapticWeight, 
-      Double timeToFire,
-      Double fireTime) {
-    //try{
-    //  burningSpikesQueue.put(
-    //      new CollectedBurn(
-    //          firingNeuronId,
-    //          firingNodeId,
-    //          burningNeuronId,
-    //          burningNodeId,
-    //          burnTime, 
-    //          fromExternalSource, 
-    //          fromState, 
-    //          stepInState, 
-    //          postsynapticWeight, 
-    //          presynapticWeight, 
-    //          timeToFire, 
-    //          fireTime)
-    //          );
-    //}
-    //catch (InterruptedException e) {
-    //  e.printStackTrace();
-    //}
+  public synchronized void collectBurnSpike(CollectedBurn cb) {
+    try{
+      burningSpikesQueue.put(cb);
+    }
+    catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     //new_event();
   }
+  //public synchronized void collectBurnSpike(
+  //    Long firingNeuronId,
+  //    Integer firingNodeId,
+  //    Long burningNeuronId,
+  //    Integer burningNodeId,
+  //    Double burnTime, 
+  //    Boolean fromExternalSource, 
+  //    Double fromState, 
+  //    Double stepInState, 
+  //    Double postsynapticWeight, 
+  //    Double presynapticWeight, 
+  //    Double timeToFire,
+  //    Double fireTime) {
+  //  try{
+  //    burningSpikesQueue.put(
+  //        new CollectedBurn(
+  //            firingNeuronId,
+  //            firingNodeId,
+  //            burningNeuronId,
+  //            burningNodeId,
+  //            burnTime, 
+  //            fromExternalSource, 
+  //            fromState, 
+  //            stepInState, 
+  //            postsynapticWeight, 
+  //            presynapticWeight, 
+  //            timeToFire, 
+  //            fireTime)
+  //            );
+  //  }
+  //  //catch (InterruptedException e) {
+  //  //  e.printStackTrace();
+  //  //}
+  //  //new_event();
+  //}
   
   //private void processBurnSpike(CollectedBurn cb) {
   //  //if (checkall ||( NOI.get(cb.getBurningNodeId())!=null )){
