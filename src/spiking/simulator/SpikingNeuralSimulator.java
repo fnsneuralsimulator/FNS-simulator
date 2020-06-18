@@ -68,6 +68,7 @@ import org.apache.commons.cli.*;
 
 public class SpikingNeuralSimulator extends Thread{
   private final static String TAG = "[Spiking Neural Simulator] ";
+  private final static int SERIALIZE_AFTER=1000000;
   private Boolean verbose = false;
   private Boolean debug = false;
   private NodesManager nMan;
@@ -310,8 +311,9 @@ public class SpikingNeuralSimulator extends Thread{
     HashMap <Integer, NodeCfg> nodeCs =  ssc.getNodesMap();
     avgNeuronalSignalSpeed=ssc.getAvg_neuronal_signal_speed();
     Integer serializeAfter=ssc.getSerialize_after();
-    if (serializeAfter!=null)
-      sc.setSerializeAfter(serializeAfter);
+    if (serializeAfter==null)
+      serializeAfter=SERIALIZE_AFTER;
+    sc.setSerializeAfter(serializeAfter);
     times[1]=System.currentTimeMillis()-lastTime;
     lastTime+=times[1];
     System.out.println("creating and adding nodes...\n");

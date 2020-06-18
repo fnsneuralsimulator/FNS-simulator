@@ -66,6 +66,8 @@ import utils.tools.NiceNode;
 import utils.tools.NiceQueue;
 import utils.math.FastMath;
 import utils.statistics.StatisticsCollector;
+import utils.statistics.BurningWriter;
+import utils.statistics.FiringWriter;
 
 public class NodeThread extends Thread{
   
@@ -106,6 +108,10 @@ public class NodeThread extends Thread{
   long[] times= new long[10];
   private StatisticsCollector sc;
   private int toremDebug=0;
+  private BurningWriter burningWriter;
+  private FiringWriter firingWriter;
+  private NodeFiringsThread nft;
+  private NodeBurningsThread nbt;
   
 
   /**
@@ -394,6 +400,10 @@ public class NodeThread extends Thread{
       Boolean isNOI,
       StatisticsCollector sc){
     this.sc=sc;
+    nft=new NodeFiringsThread(this.sc);
+    nbt=new NodeBurningsThread(this.sc);
+    nft.start();
+    nbt.start();
     queuesMap = new HashMap<Synapse, NiceQueue>();
     internodeFires = new ArrayList<InterNodeSpike>();
     nnMan = new NodeNeuronsManager(n, 
@@ -542,7 +552,7 @@ public class NodeThread extends Thread{
                   lastCollectedBurstFiringBurnTime=
                       fixedBurnSpike.getBurnTime();
                   if(isNOI) 
-                    sc.collectFireSpike(
+                    nft.collectFireSpike(
                         n.getId(), 
                         fixedBurnSpike.getSyn().getAxonNeuronId(),
                         fixedBurnSpike.getBurnTime(), 
@@ -575,7 +585,7 @@ public class NodeThread extends Thread{
                 lastCollectedBurstFiringBurnTime=
                     fixedBurnSpike.getBurnTime();
                 if(isNOI) 
-                  sc.collectFireSpike(
+                  nft.collectFireSpike(
                       n.getId(), 
                       fixedBurnSpike.getSyn().getAxonNeuronId(),
                       fixedBurnSpike.getBurnTime(), 
@@ -634,7 +644,7 @@ public class NodeThread extends Thread{
             continue;
         }
         if(isNOI) 
-          sc.collectFireSpike(
+          nft.collectFireSpike(
               n.getId(), 
               firingNeuronId, 
               spikeTime, 
@@ -1142,7 +1152,7 @@ public class NodeThread extends Thread{
       times[4]+=System.currentTimeMillis()-startTime;
       // collecting the spike
       if(isNOI) 
-        sc.collectBurnSpike(
+        nbt.collectBurnSpike(
             firingNeuronId,
             firingNodeId,
             burningNeuronId,
@@ -1160,7 +1170,7 @@ public class NodeThread extends Thread{
     else{
       // collecting the spike
       if(isNOI) 
-        sc.collectBurnSpike(
+        nbt.collectBurnSpike(
             firingNeuronId,
             firingNodeId,
             burningNeuronId,
