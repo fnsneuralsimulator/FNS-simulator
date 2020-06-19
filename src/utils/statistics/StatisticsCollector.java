@@ -194,6 +194,32 @@ public class StatisticsCollector /*extends Thread*/ {
        e.printStackTrace();
      }
   }
+  //public synchronized void collectFireSpike(
+  //    Integer firingNodeId, 
+  //    Long firingNeuronId, 
+  //    Double firingTime, 
+  //    Long maxN, 
+  //    Double compressionFactor, 
+  //    Boolean isExcitatory, 
+  //    Boolean isExternal){
+  //  //processFireSpike(
+  //  try{
+  //    firingSpikesQueue.put(
+  //        new CollectedFire(
+  //            firingNodeId, 
+  //            firingNeuronId, 
+  //            firingTime, 
+  //            maxN, 
+  //            compressionFactor, 
+  //            isExcitatory, 
+  //            isExternal
+  //            ));
+  //   }
+  //   catch (InterruptedException e) {
+  //     e.printStackTrace();
+  //   }
+  //  //new_event();
+  //}
 
   //private void processFireSpike(CollectedFire cf) {
   //    FiringNeuron fn= new FiringNeuron(

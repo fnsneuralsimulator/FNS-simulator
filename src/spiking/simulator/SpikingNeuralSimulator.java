@@ -123,6 +123,7 @@ public class SpikingNeuralSimulator extends Thread{
   
   public SpikingNeuralSimulator (){
     nMan = new NodesManager(this, bop_conservative_p);
+    //sc.start();
   }
   
   private void addNodeThread(NodeThread node){
@@ -301,7 +302,7 @@ public class SpikingNeuralSimulator extends Thread{
 
   private void setFilenameScs(String filename){
     for (int i=0; i<scs.size(); ++i)
-      scs.get(i).setFilename(filename+"-"+i);    
+      scs.get(i).setFilename(filename+"_node-"+i+"_");    
   }
  
   private void setMatlabScs(){
@@ -801,15 +802,6 @@ public class SpikingNeuralSimulator extends Thread{
       sns.checkAll();
       //sns.setCheckalle;
     }
-    sns.setFilenameScs(filename);
-    if (cmd.hasOption("matlab"))
-      sns.setMatlabScs();
-    if (cmd.hasOption("reduced-output"))
-      sns.setReducedOutputScs();
-    if (cmd.hasOption("super-reduced-output"))
-      sns.setSuperReducedOutputScs();
-    if (cmd.hasOption("gephi"))
-      sns.setGephiScs();
     if (cmd.hasOption("verbose"))
       sns.setVerbose();
     try {
@@ -820,6 +812,15 @@ public class SpikingNeuralSimulator extends Thread{
     } catch (BadParametersException e) {
       e.printStackTrace();
     }
+    sns.setFilenameScs(filename);
+    if (cmd.hasOption("matlab"))
+      sns.setMatlabScs();
+    if (cmd.hasOption("reduced-output"))
+      sns.setReducedOutputScs();
+    if (cmd.hasOption("super-reduced-output"))
+      sns.setSuperReducedOutputScs();
+    if (cmd.hasOption("gephi"))
+      sns.setGephiScs();
     System.out.println("nodes to check mask:"+nodeListString);    
     System.out.println("running simulator...\n");
     sns.start();
