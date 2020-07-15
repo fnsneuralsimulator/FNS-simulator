@@ -19,7 +19,7 @@ Please cite FNS
 
 When using FNS, please cite us as follows:
 
-Gianluca Susi, Pilar Garcés, Alessandro Cristini, Emanuele Paracone, Mario 
+Gianluca Susi, Pilar Garcés, Emanuele Paracone, Alessandro Cristini, Mario 
 Salerno, Fernando Maestú, Ernesto Pereda (2020). "FNS: an event-driven spiking 
 neural network simulator based on the LIFL neuron model". Paper under review.
 Laboratory of Cognitive and Computational Neuroscience, UPM-UCM Centre for 
