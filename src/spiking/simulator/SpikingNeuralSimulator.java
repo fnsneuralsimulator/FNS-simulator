@@ -69,6 +69,8 @@ import org.apache.commons.cli.*;
 public class SpikingNeuralSimulator extends Thread{
   private final static String TAG = "[Spiking Neural Simulator] ";
   private final static int SERIALIZE_AFTER=1000000;
+  //the simulation start time
+  private long simStartTime;
   private Boolean verbose = false;
   private Boolean debug = false;
   private NodesManager nMan;
@@ -123,6 +125,7 @@ public class SpikingNeuralSimulator extends Thread{
   
   public SpikingNeuralSimulator (){
     nMan = new NodesManager(this, bop_conservative_p);
+    simStartTime=System.currentTimeMillis();
     //sc.start();
   }
   
@@ -194,6 +197,10 @@ public class SpikingNeuralSimulator extends Thread{
   private void killscs(){
     for (int i=0; i<scs.size(); ++i)
       scs.get(i).kill();
+<<<<<<< HEAD
+    scs.get(0).close();
+=======
+>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
   }
 
 /**
@@ -216,7 +223,7 @@ public class SpikingNeuralSimulator extends Thread{
  */
   
   public void run(){
-    long startTime = System.currentTimeMillis();
+    //long startTime = System.currentTimeMillis();
     if (!initialized)
       return;
     println("starting nodes...");
@@ -231,11 +238,16 @@ public class SpikingNeuralSimulator extends Thread{
     }
     println(
         "end of simulator run, "+
-        (System.currentTimeMillis()-startTime)+
+        (System.currentTimeMillis()-simStartTime)+
         " ms elapsed.");
     println("effective simulation time: "+
-        (System.currentTimeMillis()-startTime-
-            times[0]-times[1]-times[2]-times[3]-times[4])+
+        (System.currentTimeMillis()-
+            simStartTime-
+            times[0]-
+            times[1]-
+            times[2]-
+            times[3]-
+            times[4])+
         " ms.");
     println(
         "init phases:\n\t conn pckg read:\t\t"+
@@ -248,7 +260,12 @@ public class SpikingNeuralSimulator extends Thread{
         " ms\n\t simulator init:\t\t"+
         times[4]+
         " ms\n\t total init time:\t\t"+
-        (times[0]+times[1]+times[2]+times[3]+times[4])+
+        (
+            times[0]+
+            times[1]+
+            times[2]+
+            times[3]+
+            times[4])+
         " ms");
     println("avg neuronal signal speed:"+avgNeuronalSignalSpeed);
     println("cycle time:"+cycle_time);
@@ -295,14 +312,25 @@ public class SpikingNeuralSimulator extends Thread{
       scs.get(i).setSerializeAfter(serializeAfter);
   }
  
+<<<<<<< HEAD
+  public void startScs(){
+=======
   private void startScs(){
+>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
     for (int i=0; i<scs.size(); ++i)
       scs.get(i).start();
   }
 
+<<<<<<< HEAD
+  public void setFilenameScs(String filename){
+    for (int i=0; i<scs.size(); ++i)
+      //scs.get(i).setFilename(filename+"node-"+i+"_exp-");    
+      scs.get(i).setFilename(filename+"exp-");    
+=======
   private void setFilenameScs(String filename){
     for (int i=0; i<scs.size(); ++i)
       scs.get(i).setFilename(filename+"_node-"+i+"_");    
+>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
   }
  
   private void setMatlabScs(){
@@ -333,6 +361,10 @@ public class SpikingNeuralSimulator extends Thread{
           "|=============");
       scs.get(i).PrintResults();    
     }
+<<<<<<< HEAD
+    System.out.println();
+=======
+>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
   }
  
   /**
@@ -348,6 +380,7 @@ public class SpikingNeuralSimulator extends Thread{
   *                       (with some aproximations)
   */
   public void initFromConfigFileAndConnectivityPackage(
+      //String filename,
       String configPath, 
       String connPkgPath, 
       Boolean do_fast) 
@@ -359,6 +392,10 @@ public class SpikingNeuralSimulator extends Thread{
     cpm.readConnectivityPackage(connPkgPath);
     for (int i=0; i<cpm.getNodesNum();++i)
       scs.add(new StatisticsCollector());
+<<<<<<< HEAD
+    //setFilenameScs(filename);
+=======
+>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
     setMinMaxNe_xn_ratiosScs(
         cpm.getMinNe_xn_ratio(), 
         cpm.getMaxNe_xn_ratio());
@@ -593,7 +630,10 @@ public class SpikingNeuralSimulator extends Thread{
     init();
     times[4]=System.currentTimeMillis()-lastTime;
     lastTime+=times[4];
+<<<<<<< HEAD
+=======
     startScs();
+>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
   }
   
   /**
@@ -778,6 +818,7 @@ public class SpikingNeuralSimulator extends Thread{
         }
         // intializing simulator
     System.out.println("initializing simulator");
+    //long startTime = System.currentTimeMillis();
     SpikingNeuralSimulator sns = new SpikingNeuralSimulator();
     sns.setExperimentName(args[0]);
     String filename=null;
@@ -800,7 +841,6 @@ public class SpikingNeuralSimulator extends Thread{
     else {
       filename = Experiment.getExperimentDir()+"all_nodes_";
       sns.checkAll();
-      //sns.setCheckalle;
     }
     if (cmd.hasOption("verbose"))
       sns.setVerbose();
@@ -812,7 +852,10 @@ public class SpikingNeuralSimulator extends Thread{
     } catch (BadParametersException e) {
       e.printStackTrace();
     }
+<<<<<<< HEAD
+=======
     sns.setFilenameScs(filename);
+>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
     if (cmd.hasOption("matlab"))
       sns.setMatlabScs();
     if (cmd.hasOption("reduced-output"))
@@ -822,7 +865,10 @@ public class SpikingNeuralSimulator extends Thread{
     if (cmd.hasOption("gephi"))
       sns.setGephiScs();
     System.out.println("nodes to check mask:"+nodeListString);    
-    System.out.println("running simulator...\n");
+    sns.setFilenameScs(filename);
+    System.out.println("starting statistic collector...");
+    sns.startScs();
+    System.out.println("starting simulator...\n");
     sns.start();
     try {
       sns.join();
@@ -831,9 +877,13 @@ public class SpikingNeuralSimulator extends Thread{
     }
     sns.printResultsScs();
     sns.killscs();
+<<<<<<< HEAD
+    //try{
+=======
     try{
+>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
       //sns.sc.makeCsv(filename);
-      System.out.println("done.");
+      //System.out.println("done.");
       //if (do_plot){
       //  sns.sc.printFirePlot(filename);
       //  System.out.println("Press enter twice to quit:");
@@ -841,9 +891,9 @@ public class SpikingNeuralSimulator extends Thread{
       //  System.in.read();
       //  System.in.read();
       //}
-    } catch (Exception e){
-      e.printStackTrace();
-    }
+    //} catch (Exception e){
+    //  e.printStackTrace();
+    //}
 
     System.out.println("bye!");
     System.exit(0);

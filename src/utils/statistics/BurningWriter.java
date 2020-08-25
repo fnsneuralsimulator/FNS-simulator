@@ -55,18 +55,14 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 
 public class BurningWriter extends Thread {
 
   
   private final String TAG = "[Burning Writer] ";
-  private Boolean keepRunning=true;
-  private String filename;
-  private Boolean gephi = false;
-  private Boolean matlab = false;
-  private Boolean reducedOutput = false;
-  private Boolean superReducedOutput = false;
+  private String defFileName;
   private PrintWriter pw;
   private PrintWriter pwGephi;
   private PrintWriter pwMatlab;
@@ -81,47 +77,32 @@ public class BurningWriter extends Thread {
   private DecimalFormat df = new DecimalFormat("#.################");
   private int count=1;
   private BlockingQueue <CollectedBurn> burningSpikesQueue;
-  private String defFileName=null;
+  private StatisticsCollector sc;
+  private int sa; 
 
   public BurningWriter(
-      String filename, 
-      BlockingQueue <CollectedBurn> burningSpikesQueue){
-    this.filename=filename;
-    this.burningSpikesQueue=burningSpikesQueue;
+      StatisticsCollector sc,
+      String defFileName, 
+      int sa){
+    this.sc=sc;
+    this.defFileName=defFileName;
+    this.sa=sa;
   }
 
   public void init(){
+    Boolean newfile=false;
+    burningSpikesQueue= new ArrayBlockingQueue<CollectedBurn>(sa);
     try{
-      for(;;++count) {
-        if (superReducedOutput)
-          towritefile= new File(
-              filename
-              +String.format("%03d", count)
-              +"_burning_R.csv");
-        else if (reducedOutput)
-          towritefile= new File(
-              filename
-              +String.format("%03d", count)
-              +"_burning_r.csv");
-        else
-          towritefile= new File(
-              filename
-              +String.format("%03d", count)
-              +"_burning.csv");
-          if(!towritefile.exists()){
-            defFileName=filename+String.format("%03d", count);
-              break;
-          }
-      }
-      if (reducedOutput)
+      if (sc.reducedOutput)
         towritefile= new File(defFileName+"_burning_r.csv");
-      else if (superReducedOutput)
+      else if (sc.superReducedOutput)
         towritefile= new File(defFileName+"_burning_R.csv");
       else
         towritefile= new File(defFileName+"_burning.csv");
       if (towritefile.exists())
         fw = new FileWriter(towritefile,true);
       else{
+        newfile=true;
         towritefile.createNewFile();
         fw = new FileWriter(towritefile);
       }
@@ -130,8 +111,8 @@ public class BurningWriter extends Thread {
       //----------
       // matlab
       //----------
-      if (matlab){
-        towritefileMatlab= new File(defFileName+"_burning_matlab.csv");
+      if (sc.matlab){
+        towritefileMatlab= new File(defFileName+"_burning_sc.matlab.csv");
         if (towritefileMatlab.exists())
           fwMatlab = new FileWriter(towritefileMatlab,true);
         else{
@@ -142,10 +123,10 @@ public class BurningWriter extends Thread {
         pwMatlab=new PrintWriter(bwMatlab);
       }
       //----------
-      // matlab
+      // gephi 
       //----------
-      if (gephi){
-        towritefileGephi = new File(defFileName+"_burning_gephi.csv");
+      if (sc.gephi){
+        towritefileGephi = new File(defFileName+"_burning_sc.gephi.csv");
         if (towritefileGephi.exists())
           fwGephi = new FileWriter(towritefileGephi,true);
         else{
@@ -154,13 +135,11 @@ public class BurningWriter extends Thread {
         }
         BufferedWriter bwGephi = new BufferedWriter(fwGephi);
         pwGephi=new PrintWriter(bwGephi);
-        pwGephi.println( "Firing, Burning");
+        if (newfile)
+          pwGephi.println( "Firing, Burning");
     }
-
-
-
     bw = new BufferedWriter(fw);
-    if (!reducedOutput)
+    if (newfile && !sc.reducedOutput)
       pw.println(
           "Burning Time, "
           + "Firing Node, "
@@ -185,7 +164,7 @@ public class BurningWriter extends Thread {
     init();
     CollectedBurn cb;
     try{
-      while (true){
+      while (sc.keepRunning){
         cb=(CollectedBurn)burningSpikesQueue.take();
         // ---------
         // std csv
@@ -199,18 +178,18 @@ public class BurningWriter extends Thread {
         String fromStateToPrintMatlab;
         String toStateToPrintMatlab;
         if (fromState==null){
-          fromStateToPrint=(reducedOutput||superReducedOutput)?"0":"refr";
-          toStateToPrint=(reducedOutput||superReducedOutput)?"0":"refr";
+          fromStateToPrint=(sc.reducedOutput||sc.superReducedOutput)?"0":"refr";
+          toStateToPrint=(sc.reducedOutput||sc.superReducedOutput)?"0":"refr";
         }
         else{
           fromStateToPrint=""+df.format(fromState);
           toStateToPrint=""+df.format(fromState+stepInState);
         }
         if (stepInState==null)
-          stepInStateToPrint=(reducedOutput||superReducedOutput)?"0":"refr";
+          stepInStateToPrint=(sc.reducedOutput||sc.superReducedOutput)?"0":"refr";
         else
           stepInStateToPrint=""+df.format(stepInState);
-        if (reducedOutput||superReducedOutput)
+        if (sc.reducedOutput||sc.superReducedOutput)
           pw.println(
               df.format(cb.getBurnTime())+", "
               + cb.getBurningNodeId()+", "
@@ -237,7 +216,7 @@ public class BurningWriter extends Thread {
         // ------------
         // matlab csv
         // ------------
-        if (matlab){
+        if (sc.matlab){
           String refrStringMatlab="0";
           if (fromState==null){
             fromStateToPrintMatlab=refrStringMatlab;
@@ -270,7 +249,7 @@ public class BurningWriter extends Thread {
         // ------------
         // gephi csv
         // ------------
-        if(gephi&&(!cb.fromExternalInput())){
+        if(sc.gephi&&(!cb.fromExternalInput())){
           pwGephi.println(
               + cb.getFiringNodeId()+"-"
               + cb.getFiringNeuronId()+", "
@@ -285,31 +264,35 @@ public class BurningWriter extends Thread {
   }
   
   public void close(){
+    pw.flush();
+    pw.close();
+    if (pwMatlab!=null){
+      pwMatlab.flush();
+      pwMatlab.close();
+    }
+    if (pwGephi!=null){
+      pwGephi.flush();
+      pwGephi.close();
+    }
+  }
+
+  protected void flush(){
+    pw.flush();
+    if (pwMatlab!=null){
+      pwMatlab.flush();
+    }
+    if (pwGephi!=null){
+      pwGephi.flush();
+    }
+  }
+
+  protected void put(CollectedBurn cb){
     try{
-      while (!burningSpikesQueue.isEmpty())
-        burningSpikesQueue.wait();
-      pw.flush();
-      pw.close();
-      if (pwMatlab!=null){
-        pwMatlab.flush();
-        pwMatlab.close();
-      }
-      if (pwGephi!=null){
-        pwGephi.flush();
-        pwGephi.close();
-      }
-    } catch (InterruptedException e){
+      burningSpikesQueue.put(cb);
+    }
+    catch (InterruptedException e) {
       e.printStackTrace();
     }
   }
 
-  public void setReducedOutput(){
-    reducedOutput=true;
-  }
-
-  public void setSuperReducedOutput(){
-    reducedOutput=true;
-    superReducedOutput=true;
-    df = new DecimalFormat("#.################");
-  }
 }

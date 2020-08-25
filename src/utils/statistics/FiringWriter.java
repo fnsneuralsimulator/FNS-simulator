@@ -55,18 +55,15 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
+
 
 
 public class FiringWriter extends Thread {
 
   
   private final String TAG = "[Firing Writer] ";
-  private Boolean keepRunning=true;
-  private String filename;
-  private Boolean gephi = false;
-  private Boolean matlab = false;
-  private Boolean reducedOutput = false;
-  private Boolean superReducedOutput = false;
+  private String defFileName;
   private PrintWriter pw;
   private PrintWriter pwGephi;
   private PrintWriter pwMatlab;
@@ -81,47 +78,32 @@ public class FiringWriter extends Thread {
   private DecimalFormat df = new DecimalFormat("#.################");
   private int count=1;
   private BlockingQueue <CollectedFire> firingSpikesQueue;
-  private String defFileName=null;
+  private StatisticsCollector sc;
+  private int sa; 
 
   public FiringWriter(
-      String filename, 
-      BlockingQueue <CollectedFire> firingSpikesQueue){
-    this.filename=filename;
-    this.firingSpikesQueue=firingSpikesQueue;
+      StatisticsCollector sc,
+      String defFileName, 
+      int sa){
+    this.sc=sc;
+    this.defFileName=defFileName;
+    this.sa=sa;
   }
 
   public void init(){
+    Boolean newfile=false;
+    firingSpikesQueue= new ArrayBlockingQueue<CollectedFire>(sa);
     try{
-      for(;;++count) {
-        if (superReducedOutput)
-          towritefile= new File(
-              filename
-              +String.format("%03d", count)
-              +"_firing_R.csv");
-        else if (reducedOutput)
-          towritefile= new File(
-              filename
-              +String.format("%03d", count)
-              +"_firing_r.csv");
-        else
-          towritefile= new File(
-              filename
-              +String.format("%03d", count)
-              +"_firing.csv");
-          if(!towritefile.exists()){
-            defFileName=filename+String.format("%03d", count);
-              break;
-          }
-      }
-      if (reducedOutput)
+      if (sc.reducedOutput)
         towritefile= new File(defFileName+"_firing_r.csv");
-      else if (superReducedOutput)
+      else if (sc.superReducedOutput)
         towritefile= new File(defFileName+"_firing_R.csv");
       else
         towritefile= new File(defFileName+"_firing.csv");
       if (towritefile.exists())
         fw = new FileWriter(towritefile,true);
       else{
+        newfile=true;
         towritefile.createNewFile();
         fw = new FileWriter(towritefile);
       }
@@ -130,8 +112,8 @@ public class FiringWriter extends Thread {
       //----------
       // matlab
       //----------
-      if (matlab){
-        towritefileMatlab= new File(defFileName+"_firing_matlab.csv");
+      if (sc.matlab){
+        towritefileMatlab= new File(defFileName+"_firing_sc.matlab.csv");
         if (towritefileMatlab.exists())
           fwMatlab = new FileWriter(towritefileMatlab,true);
         else{
@@ -141,10 +123,8 @@ public class FiringWriter extends Thread {
         bwMatlab = new BufferedWriter(fwMatlab);
         pwMatlab=new PrintWriter(bwMatlab);
       }
-
-
       bw = new BufferedWriter(fw);
-      if (!reducedOutput)
+      if (newfile && !sc.reducedOutput)
         pw.println(
             "Firing Time,"
             +" Firing Node,"
@@ -160,7 +140,7 @@ public class FiringWriter extends Thread {
     init();
     CollectedFire cf;
     try{
-      while (true){
+      while (sc.keepRunning){
         cf=firingSpikesQueue.take();
         // ---------
         // std csv
@@ -172,10 +152,10 @@ public class FiringWriter extends Thread {
         else
           excitStr="inhibitory";
         if (cf.isExternal())
-          isExternalStr=(reducedOutput||superReducedOutput)?"1":"true";
+          isExternalStr=(sc.reducedOutput||sc.superReducedOutput)?"1":"true";
         else
-          isExternalStr=(reducedOutput||superReducedOutput)?"0":"false";
-        if (reducedOutput||superReducedOutput)
+          isExternalStr=(sc.reducedOutput||sc.superReducedOutput)?"0":"false";
+        if (sc.reducedOutput||sc.superReducedOutput)
           pw.println(
               df.format(cf.getFiringTime())+", "
               +cf.getFiringNodeId()+", "
@@ -194,7 +174,7 @@ public class FiringWriter extends Thread {
         // ---------
         // matlab csv
         // ---------
-        if (matlab)
+        if (sc.matlab)
           pwMatlab.println(
               cf.getFiringTime().toString()+", "
               +cf.getFiringNodeId()+", "
@@ -209,28 +189,30 @@ public class FiringWriter extends Thread {
     
   }
 
-  public void close(){
+  protected void put(CollectedFire cf){
     try{
-      while (!firingSpikesQueue.isEmpty())
-        firingSpikesQueue.wait();
+      firingSpikesQueue.put(cf);
+    }
+    catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void close(){
       pw.flush();
       pw.close();
       if (pwMatlab!=null){
         pwMatlab.flush();
         pwMatlab.close();
       }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
   }
 
-  public void setReducedOutput(){
-    reducedOutput=true;
+  protected void flush(){
+      pw.flush();
+      if (pwMatlab!=null){
+        pwMatlab.flush();
+      }
   }
 
-  public void setSuperReducedOutput(){
-    reducedOutput=true;
-    superReducedOutput=true;
-    df = new DecimalFormat("#.################");
-  }
+ 
 }
