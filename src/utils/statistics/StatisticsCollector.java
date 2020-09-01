@@ -417,7 +417,7 @@ public class StatisticsCollector extends Thread {
               + "From Internal State, "
               + "To Internal State, "
               + "Step in State, "
-              +" Post Synaptic Weight, "
+              +"Post Synaptic Weight, "
               + "Pre Synaptic Weight, "
               + "Instant to Fire, "
               + "(Afferent) Firing Time");
@@ -460,8 +460,8 @@ public class StatisticsCollector extends Thread {
               + toStateToPrint +", "
               + stepInStateToPrint+", "
               + df.format(burningSpikesHashMap.get(key).getPostSynapticWeight())+", "
-              + df.format(burningSpikesHashMap.get(key).getPreSynapticWeight())+","
-              + df.format(burningSpikesHashMap.get(key).getTimeToFire())+","
+              + df.format(burningSpikesHashMap.get(key).getPreSynapticWeight())+", "
+              + df.format(burningSpikesHashMap.get(key).getTimeToFire())+", "
               + df.format((burningSpikesHashMap.get(key).getFireTime()!=null)?
                   burningSpikesHashMap.get(key).getFireTime():0)
               );
@@ -494,11 +494,11 @@ public class StatisticsCollector extends Thread {
       if (new_fire_file){
         if (!(reducedOutput||superReducedOutput))
           fireWriter.println(
-              "Firing Time,"
-              +" Firing Node,"
-              +" Firing Neuron, "
-              +" Neuron Type,"
-              +" External Source");
+              "Firing Time, "
+              +"Firing Node, "
+              +"Firing Neuron, "
+              +"Neuron Type, "
+              +"External Source");
       }
       while (it.hasNext()){
         Long key = it.next();
