@@ -150,7 +150,7 @@ public class BurningWriter extends Thread {
           + "From Internal State, "
           + "To Internal State, "
           + "Step in State, "
-          +" Post Synaptic Weight, "
+          +"Post Synaptic Weight, "
           + "Pre Synaptic Weight, "
           + "Instant to Fire, "
           + "(Afferent) Firing Time");
@@ -208,8 +208,8 @@ public class BurningWriter extends Thread {
               + toStateToPrint +", "
               + stepInStateToPrint+", "
               + df.format(cb.getPostSynapticWeight())+", "
-              + df.format(cb.getPreSynapticWeight())+","
-              + df.format(cb.getTimeToFire())+","
+              + df.format(cb.getPreSynapticWeight())+", "
+              + df.format(cb.getTimeToFire())+", "
               + df.format((cb.getFireTime()!=null)?
                   cb.getFireTime():0)
               );

@@ -126,11 +126,11 @@ public class FiringWriter extends Thread {
       bw = new BufferedWriter(fw);
       if (newfile && !sc.reducedOutput)
         pw.println(
-            "Firing Time,"
-            +" Firing Node,"
-            +" Firing Neuron, "
-            +" Neuron Type,"
-            +" External Source");
+            "Firing Time, "
+            +"Firing Node, "
+            +"Firing Neuron, "
+            +"Neuron Type, "
+            +"External Source");
     }catch(IOException e){
       e.printStackTrace();
       }

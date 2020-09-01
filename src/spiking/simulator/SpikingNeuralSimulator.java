@@ -197,10 +197,7 @@ public class SpikingNeuralSimulator extends Thread{
   private void killscs(){
     for (int i=0; i<scs.size(); ++i)
       scs.get(i).kill();
-//<<<<<<< HEAD
     scs.get(0).close();
-//=======
-//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
   }
 
 /**
@@ -223,7 +220,6 @@ public class SpikingNeuralSimulator extends Thread{
  */
   
   public void run(){
-    //long startTime = System.currentTimeMillis();
     if (!initialized)
       return;
     println("starting nodes...");
@@ -283,7 +279,6 @@ public class SpikingNeuralSimulator extends Thread{
       if (currentTime>=total_time)
         killAll();
       else{
-        //printBreakLine();
         try {
           sleep(5);
         } catch (InterruptedException e) {
@@ -312,25 +307,14 @@ public class SpikingNeuralSimulator extends Thread{
       scs.get(i).setSerializeAfter(serializeAfter);
   }
  
-//<<<<<<< HEAD
   public void startScs(){
-//=======
-//  private void startScs(){
-//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
     for (int i=0; i<scs.size(); ++i)
       scs.get(i).start();
   }
 
-//<<<<<<< HEAD
   public void setFilenameScs(String filename){
     for (int i=0; i<scs.size(); ++i)
-      //scs.get(i).setFilename(filename+"node-"+i+"_exp-");    
       scs.get(i).setFilename(filename+"exp-");    
-//=======
-//  private void setFilenameScs(String filename){
-//    for (int i=0; i<scs.size(); ++i)
-//      scs.get(i).setFilename(filename+"_node-"+i+"_");    
-//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
   }
  
   private void setMatlabScs(){
@@ -361,10 +345,7 @@ public class SpikingNeuralSimulator extends Thread{
           "|=============");
       scs.get(i).PrintResults();    
     }
-//<<<<<<< HEAD
     System.out.println();
-//=======
-//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
   }
  
   /**
@@ -392,10 +373,6 @@ public class SpikingNeuralSimulator extends Thread{
     cpm.readConnectivityPackage(connPkgPath);
     for (int i=0; i<cpm.getNodesNum();++i)
       scs.add(new StatisticsCollector());
-//<<<<<<< HEAD
-    //setFilenameScs(filename);
-//=======
-//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
     setMinMaxNe_xn_ratiosScs(
         cpm.getMinNe_xn_ratio(), 
         cpm.getMaxNe_xn_ratio());
@@ -630,10 +607,6 @@ public class SpikingNeuralSimulator extends Thread{
     init();
     times[4]=System.currentTimeMillis()-lastTime;
     lastTime+=times[4];
-//<<<<<<< HEAD
-//=======
-//    startScs();
-//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
   }
   
   /**
@@ -709,7 +682,6 @@ public class SpikingNeuralSimulator extends Thread{
   
   
   public void setNOI(HashMap <Integer, Boolean> NOI){
-    //sc.setNOI(NOI);
     this.NOI=NOI;
   }
 
@@ -818,7 +790,6 @@ public class SpikingNeuralSimulator extends Thread{
         }
         // intializing simulator
     System.out.println("initializing simulator");
-    //long startTime = System.currentTimeMillis();
     SpikingNeuralSimulator sns = new SpikingNeuralSimulator();
     sns.setExperimentName(args[0]);
     String filename=null;
@@ -852,10 +823,6 @@ public class SpikingNeuralSimulator extends Thread{
     } catch (BadParametersException e) {
       e.printStackTrace();
     }
-//<<<<<<< HEAD
-//=======
-//    sns.setFilenameScs(filename);
-//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
     if (cmd.hasOption("matlab"))
       sns.setMatlabScs();
     if (cmd.hasOption("reduced-output"))
@@ -877,24 +844,6 @@ public class SpikingNeuralSimulator extends Thread{
     }
     sns.printResultsScs();
     sns.killscs();
-//<<<<<<< HEAD
-//    //try{
-//=======
-    //try{
-//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
-      //sns.sc.makeCsv(filename);
-      //System.out.println("done.");
-      //if (do_plot){
-      //  sns.sc.printFirePlot(filename);
-      //  System.out.println("Press enter twice to quit:");
-      //  System.in.read();
-      //  System.in.read();
-      //  System.in.read();
-      //}
-    //} catch (Exception e){
-    //  e.printStackTrace();
-    //}
-
     System.out.println("bye!");
     System.exit(0);
   }
