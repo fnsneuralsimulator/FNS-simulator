@@ -197,10 +197,10 @@ public class SpikingNeuralSimulator extends Thread{
   private void killscs(){
     for (int i=0; i<scs.size(); ++i)
       scs.get(i).kill();
-<<<<<<< HEAD
+//<<<<<<< HEAD
     scs.get(0).close();
-=======
->>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
+//=======
+//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
   }
 
 /**
@@ -312,25 +312,25 @@ public class SpikingNeuralSimulator extends Thread{
       scs.get(i).setSerializeAfter(serializeAfter);
   }
  
-<<<<<<< HEAD
+//<<<<<<< HEAD
   public void startScs(){
-=======
-  private void startScs(){
->>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
+//=======
+//  private void startScs(){
+//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
     for (int i=0; i<scs.size(); ++i)
       scs.get(i).start();
   }
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
   public void setFilenameScs(String filename){
     for (int i=0; i<scs.size(); ++i)
       //scs.get(i).setFilename(filename+"node-"+i+"_exp-");    
       scs.get(i).setFilename(filename+"exp-");    
-=======
-  private void setFilenameScs(String filename){
-    for (int i=0; i<scs.size(); ++i)
-      scs.get(i).setFilename(filename+"_node-"+i+"_");    
->>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
+//=======
+//  private void setFilenameScs(String filename){
+//    for (int i=0; i<scs.size(); ++i)
+//      scs.get(i).setFilename(filename+"_node-"+i+"_");    
+//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
   }
  
   private void setMatlabScs(){
@@ -361,10 +361,10 @@ public class SpikingNeuralSimulator extends Thread{
           "|=============");
       scs.get(i).PrintResults();    
     }
-<<<<<<< HEAD
+//<<<<<<< HEAD
     System.out.println();
-=======
->>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
+//=======
+//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
   }
  
   /**
@@ -392,10 +392,10 @@ public class SpikingNeuralSimulator extends Thread{
     cpm.readConnectivityPackage(connPkgPath);
     for (int i=0; i<cpm.getNodesNum();++i)
       scs.add(new StatisticsCollector());
-<<<<<<< HEAD
+//<<<<<<< HEAD
     //setFilenameScs(filename);
-=======
->>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
+//=======
+//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
     setMinMaxNe_xn_ratiosScs(
         cpm.getMinNe_xn_ratio(), 
         cpm.getMaxNe_xn_ratio());
@@ -630,10 +630,10 @@ public class SpikingNeuralSimulator extends Thread{
     init();
     times[4]=System.currentTimeMillis()-lastTime;
     lastTime+=times[4];
-<<<<<<< HEAD
-=======
-    startScs();
->>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
+//<<<<<<< HEAD
+//=======
+//    startScs();
+//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
   }
   
   /**
@@ -852,10 +852,10 @@ public class SpikingNeuralSimulator extends Thread{
     } catch (BadParametersException e) {
       e.printStackTrace();
     }
-<<<<<<< HEAD
-=======
-    sns.setFilenameScs(filename);
->>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
+//<<<<<<< HEAD
+//=======
+//    sns.setFilenameScs(filename);
+//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
     if (cmd.hasOption("matlab"))
       sns.setMatlabScs();
     if (cmd.hasOption("reduced-output"))
@@ -877,11 +877,11 @@ public class SpikingNeuralSimulator extends Thread{
     }
     sns.printResultsScs();
     sns.killscs();
-<<<<<<< HEAD
+//<<<<<<< HEAD
+//    //try{
+//=======
     //try{
-=======
-    try{
->>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
+//>>>>>>> 7029a5a3b83e41bfd1513eac171512eba263adff
       //sns.sc.makeCsv(filename);
       //System.out.println("done.");
       //if (do_plot){

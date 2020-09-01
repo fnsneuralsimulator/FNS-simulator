@@ -89,14 +89,15 @@ public class ExternalInput {
      this.timeStep=timeStep;
      this.externalAmplitude=externalAmplitude;
      this.externalOutdegree=externalOutdegree;
-     init();
+     externalInputs=n.getExternalInputs();
+     //init();
    }
    
-   private void init(){
-     println("external input init...");
-     externalInputs=n.getExternalInputs();
-     println("external input initialized.");
-   }
+   //private void init(){
+   //  println("external input init...");
+   //  externalInputs=n.getExternalInputs();
+   //  println("external input initialized.");
+   //}
    
    
    public Double getAmplitudeValue(int extNeuron){
