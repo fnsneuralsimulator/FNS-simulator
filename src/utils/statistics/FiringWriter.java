@@ -89,51 +89,76 @@ public class FiringWriter extends Thread {
     this.defFileName=defFileName;
     this.sa=sa;
   }
+  protected void setWriters(
+      PrintWriter pw,
+      PrintWriter pwGephi,
+      PrintWriter pwMatlab,
+      File towritefile,
+      File towritefileGephi,
+      File towritefileMatlab,
+      BufferedWriter bw,
+      BufferedWriter bwMatlab,
+      FileWriter fw,
+      FileWriter fwGephi,
+      FileWriter fwMatlab
+  ){
+    this.pw=pw;
+    this.pwGephi=pwGephi;
+    this.pwMatlab=pwMatlab;
+    this.towritefile=towritefile;
+    this.towritefileGephi=towritefileGephi;
+    this.towritefileMatlab=towritefileMatlab;
+    this.bw=bw;
+    this.bwMatlab=bwMatlab;
+    this.fw=fw;
+    this.fwGephi=fwGephi;
+    this.fwMatlab=fwMatlab;
+  }
 
   public void init(){
-    Boolean newfile=false;
+    //Boolean newfile=false;
     firingSpikesQueue= new ArrayBlockingQueue<CollectedFire>(sa);
-    try{
-      if (sc.reducedOutput)
-        towritefile= new File(defFileName+"_firing_r.csv");
-      else if (sc.superReducedOutput)
-        towritefile= new File(defFileName+"_firing_R.csv");
-      else
-        towritefile= new File(defFileName+"_firing.csv");
-      if (towritefile.exists())
-        fw = new FileWriter(towritefile,true);
-      else{
-        newfile=true;
-        towritefile.createNewFile();
-        fw = new FileWriter(towritefile);
-      }
-      bw = new BufferedWriter(fw);
-      pw = new PrintWriter(bw);
-      //----------
-      // matlab
-      //----------
-      if (sc.matlab){
-        towritefileMatlab= new File(defFileName+"_firing_sc.matlab.csv");
-        if (towritefileMatlab.exists())
-          fwMatlab = new FileWriter(towritefileMatlab,true);
-        else{
-          towritefileMatlab.createNewFile();
-          fwMatlab = new FileWriter(towritefileMatlab);
-        }
-        bwMatlab = new BufferedWriter(fwMatlab);
-        pwMatlab=new PrintWriter(bwMatlab);
-      }
-      bw = new BufferedWriter(fw);
-      if (newfile && !sc.reducedOutput)
-        pw.println(
-            "Firing Time, "
-            +"Firing Node, "
-            +"Firing Neuron, "
-            +"Neuron Type, "
-            +"External Source");
-    }catch(IOException e){
-      e.printStackTrace();
-      }
+    //try{
+    //  if (sc.reducedOutput)
+    //    towritefile= new File(defFileName+"_firing_r.csv");
+    //  else if (sc.superReducedOutput)
+    //    towritefile= new File(defFileName+"_firing_R.csv");
+    //  else
+    //    towritefile= new File(defFileName+"_firing.csv");
+    //  if (towritefile.exists())
+    //    fw = new FileWriter(towritefile,true);
+    //  else{
+    //    newfile=true;
+    //    towritefile.createNewFile();
+    //    fw = new FileWriter(towritefile);
+    //  }
+    //  bw = new BufferedWriter(fw);
+    //  pw = new PrintWriter(bw);
+    //  //----------
+    //  // matlab
+    //  //----------
+    //  if (sc.matlab){
+    //    towritefileMatlab= new File(defFileName+"_firing_sc.matlab.csv");
+    //    if (towritefileMatlab.exists())
+    //      fwMatlab = new FileWriter(towritefileMatlab,true);
+    //    else{
+    //      towritefileMatlab.createNewFile();
+    //      fwMatlab = new FileWriter(towritefileMatlab);
+    //    }
+    //    bwMatlab = new BufferedWriter(fwMatlab);
+    //    pwMatlab=new PrintWriter(bwMatlab);
+    //  }
+    //  bw = new BufferedWriter(fw);
+    //  if (newfile && !sc.reducedOutput)
+    //    pw.println(
+    //        "Firing Time, "
+    //        +"Firing Node, "
+    //        +"Firing Neuron, "
+    //        +"Neuron Type, "
+    //        +"External Source");
+    //}catch(IOException e){
+    //  e.printStackTrace();
+    //  }
   }
 
   public void run() {

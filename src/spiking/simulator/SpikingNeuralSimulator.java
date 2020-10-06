@@ -308,8 +308,221 @@ public class SpikingNeuralSimulator extends Thread{
   }
  
   public void startScs(){
-    for (int i=0; i<scs.size(); ++i)
+    PrintWriter burningPw;
+    PrintWriter burningPwGephi;
+    PrintWriter burningPwMatlab;
+    File burningTowritefile;
+    File burningTowritefileGephi;
+    File burningTowritefileMatlab;
+    BufferedWriter burningBw;
+    BufferedWriter burningBwMatlab;
+    FileWriter burningFw;
+    FileWriter burningFwGephi;
+    FileWriter burningFwMatlab;
+    FileWriter firingFw;
+    FileWriter firingFwGephi;
+    FileWriter firingFwMatlab;
+    PrintWriter firingPw;
+    PrintWriter firingPwGephi;
+    PrintWriter firingPwMatlab;
+    File firingTowritefile;
+    File firingTowritefileGephi;
+    File firingTowritefileMatlab;
+    BufferedWriter firingBw;
+    BufferedWriter firingBwMatlab;
+    initBurningWriters(
+        burningPw,
+        burningPwGephi,
+        burningPwMatlab,
+        burningTowritefile,
+        burningTowritefileGephi,
+        burningTowritefileMatlab,
+        burningBw,
+        burningBwMatlab,
+        burningFw,
+        burningFwGephi,
+        burningFwMatlab
+    );
+    initFiringWriters(
+        firingPw,
+        firingPwGephi,
+        firingPwMatlab,
+        firingTowritefile,
+        firingTowritefileGephi,
+        firingTowritefileMatlab,
+        firingBw,
+        firingBwMatlab,
+        firingFw,
+        firingFwGephi,
+        firingFwMatlab
+    );
+    for (int i=0; i<scs.size(); ++i){
+      scs.get(i).setWriters(
+        burningPw,
+        burningPwGephi,
+        burningPwMatlab,
+        burningTowritefile,
+        burningTowritefileGephi,
+        burningTowritefileMatlab,
+        burningBw,
+        burningBwMatlab,
+        burningFw,
+        burningFwGephi,
+        burningFwMatlab,
+        firingPw,
+        firingPwGephi,
+        firingPwMatlab,
+        firingTowritefile,
+        firingTowritefileGephi,
+        firingTowritefileMatlab,
+        firingBw,
+        firingBwMatlab,
+        firingFw,
+        firingFwGephi,
+        firingFwMatlab
+      );
       scs.get(i).start();
+    }
+  }
+
+  private void initBurningWriters(
+      PrintWriter pw,
+      PrintWriter pwGephi,
+      PrintWriter pwMatlab,
+      File towritefile,
+      File towritefileGephi,
+      File towritefileMatlab,
+      BufferedWriter bw,
+      BufferedWriter bwMatlab,
+      FileWriter fw,
+      FileWriter fwGephi,
+      FileWriter fwMatlab
+  ){
+    Boolean newfile=false;
+    try{
+      if (sc.reducedOutput)
+        towritefile= new File(defFileName+"_burning_r.csv");
+      else if (sc.superReducedOutput)
+        towritefile= new File(defFileName+"_burning_R.csv");
+      else
+        towritefile= new File(defFileName+"_burning.csv");
+      if (towritefile.exists())
+        fw = new FileWriter(towritefile,true);
+      else{
+        newfile=true;
+        towritefile.createNewFile();
+        fw = new FileWriter(towritefile);
+      }
+      bw = new BufferedWriter(fw);
+      pw= new PrintWriter(bw);
+      //----------
+      // matlab
+      //----------
+      if (sc.matlab){
+        towritefileMatlab= new File(defFileName+"_burning_sc.matlab.csv");
+        if (towritefileMatlab.exists())
+          fwMatlab = new FileWriter(towritefileMatlab,true);
+        else{
+          towritefileMatlab.createNewFile();
+          fwMatlab = new FileWriter(towritefileMatlab);
+        }
+        BufferedWriter bwMatlab = new BufferedWriter(fwMatlab);
+        pwMatlab=new PrintWriter(bwMatlab);
+      }
+      //----------
+      // gephi 
+      //----------
+      if (sc.gephi){
+        towritefileGephi = new File(defFileName+"_burning_sc.gephi.csv");
+        if (towritefileGephi.exists())
+          fwGephi = new FileWriter(towritefileGephi,true);
+        else{
+          towritefileGephi.createNewFile();
+          fwGephi = new FileWriter(towritefileGephi);
+        }
+        BufferedWriter bwGephi = new BufferedWriter(fwGephi);
+        pwGephi=new PrintWriter(bwGephi);
+        if (newfile)
+          pwGephi.println( "Firing, Burning");
+    }
+    bw = new BufferedWriter(fw);
+    if (newfile && !sc.reducedOutput)
+      pw.println(
+          "Burning Time, "
+          + "Firing Node, "
+          + "Firing Neuron, "
+          + "Burning Node, "
+          + "Burning Neuron, "
+          + "External Source, "
+          + "From Internal State, "
+          + "To Internal State, "
+          + "Step in State, "
+          +"Post Synaptic Weight, "
+          + "Pre Synaptic Weight, "
+          + "Instant to Fire, "
+          + "(Afferent) Firing Time");
+    } catch (IOException e){
+      e.printStackTrace();
+    }
+
+  }
+
+  private void initFiringWriters(
+      PrintWriter pw,
+      PrintWriter pwGephi,
+      PrintWriter pwMatlab,
+      File towritefile,
+      File towritefileGephi,
+      File towritefileMatlab,
+      BufferedWriter bw,
+      BufferedWriter bwMatlab,
+      FileWriter fw,
+      FileWriter fwGephi,
+      FileWriter fwMatlab
+  ){
+    Boolean newfile=false;
+    try{
+      if (sc.reducedOutput)
+        towritefile= new File(defFileName+"_firing_r.csv");
+      else if (sc.superReducedOutput)
+        towritefile= new File(defFileName+"_firing_R.csv");
+      else
+        towritefile= new File(defFileName+"_firing.csv");
+      if (towritefile.exists())
+        fw = new FileWriter(towritefile,true);
+      else{
+        newfile=true;
+        towritefile.createNewFile();
+        fw = new FileWriter(towritefile);
+      }
+      bw = new BufferedWriter(fw);
+      pw = new PrintWriter(bw);
+      //----------
+      // matlab
+      //----------
+      if (sc.matlab){
+        towritefileMatlab= new File(defFileName+"_firing_sc.matlab.csv");
+        if (towritefileMatlab.exists())
+          fwMatlab = new FileWriter(towritefileMatlab,true);
+        else{
+          towritefileMatlab.createNewFile();
+          fwMatlab = new FileWriter(towritefileMatlab);
+        }
+        bwMatlab = new BufferedWriter(fwMatlab);
+        pwMatlab=new PrintWriter(bwMatlab);
+      }
+      bw = new BufferedWriter(fw);
+      if (newfile && !sc.reducedOutput)
+        pw.println(
+            "Firing Time, "
+            +"Firing Node, "
+            +"Firing Neuron, "
+            +"Neuron Type, "
+            +"External Source");
+    }catch(IOException e){
+      e.printStackTrace();
+      }
+
   }
 
   public void setFilenameScs(String filename){

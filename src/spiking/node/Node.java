@@ -259,7 +259,7 @@ public class Node {
   public void nodeInit(){
     println("init...");
     // ring closure
-    wireInit();
+    wireInit(); 
     externalInputInit();
     println("init done.");
   }
@@ -328,8 +328,6 @@ public class Node {
         //rewiring condition
         if (Math.random()<prew){
           Long tmp;
-          //Long tmpSrc=shuffled.get(i);
-          //long l=0;
           for (;
               ((tmp = shuffled_rand.get(l) )
                   .equals(tmpSrc)) || 
@@ -339,15 +337,6 @@ public class Node {
                           tmpSrc,
                           tmp))!=null);
                 l=(l+1)%n){}
-          //while ( 
-          //    ((tmp = (long) Math.round(Math.random()*(n-1)))
-          //        .equals(shuffled.get(i))) || 
-          //        (tmp.equals(shuffled.get((i+j)%n)))||
-          //        (connectionMatrix.get(
-          //            new LongCouple(
-          //                shuffled.get(i), 
-          //                tmp))!=null)
-          //        ){}
           putConnection(shuffled.get(i), tmp, tmpAmpl);
         }
         else

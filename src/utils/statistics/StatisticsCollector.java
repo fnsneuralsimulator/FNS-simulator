@@ -276,6 +276,59 @@ public class StatisticsCollector /*extends Thread*/ {
     System.out.println();
     return reducedOutput;
   }
+
+  public void setWriters(
+      PrintWriter burningPw,
+      PrintWriter burningPwGephi,
+      PrintWriter burningPwMatlab,
+      File burningTowritefile,
+      File burningTowritefileGephi,
+      File burningTowritefileMatlab,
+      bufferedwriter burningBw,
+      bufferedwriter burningBwMatlab,
+      FileWriter burningFw,
+      FileWriter burningFwGephi,
+      FileWriter burningFwMatlab
+      PrintWriter firingPw,
+      PrintWriter firingPwGephi,
+      PrintWriter firingPwMatlab,
+      File firingTowritefile,
+      File firingTowritefileGephi,
+      File firingTowritefileMatlab,
+      BufferedWriter firingBw,
+      BufferedWriter firingBwMatlab,
+      FileWriter firingFw,
+      FileWriter firingFwGephi,
+      FileWriter firingFwMatlab
+  ){
+    burningWriter.setWriters(
+        burningPw,
+        burningPwGephi,
+        burningPwMatlab,
+        burningTowritefile,
+        burningTowritefileGephi,
+        burningTowritefileMatlab,
+        burningBw,
+        burningBwMatlab,
+        burningFw,
+        burningFwGephi,
+        burningFwMatlab
+    )
+    firingWriter.setWriters(
+        firingPw,
+        firingPwGephi,
+        firingPwMatlab,
+        firingTowritefile,
+        firingTowritefileGephi,
+        firingTowritefileMatlab,
+        firingBw,
+        firingBwMatlab,
+        firingFw,
+        firingFwGephi,
+        firingFwMatlab
+    )
+    
+  }
   
   
 }
