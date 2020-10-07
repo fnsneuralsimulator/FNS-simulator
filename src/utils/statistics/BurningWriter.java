@@ -66,14 +66,14 @@ public class BurningWriter extends Thread {
   private PrintWriter pw;
   private PrintWriter pwGephi;
   private PrintWriter pwMatlab;
-  private File towritefile;
-  private File towritefileGephi;
-  private File towritefileMatlab;
-  private BufferedWriter bw;
-  private BufferedWriter bwMatlab;
-  private FileWriter fw;
-  private FileWriter fwGephi;
-  private FileWriter fwMatlab;
+  //private File towritefile;
+  //private File towritefileGephi;
+  //private File towritefileMatlab;
+  //private BufferedWriter bw;
+  //private BufferedWriter bwMatlab;
+  //private FileWriter fw;
+  //private FileWriter fwGephi;
+  //private FileWriter fwMatlab;
   private DecimalFormat df = new DecimalFormat("#.################");
   private int count=1;
   private BlockingQueue <CollectedBurn> burningSpikesQueue;
@@ -92,27 +92,27 @@ public class BurningWriter extends Thread {
   protected void setWriters(
       PrintWriter pw,
       PrintWriter pwGephi,
-      PrintWriter pwMatlab,
-      File towritefile,
-      File towritefileGephi,
-      File towritefileMatlab,
-      BufferedWriter bw,
-      BufferedWriter bwMatlab,
-      FileWriter fw,
-      FileWriter fwGephi,
-      FileWriter fwMatlab
+      PrintWriter pwMatlab
+      //File towritefile,
+      //File towritefileGephi,
+      //File towritefileMatlab,
+      //BufferedWriter bw,
+      //BufferedWriter bwMatlab,
+      //FileWriter fw,
+      //FileWriter fwGephi,
+      //FileWriter fwMatlab
   ){
     this.pw=pw;
     this.pwGephi=pwGephi;
     this.pwMatlab=pwMatlab;
-    this.towritefile=towritefile;
-    this.towritefileGephi=towritefileGephi;
-    this.towritefileMatlab=towritefileMatlab;
-    this.bw=bw;
-    this.bwMatlab=bwMatlab;
-    this.fw=fw;
-    this.fwGephi=fwGephi;
-    this.fwMatlab=fwMatlab;
+    //this.towritefile=towritefile;
+    //this.towritefileGephi=towritefileGephi;
+    //this.towritefileMatlab=towritefileMatlab;
+    //this.bw=bw;
+    //this.bwMatlab=bwMatlab;
+    //this.fw=fw;
+    //this.fwGephi=fwGephi;
+    //this.fwMatlab=fwMatlab;
   }
 
   public void init(){

@@ -122,7 +122,7 @@ public class StatisticsCollector /*extends Thread*/ {
   }
   
   public void init(String defFilename){
-    this.filename=filename;
+    //this.filename=filename;
     //for(;;++count) {
     //  if (superReducedOutput)
     //    towritefile= new File(
@@ -281,51 +281,62 @@ public class StatisticsCollector /*extends Thread*/ {
       PrintWriter burningPw,
       PrintWriter burningPwGephi,
       PrintWriter burningPwMatlab,
-      File burningTowritefile,
-      File burningTowritefileGephi,
-      File burningTowritefileMatlab,
-      BufferedWriter burningBw,
-      BufferedWriter burningBwMatlab,
-      FileWriter burningFw,
-      FileWriter burningFwGephi,
-      FileWriter burningFwMatlab,
+      //File burningTowritefile,
+      //File burningTowritefileGephi,
+      //File burningTowritefileMatlab,
+      //BufferedWriter burningBw,
+      //BufferedWriter burningBwMatlab,
+      //FileWriter burningFw,
+      //FileWriter burningFwGephi,
+      //FileWriter burningFwMatlab,
       PrintWriter firingPw,
       PrintWriter firingPwGephi,
-      PrintWriter firingPwMatlab,
-      File firingTowritefile,
-      File firingTowritefileGephi,
-      File firingTowritefileMatlab,
-      BufferedWriter firingBw,
-      BufferedWriter firingBwMatlab,
-      FileWriter firingFw,
-      FileWriter firingFwGephi,
-      FileWriter firingFwMatlab
+      PrintWriter firingPwMatlab
+      //File firingTowritefile,
+      //File firingTowritefileGephi,
+      //File firingTowritefileMatlab,
+      //BufferedWriter firingBw,
+      //BufferedWriter firingBwMatlab,
+      //FileWriter firingFw,
+      //FileWriter firingFwGephi,
+      //FileWriter firingFwMatlab
   ){
+    System.out.println("burningPw:" + burningPw);
+    System.out.println("burningPwGephi:" + burningPwGephi);
+    System.out.println("burningPwMatlab:" + burningPwMatlab);
+    //System.out.println("burningTowritefile:" + burningTowritefile);
+    //System.out.println("burningTowritefileGephi:" + burningTowritefileGephi);
+    //System.out.println("burningTowritefileMatlab:" + burningTowritefileMatlab);
+    //System.out.println("burningBw:" + burningBw);
+    //System.out.println("burningBwMatlab:" + burningBwMatlab);
+    //System.out.println("burningFw:" + burningFw);
+    //System.out.println("burningFwGephi:" + burningFwGephi);
+    //System.out.println("burningFwMatlab:" + burningFwMatlab);
     burningWriter.setWriters(
         burningPw,
         burningPwGephi,
-        burningPwMatlab,
-        burningTowritefile,
-        burningTowritefileGephi,
-        burningTowritefileMatlab,
-        burningBw,
-        burningBwMatlab,
-        burningFw,
-        burningFwGephi,
-        burningFwMatlab
+        burningPwMatlab
+        //burningTowritefile,
+        //burningTowritefileGephi,
+        //burningTowritefileMatlab,
+        //burningBw,
+        //burningBwMatlab,
+        //burningFw,
+        //burningFwGephi,
+        //burningFwMatlab
     );
     firingWriter.setWriters(
         firingPw,
         firingPwGephi,
-        firingPwMatlab,
-        firingTowritefile,
-        firingTowritefileGephi,
-        firingTowritefileMatlab,
-        firingBw,
-        firingBwMatlab,
-        firingFw,
-        firingFwGephi,
-        firingFwMatlab
+        firingPwMatlab
+        //firingTowritefile,
+        //firingTowritefileGephi,
+        //firingTowritefileMatlab,
+        //firingBw,
+        //firingBwMatlab,
+        //firingFw,
+        //firingFwGephi,
+        //firingFwMatlab
     );
     
   }

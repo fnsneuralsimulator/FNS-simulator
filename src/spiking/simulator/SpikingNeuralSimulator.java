@@ -342,29 +342,30 @@ public class SpikingNeuralSimulator extends Thread{
     initBurningWriters();
     initFiringWriters();
     for (int i=0; i<scs.size(); ++i){
+      scs.get(i).init(defFileName);
       scs.get(i).setWriters(
         burningPw,
         burningPwGephi,
         burningPwMatlab,
-        burningTowritefile,
-        burningTowritefileGephi,
-        burningTowritefileMatlab,
-        burningBw,
-        burningBwMatlab,
-        burningFw,
-        burningFwGephi,
-        burningFwMatlab,
+        //burningTowritefile,
+        //burningTowritefileGephi,
+        //burningTowritefileMatlab,
+        //burningBw,
+        //burningBwMatlab,
+        //burningFw,
+        //burningFwGephi,
+        //burningFwMatlab,
         firingPw,
         firingPwGephi,
-        firingPwMatlab,
-        firingTowritefile,
-        firingTowritefileGephi,
-        firingTowritefileMatlab,
-        firingBw,
-        firingBwMatlab,
-        firingFw,
-        firingFwGephi,
-        firingFwMatlab
+        firingPwMatlab
+        //firingTowritefile,
+        //firingTowritefileGephi,
+        //firingTowritefileMatlab,
+        //firingBw,
+        //firingBwMatlab,
+        //firingFw,
+        //firingFwGephi,
+        //firingFwMatlab
       );
       scs.get(i).start();
     }
@@ -380,11 +381,11 @@ public class SpikingNeuralSimulator extends Thread{
       else
         burningTowritefile= new File(defFileName+"_burning.csv");
       if (burningTowritefile.exists())
-        firingFw = new FileWriter(firingTowritefile,true);
+        burningFw = new FileWriter(firingTowritefile,true);
       else{
         newfile=true;
         burningTowritefile.createNewFile();
-        burningFw = new FileWriter(firingTowritefile);
+        burningFw = new FileWriter(burningTowritefile);
       }
       burningBw = new BufferedWriter(burningFw);
       burningPw= new PrintWriter(burningBw);
