@@ -172,7 +172,7 @@ public class SpikingNeuralSimulator extends Thread{
     }
     initialized=true;
     String minTractLengthStr=(nMan.getMinTractLength()!=NodesManager.MAX_TRACT_LENGTH)?
-        (""+nMan.getMinTractLength()):" there are no connection betwen regions.";
+        (""+nMan.getMinTractLength()):" there are no connections between nodes.";
     println("min tract length:"+minTractLengthStr);
     println("avg neuronal signal speed:"+avgNeuronalSignalSpeed);
     cycle_time=(nMan.getMinTractLength()+epsilon)/

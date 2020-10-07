@@ -278,8 +278,8 @@ public class BurningWriter extends Thread {
               + toStateToPrintMatlab +", "
               + stepInStateToPrintMatlab+", "
               + cb.getPostSynapticWeight()+", "
-              + cb.getPreSynapticWeight()+","
-              + cb.getTimeToFire()+","
+              + cb.getPreSynapticWeight()+", "
+              + cb.getTimeToFire()+", "
               + cb.getFireTime()
               );
         }
