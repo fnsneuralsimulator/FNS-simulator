@@ -121,29 +121,29 @@ public class StatisticsCollector /*extends Thread*/ {
     return serializeAfter;
   }
   
-  public void setFilename(String filename){
+  public void init(String defFilename){
     this.filename=filename;
-    for(;;++count) {
-      if (superReducedOutput)
-        towritefile= new File(
-            filename
-            +String.format("%03d", count)
-            +"_burning_R.csv");
-      else if (reducedOutput)
-        towritefile= new File(
-            filename
-            +String.format("%03d", count)
-            +"_burning_r.csv");
-      else
-        towritefile= new File(
-            filename
-            +String.format("%03d", count)
-            +"_burning.csv");
-      if(!towritefile.exists()){
-        defFileName=filename+String.format("%03d", count);
-          break;
-      }
-    }
+    //for(;;++count) {
+    //  if (superReducedOutput)
+    //    towritefile= new File(
+    //        filename
+    //        +String.format("%03d", count)
+    //        +"_burning_R.csv");
+    //  else if (reducedOutput)
+    //    towritefile= new File(
+    //        filename
+    //        +String.format("%03d", count)
+    //        +"_burning_r.csv");
+    //  else
+    //    towritefile= new File(
+    //        filename
+    //        +String.format("%03d", count)
+    //        +"_burning.csv");
+    //  if(!towritefile.exists()){
+    //    defFileName=filename+String.format("%03d", count);
+    //      break;
+    //  }
+    //}
     burningWriter= new BurningWriter(
         this,
         defFileName,
@@ -284,11 +284,11 @@ public class StatisticsCollector /*extends Thread*/ {
       File burningTowritefile,
       File burningTowritefileGephi,
       File burningTowritefileMatlab,
-      bufferedwriter burningBw,
-      bufferedwriter burningBwMatlab,
+      BufferedWriter burningBw,
+      BufferedWriter burningBwMatlab,
       FileWriter burningFw,
       FileWriter burningFwGephi,
-      FileWriter burningFwMatlab
+      FileWriter burningFwMatlab,
       PrintWriter firingPw,
       PrintWriter firingPwGephi,
       PrintWriter firingPwMatlab,
@@ -313,7 +313,7 @@ public class StatisticsCollector /*extends Thread*/ {
         burningFw,
         burningFwGephi,
         burningFwMatlab
-    )
+    );
     firingWriter.setWriters(
         firingPw,
         firingPwGephi,
@@ -326,7 +326,7 @@ public class StatisticsCollector /*extends Thread*/ {
         firingFw,
         firingFwGephi,
         firingFwMatlab
-    )
+    );
     
   }
   
