@@ -301,17 +301,6 @@ public class StatisticsCollector /*extends Thread*/ {
       //FileWriter firingFwGephi,
       //FileWriter firingFwMatlab
   ){
-    System.out.println("burningPw:" + burningPw);
-    System.out.println("burningPwGephi:" + burningPwGephi);
-    System.out.println("burningPwMatlab:" + burningPwMatlab);
-    //System.out.println("burningTowritefile:" + burningTowritefile);
-    //System.out.println("burningTowritefileGephi:" + burningTowritefileGephi);
-    //System.out.println("burningTowritefileMatlab:" + burningTowritefileMatlab);
-    //System.out.println("burningBw:" + burningBw);
-    //System.out.println("burningBwMatlab:" + burningBwMatlab);
-    //System.out.println("burningFw:" + burningFw);
-    //System.out.println("burningFwGephi:" + burningFwGephi);
-    //System.out.println("burningFwMatlab:" + burningFwMatlab);
     burningWriter.setWriters(
         burningPw,
         burningPwGephi,

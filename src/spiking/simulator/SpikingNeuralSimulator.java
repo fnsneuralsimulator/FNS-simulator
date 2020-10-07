@@ -489,7 +489,7 @@ public class SpikingNeuralSimulator extends Thread{
 
   
   public void setFilename(String filename){
-    filename=filename+"exp-";
+    //filename=filename+"exp-";
     int count=1;
     File towritefile;
     for(;;++count) {
