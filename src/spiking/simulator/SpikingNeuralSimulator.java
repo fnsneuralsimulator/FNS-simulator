@@ -394,8 +394,8 @@ public class SpikingNeuralSimulator extends Thread{
       //----------
       if (matlab){
         burningTowritefileMatlab= new File(defFileName+"_burning_matlab.csv");
-        if (firingTowritefileMatlab.exists())
-          firingFwMatlab = new FileWriter(burningTowritefileMatlab,true);
+        if (burningTowritefileMatlab.exists())
+          burningFwMatlab = new FileWriter(burningTowritefileMatlab,true);
         else{
           burningTowritefileMatlab.createNewFile();
           burningFwMatlab = new FileWriter(burningTowritefileMatlab);
@@ -409,7 +409,7 @@ public class SpikingNeuralSimulator extends Thread{
       if (gephi){
         burningTowritefileGephi = new File(defFileName+"_burning_gephi.csv");
         if (burningTowritefileGephi.exists())
-          firingFwGephi = new FileWriter(firingTowritefileGephi,true);
+          burningFwGephi = new FileWriter(burningTowritefileGephi,true);
         else{
           burningTowritefileGephi.createNewFile();
           burningFwGephi = new FileWriter(burningTowritefileGephi);
