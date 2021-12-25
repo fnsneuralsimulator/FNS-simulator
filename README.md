@@ -46,7 +46,7 @@ To make sure you are using the latest version of Docker, type:
 
 `docker pull fnsneuralsimulator/fns-simulator:latest`
 
-Please refer to the [user guide](https://docs.google.com/document/d/1-oJK6dzu6KIggYonajqVq8xA6mUZ3ZZdBMq7zVMyTcA/export?format=pdf) for additional information.
+Please refer to the [user guide](https://docs.google.com/document/d/1TJ5vWIBHW81IaySHM5b81JeZehEwZXo8hFj2SIrKnKY/export?format=pdf) for additional information.
 
 License & Copyright (Version 3.x)
 -------------------
