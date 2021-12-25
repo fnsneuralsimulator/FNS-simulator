@@ -9,14 +9,13 @@
  CITATION:
  When using FNS for scientific publications, cite us as follows:
 
- Gianluca Susi, Pilar Garcés, Emanuele Paracone, Alessandro Cristini, 
- Mario Salerno, Fernando Maestú, Ernesto Pereda. FNS allows efficient 
- event-driven spiking neural network simulations based on a neuron 
- model supporting spike latency. Scientific Reports 11, 12160 (2021).
- Laboratory of Cognitive and Computational Neuroscience, UPM-UCM 
- Centre for Biomedical Technology, Technical University of Madrid; 
- University of Rome "Tor Vergata".   
- Paper under review.
+ Gianluca Susi, Pilar Garcés, Emanuele Paracone, Alessandro Cristini, Mario 
+ Salerno, Fernando Maestú, Ernesto Pereda (2021). "FNS allows efficient 
+ event-driven spiking neural network simulations based on a neuron model 
+ supporting spike latency. Scientific reports, 11(1), 12160.
+ Laboratory of Cognitive and Computational Neuroscience, UPM-UCM Centre for 
+ Biomedical Technology, Complutense and Technical University of Madrid; 
+ University of Rome "Tor Vergata". 
 
  FNS is free software: you can redistribute it and/or modify it 
  under the terms of the GNU General Public License version 3 as 
